@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:snapchat/core/common/widgets/continue_button.dart';
 import 'package:snapchat/core/common/widgets/custom_text_field.dart';
 import 'package:snapchat/core/common/widgets/header_text.dart';
 import 'package:snapchat/core/utils/consts/colors.dart';
 import 'package:snapchat/log_in/log_in_bloc/log_in_bloc.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 
 class LogInScreen extends StatefulWidget {
-  static const routeName = '/login';
   const LogInScreen({super.key});
+  static const routeName = '/login';
 
   @override
   State<LogInScreen> createState() => _LogInScreenState();
@@ -29,6 +29,10 @@ class _LogInScreenState extends State<LogInScreen> {
     _passwordController = TextEditingController();
     _emailFocusNode = FocusNode();
     _passwordFocusNode = FocusNode();
+    _loginBloc.add(OnChangeInputEvent(
+      email: _emailController.text,
+      password: _passwordController.text,
+    ));
   }
 
   @override
@@ -95,7 +99,7 @@ class _LogInScreenState extends State<LogInScreen> {
         focusNode: _emailFocusNode,
         labelText: 'USERNAME OR EMAIL',
         keyboardType: TextInputType.emailAddress,
-        onChanged: (p0) => _loginBloc.add(ActivateButtonEvent(
+        onChanged: (p0) => _loginBloc.add(OnChangeInputEvent(
           email: _emailController.text,
           password: _passwordController.text,
         )),
@@ -128,10 +132,12 @@ class _LogInScreenState extends State<LogInScreen> {
         focusNode: _passwordFocusNode,
         labelText: 'PASSWORD',
         obscureText: true,
-        onChanged: (_) => _loginBloc.add(ActivateButtonEvent(
-          email: _emailController.text,
-          password: _passwordController.text,
-        )),
+        onChanged: (_) => _loginBloc.add(
+          OnChangeInputEvent(
+            email: _emailController.text,
+            password: _passwordController.text,
+          ),
+        ),
         onFieldSubmitted: (value) => _passwordFocusNode.unfocus(),
       ),
     );
@@ -171,7 +177,7 @@ class _LogInScreenState extends State<LogInScreen> {
         email: _emailController.text,
         password: _passwordController.text,
       ),
-      isEnabled: (state is! ButtonIsDisabled) || (state is! LogInInitial),
+      isEnabled: state is! ButtonIsDisabled,
       title: 'Log In',
     );
   }

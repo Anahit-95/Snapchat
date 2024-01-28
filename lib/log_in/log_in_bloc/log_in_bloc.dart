@@ -9,7 +9,7 @@ part 'log_in_state.dart';
 class LogInBloc extends Bloc<LogInEvent, LogInState> {
   LogInBloc() : super(LogInInitial()) {
     on<LoggingInEvent>(_logInHandler);
-    on<ActivateButtonEvent>(_activateButtonHandler);
+    on<OnChangeInputEvent>(_activateButtonHandler);
   }
 
   Future<void> _logInHandler(
@@ -36,7 +36,7 @@ class LogInBloc extends Bloc<LogInEvent, LogInState> {
   }
 
   void _activateButtonHandler(
-      ActivateButtonEvent event, Emitter<LogInState> emit) {
+      OnChangeInputEvent event, Emitter<LogInState> emit) {
     if (event.email.isEmpty || event.password.isEmpty) {
       emit(ButtonIsDisabled());
     } else {

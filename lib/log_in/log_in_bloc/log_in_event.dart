@@ -19,8 +19,8 @@ class LoggingInEvent extends LogInEvent {
   List<Object> get props => [email, password];
 }
 
-class ActivateButtonEvent extends LogInEvent {
-  const ActivateButtonEvent({
+class OnChangeInputEvent extends LogInEvent {
+  const OnChangeInputEvent({
     required this.email,
     required this.password,
   });
