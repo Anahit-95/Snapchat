@@ -1,13 +1,13 @@
-part of 'email_phone_bloc.dart';
+part of 'sign_up_email_phone_bloc.dart';
 
-sealed class EmailPhoneEvent extends Equatable {
-  const EmailPhoneEvent();
+sealed class SignUpEmailPhoneEvent extends Equatable {
+  const SignUpEmailPhoneEvent();
 
   @override
   List<Object> get props => [];
 }
 
-final class SwitchModesEvent extends EmailPhoneEvent {
+final class SwitchModesEvent extends SignUpEmailPhoneEvent {
   const SwitchModesEvent({
     required this.mode,
   });
@@ -18,7 +18,7 @@ final class SwitchModesEvent extends EmailPhoneEvent {
   List<Object> get props => [mode];
 }
 
-final class EmailOnChangeEvent extends EmailPhoneEvent {
+final class EmailOnChangeEvent extends SignUpEmailPhoneEvent {
   const EmailOnChangeEvent(this.email);
 
   final String email;
@@ -27,7 +27,7 @@ final class EmailOnChangeEvent extends EmailPhoneEvent {
   List<Object> get props => [email];
 }
 
-final class PhoneOnChangeEvent extends EmailPhoneEvent {
+final class PhoneOnChangeEvent extends SignUpEmailPhoneEvent {
   const PhoneOnChangeEvent(this.phone);
 
   final String phone;
@@ -36,7 +36,7 @@ final class PhoneOnChangeEvent extends EmailPhoneEvent {
   List<Object> get props => [phone];
 }
 
-final class ConfirmEmailOrPhoneEvent extends EmailPhoneEvent {
+final class ConfirmEmailOrPhoneEvent extends SignUpEmailPhoneEvent {
   const ConfirmEmailOrPhoneEvent({this.email, this.phone});
 
   final String? email;

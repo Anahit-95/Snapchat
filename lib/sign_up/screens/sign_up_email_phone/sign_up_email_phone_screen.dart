@@ -4,24 +4,24 @@ import 'package:snapchat/core/common/widgets/continue_button.dart';
 import 'package:snapchat/core/common/widgets/custom_text_field.dart';
 import 'package:snapchat/core/common/widgets/header_text.dart';
 import 'package:snapchat/core/utils/consts/colors.dart';
-import 'package:snapchat/sign_up/screens/email_phone/bloc/email_phone_bloc.dart';
 import 'package:snapchat/sign_up/screens/password_screen.dart';
+import 'package:snapchat/sign_up/screens/sign_up_email_phone/sign_up_email_phone_bloc/sign_up_email_phone_bloc.dart';
 
-class EmailPhoneScreen extends StatefulWidget {
-  const EmailPhoneScreen({super.key});
+class SignUpEmailPhoneScreen extends StatefulWidget {
+  const SignUpEmailPhoneScreen({super.key});
 
   @override
-  State<EmailPhoneScreen> createState() => _EmailPhoneScreenState();
+  State<SignUpEmailPhoneScreen> createState() => _SignUpEmailPhoneScreenState();
 }
 
-class _EmailPhoneScreenState extends State<EmailPhoneScreen> {
+class _SignUpEmailPhoneScreenState extends State<SignUpEmailPhoneScreen> {
   late TextEditingController _emailController;
   late TextEditingController _mobileController;
   late FocusNode _emailFocusNode;
   late FocusNode _mobileFocusNode;
   String countryCode = 'am';
 
-  final EmailPhoneBloc _emailPhoneBloc = EmailPhoneBloc();
+  final SignUpEmailPhoneBloc _emailPhoneBloc = SignUpEmailPhoneBloc();
 
   @override
   void initState() {
@@ -58,54 +58,59 @@ class _EmailPhoneScreenState extends State<EmailPhoneScreen> {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-        create: (context) => _emailPhoneBloc,
-        child: Scaffold(
-          appBar: AppBar(),
-          body: SingleChildScrollView(
-            child: Container(
-              width: double.maxFinite,
-              padding: const EdgeInsets.all(60),
-              child: BlocConsumer<EmailPhoneBloc, EmailPhoneState>(
-                listener: (context, state) {
-                  if (state is ConfirmedEmailOrPhone) {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => const PasswordScreen()),
-                    );
-                  }
-                },
-                builder: (context, state) {
-                  if (state is PhoneMode || state is InvalidPhone) {
-                    return Column(
-                      children: [
-                        _renderHeader("What's your \nmobile number?"),
-                        _renderSignUpWithEmailPhone(state),
-                        _renderMobileInput(),
-                        _renderPhoneErrorText(state),
-                        _renderVarificationText(),
-                        _renderContinueButton1(
-                            state: state,
-                            isEnabled: _mobileController.text.isNotEmpty),
-                      ],
-                    );
-                  }
+      create: (context) => _emailPhoneBloc,
+      child: Scaffold(
+        appBar: AppBar(),
+        body: SingleChildScrollView(
+          child: Container(
+            width: double.maxFinite,
+            padding: const EdgeInsets.all(60),
+            child: BlocConsumer<SignUpEmailPhoneBloc, SignUpEmailPhoneState>(
+              listener: (context, state) {
+                if (state is ConfirmedEmailOrPhone) {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => const PasswordScreen()),
+                  );
+                }
+              },
+              builder: (context, state) {
+                if (state is PhoneMode || state is InvalidPhone) {
                   return Column(
                     children: [
-                      _renderHeader("What's your email?"),
+                      _renderHeader("What's your \nmobile number?"),
                       _renderSignUpWithEmailPhone(state),
-                      _renderEmailInput(),
-                      _renderEmailErrorText(state),
+                      _renderMobileInput(),
+                      _renderPhoneErrorText(state),
+                      _renderVarificationText(),
                       _renderContinueButton1(
-                          state: state,
-                          isEnabled: _emailController.text.isNotEmpty),
+                        state: state,
+                        isEnabled: state is! InvalidPhone &&
+                            _mobileController.text.isNotEmpty,
+                      ),
                     ],
                   );
-                },
-              ),
+                }
+                return Column(
+                  children: [
+                    _renderHeader("What's your email?"),
+                    _renderSignUpWithEmailPhone(state),
+                    _renderEmailInput(),
+                    _renderEmailErrorText(state),
+                    _renderContinueButton1(
+                      state: state,
+                      isEnabled: state is! InvalidEmail &&
+                          _emailController.text.isNotEmpty,
+                    ),
+                  ],
+                );
+              },
             ),
           ),
-        ));
+        ),
+      ),
+    );
   }
 
   Widget _renderHeader(String title) {
@@ -122,7 +127,7 @@ class _EmailPhoneScreenState extends State<EmailPhoneScreen> {
     );
   }
 
-  Widget _renderSignUpWithEmailPhone(EmailPhoneState state) {
+  Widget _renderSignUpWithEmailPhone(SignUpEmailPhoneState state) {
     return GestureDetector(
       onTap: () {
         if (state is PhoneMode || state is InvalidPhone) {
@@ -146,7 +151,7 @@ class _EmailPhoneScreenState extends State<EmailPhoneScreen> {
     );
   }
 
-  Widget _renderEmailErrorText(EmailPhoneState state) {
+  Widget _renderEmailErrorText(SignUpEmailPhoneState state) {
     if (state is InvalidEmail) {
       return SizedBox(
         width: double.maxFinite,
@@ -206,7 +211,7 @@ class _EmailPhoneScreenState extends State<EmailPhoneScreen> {
                   controller: _mobileController,
                   decoration: const InputDecoration(border: InputBorder.none),
                   keyboardType: TextInputType.phone,
-                  onChanged: (value) => _emailPhoneBloc
+                  onChanged: (_) => _emailPhoneBloc
                       .add(PhoneOnChangeEvent(_mobileController.text)),
                 ),
               ),
@@ -217,7 +222,7 @@ class _EmailPhoneScreenState extends State<EmailPhoneScreen> {
     );
   }
 
-  Widget _renderPhoneErrorText(EmailPhoneState state) {
+  Widget _renderPhoneErrorText(SignUpEmailPhoneState state) {
     if (state is InvalidPhone) {
       return SizedBox(
         width: double.maxFinite,
@@ -254,7 +259,7 @@ class _EmailPhoneScreenState extends State<EmailPhoneScreen> {
   // }
 
   Widget _renderContinueButton1(
-      {required EmailPhoneState state, required bool isEnabled}) {
+      {required SignUpEmailPhoneState state, required bool isEnabled}) {
     return ContinueButton(
       onPressed: () {
         if (state is EmailMode) {

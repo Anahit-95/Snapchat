@@ -5,21 +5,21 @@ import 'package:intl/intl.dart';
 import 'package:snapchat/core/common/widgets/continue_button.dart';
 import 'package:snapchat/core/common/widgets/header_text.dart';
 import 'package:snapchat/core/utils/consts/colors.dart';
-import 'package:snapchat/sign_up/screens/birthday/birthday_bloc/birthday_bloc.dart';
-import 'package:snapchat/sign_up/screens/username/username_screen.dart';
+import 'package:snapchat/sign_up/screens/sign_up_birthday/sign_up_birthday_bloc/sign_up_birthday_bloc.dart';
+import 'package:snapchat/sign_up/screens/sign_up_username/sign_up_username_screen.dart';
 
-class BirthsayScreen extends StatefulWidget {
-  const BirthsayScreen({super.key});
+class SignUpBirthsayScreen extends StatefulWidget {
+  const SignUpBirthsayScreen({super.key});
 
   @override
-  State<BirthsayScreen> createState() => _BirthsayScreenState();
+  State<SignUpBirthsayScreen> createState() => _SignUpBirthsayScreenState();
 }
 
-class _BirthsayScreenState extends State<BirthsayScreen> {
+class _SignUpBirthsayScreenState extends State<SignUpBirthsayScreen> {
   late TextEditingController _dateController;
   DateTime? _selectedDate;
 
-  final BirthdayBloc _birthdayBloc = BirthdayBloc();
+  final SignUpBirthdayBloc _birthdayBloc = SignUpBirthdayBloc();
 
   @override
   void initState() {
@@ -37,12 +37,13 @@ class _BirthsayScreenState extends State<BirthsayScreen> {
   Widget build(BuildContext context) {
     return BlocProvider(
       create: (context) => _birthdayBloc,
-      child: BlocConsumer<BirthdayBloc, BirthdayState>(
+      child: BlocConsumer<SignUpBirthdayBloc, SignUpBirthdayState>(
         listener: (context, state) {
           if (state is BirthdayConfirmed) {
             Navigator.push(
               context,
-              MaterialPageRoute(builder: (context) => const UsernameScreen()),
+              MaterialPageRoute(
+                  builder: (context) => const SignUpUsernameScreen()),
             );
           }
           if (state is BirthdaySelected) {
@@ -91,15 +92,15 @@ class _BirthsayScreenState extends State<BirthsayScreen> {
     );
   }
 
-  Widget _renderBirthdayContinueButton(BirthdayState state) {
+  Widget _renderBirthdayContinueButton(SignUpBirthdayState state) {
     return ContinueButton(
       onPressed: () => _birthdayBloc.add(ConfirmingDate(_selectedDate!)),
-      isEnabled: state is! BirthdayInitial && state is! InvalidBirthday,
+      isEnabled: state is ValidBirthday || state is BirthdayConfirmed,
       title: 'Continue',
     );
   }
 
-  Widget _renderBirthdayErrorText(BirthdayState state) {
+  Widget _renderBirthdayErrorText(SignUpBirthdayState state) {
     if (state is InvalidBirthday) {
       return const SizedBox(
         width: double.maxFinite,
@@ -113,13 +114,6 @@ class _BirthsayScreenState extends State<BirthsayScreen> {
       return const SizedBox(height: 15);
     }
   }
-
-  // void _renderContinue(DateTime birthdate) {
-  //   Navigator.push(
-  //     context,
-  //     MaterialPageRoute(builder: (context) => const UsernameScreen()),
-  //   );
-  // }
 
   Future<void> _openDatePicker() async {
     FocusScope.of(context).unfocus();
@@ -136,11 +130,6 @@ class _BirthsayScreenState extends State<BirthsayScreen> {
             maximumDate: currentDate,
             dateOrder: DatePickerDateOrder.dmy,
             onDateTimeChanged: (newDate) {
-              // setState(() {
-              //   _selectedDate = newDate;
-              //   _dateController.text =
-              //       DateFormat('d MMMM yyyy').format(_selectedDate!);
-              // });
               _birthdayBloc.add(SelectingDate(newDate));
             },
           ),

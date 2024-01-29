@@ -4,24 +4,24 @@ import 'package:snapchat/core/common/widgets/continue_button.dart';
 import 'package:snapchat/core/common/widgets/custom_text_field.dart';
 import 'package:snapchat/core/common/widgets/header_text.dart';
 import 'package:snapchat/core/utils/consts/colors.dart';
-import 'package:snapchat/sign_up/screens/birthday/birthday_screen.dart';
-import 'package:snapchat/sign_up/screens/name/name_bloc/name_bloc.dart';
+import 'package:snapchat/sign_up/screens/sign_up_birthday/sign_up_birthday_screen.dart';
+import 'package:snapchat/sign_up/screens/sign_up_name/sign_up_name_bloc/sign_up_name_bloc.dart';
 
-class SignUpScreen extends StatefulWidget {
-  const SignUpScreen({super.key});
+class SignUpNameScreen extends StatefulWidget {
+  const SignUpNameScreen({super.key});
   static const routeName = 'sign-up';
 
   @override
-  State<SignUpScreen> createState() => _SignUpScreenState();
+  State<SignUpNameScreen> createState() => _SignUpNameScreenState();
 }
 
-class _SignUpScreenState extends State<SignUpScreen> {
+class _SignUpNameScreenState extends State<SignUpNameScreen> {
   late TextEditingController _firstNameController;
   late TextEditingController _lastNameController;
   late FocusNode _firstNameFocusNode;
   late FocusNode _lastNameFocusNode;
 
-  final NameBloc _nameBloc = NameBloc();
+  final SignUpNameBloc _nameBloc = SignUpNameBloc();
 
   @override
   void initState() {
@@ -45,12 +45,14 @@ class _SignUpScreenState extends State<SignUpScreen> {
   Widget build(BuildContext context) {
     return BlocProvider(
       create: (BuildContext context) => _nameBloc,
-      child: BlocConsumer<NameBloc, NameState>(
+      child: BlocConsumer<SignUpNameBloc, SignUpNameState>(
         listener: (context, state) {
           if (state is NameRegistered) {
             Navigator.push(
               context,
-              MaterialPageRoute(builder: (context) => const BirthsayScreen()),
+              MaterialPageRoute(
+                builder: (context) => const SignUpBirthsayScreen(),
+              ),
             );
           }
         },
@@ -112,7 +114,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
     );
   }
 
-  Widget _renderSignUpButton(NameState state) {
+  Widget _renderSignUpButton(SignUpNameState state) {
     return ContinueButton(
       onPressed: () => _renderSignUpAndAccept(
         firstName: _firstNameController.text,

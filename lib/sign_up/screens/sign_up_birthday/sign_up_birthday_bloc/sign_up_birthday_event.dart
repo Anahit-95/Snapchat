@@ -1,13 +1,13 @@
-part of 'birthday_bloc.dart';
+part of 'sign_up_birthday_bloc.dart';
 
-sealed class BirthdayEvent extends Equatable {
-  const BirthdayEvent();
+sealed class SignUpBirthdayEvent extends Equatable {
+  const SignUpBirthdayEvent();
 
   @override
   List<Object> get props => [];
 }
 
-final class SelectingDate extends BirthdayEvent {
+final class SelectingDate extends SignUpBirthdayEvent {
   const SelectingDate(this.birthDate);
 
   final DateTime? birthDate;
@@ -16,7 +16,7 @@ final class SelectingDate extends BirthdayEvent {
   List<Object> get props => [birthDate!];
 }
 
-final class ConfirmingDate extends BirthdayEvent {
+final class ConfirmingDate extends SignUpBirthdayEvent {
   const ConfirmingDate(this.birthDate);
 
   final DateTime birthDate;

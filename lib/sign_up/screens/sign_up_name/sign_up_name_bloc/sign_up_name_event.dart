@@ -1,13 +1,13 @@
-part of 'name_bloc.dart';
+part of 'sign_up_name_bloc.dart';
 
-sealed class NameEvent extends Equatable {
-  const NameEvent();
+sealed class SignUpNameEvent extends Equatable {
+  const SignUpNameEvent();
 
   @override
   List<Object> get props => [];
 }
 
-class SignUpAndAcceptEvent extends NameEvent {
+class SignUpAndAcceptEvent extends SignUpNameEvent {
   const SignUpAndAcceptEvent({
     required this.firstName,
     required this.lastName,
@@ -20,7 +20,7 @@ class SignUpAndAcceptEvent extends NameEvent {
   List<Object> get props => [firstName, lastName];
 }
 
-class OnChangeInputEvent extends NameEvent {
+class OnChangeInputEvent extends SignUpNameEvent {
   const OnChangeInputEvent({
     required this.firstName,
     required this.lastName,

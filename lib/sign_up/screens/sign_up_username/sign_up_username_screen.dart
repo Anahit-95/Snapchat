@@ -4,20 +4,20 @@ import 'package:snapchat/core/common/widgets/continue_button.dart';
 import 'package:snapchat/core/common/widgets/custom_text_field.dart';
 import 'package:snapchat/core/common/widgets/header_text.dart';
 import 'package:snapchat/core/utils/consts/colors.dart';
-import 'package:snapchat/sign_up/screens/email_phone/email_phone_screen.dart';
-import 'package:snapchat/sign_up/screens/username/username_bloc/username_bloc.dart';
+import 'package:snapchat/sign_up/screens/sign_up_email_phone/sign_up_email_phone_screen.dart';
+import 'package:snapchat/sign_up/screens/sign_up_username/sign_up_username_bloc/sign_up_username_bloc.dart';
 
-class UsernameScreen extends StatefulWidget {
-  const UsernameScreen({super.key});
+class SignUpUsernameScreen extends StatefulWidget {
+  const SignUpUsernameScreen({super.key});
 
   @override
-  State<UsernameScreen> createState() => _UsernameScreenState();
+  State<SignUpUsernameScreen> createState() => _SignUpUsernameScreenState();
 }
 
-class _UsernameScreenState extends State<UsernameScreen> {
+class _SignUpUsernameScreenState extends State<SignUpUsernameScreen> {
   late TextEditingController _controller;
 
-  final UsernameBloc _usernameBloc = UsernameBloc();
+  final SignUpUsernameBloc _usernameBloc = SignUpUsernameBloc();
 
   @override
   void initState() {
@@ -35,12 +35,13 @@ class _UsernameScreenState extends State<UsernameScreen> {
   Widget build(BuildContext context) {
     return BlocProvider(
       create: (context) => _usernameBloc,
-      child: BlocConsumer<UsernameBloc, UsernameState>(
+      child: BlocConsumer<SignUpUsernameBloc, SignUpUsernameState>(
         listener: (context, state) {
           if (state is UsernameConfirmed) {
             Navigator.push(
               context,
-              MaterialPageRoute(builder: (context) => const EmailPhoneScreen()),
+              MaterialPageRoute(
+                  builder: (context) => const SignUpEmailPhoneScreen()),
             );
           }
         },
@@ -90,7 +91,7 @@ class _UsernameScreenState extends State<UsernameScreen> {
     );
   }
 
-  Widget _rederAvailable(UsernameState state) {
+  Widget _rederAvailable(SignUpUsernameState state) {
     return Container(
       width: double.maxFinite,
       height: 25,
@@ -113,7 +114,7 @@ class _UsernameScreenState extends State<UsernameScreen> {
     );
   }
 
-  Widget _renderContinueButton(UsernameState state) {
+  Widget _renderContinueButton(SignUpUsernameState state) {
     return ContinueButton(
       onPressed: () => _usernameBloc.add(ConfirmingUsername(_controller.text)),
       isEnabled: _controller.text.length >= 5 && state is! InvalidUsername,

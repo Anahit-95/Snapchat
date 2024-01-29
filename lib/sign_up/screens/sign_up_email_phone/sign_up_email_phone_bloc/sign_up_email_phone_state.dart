@@ -1,15 +1,15 @@
-part of 'email_phone_bloc.dart';
+part of 'sign_up_email_phone_bloc.dart';
 
-sealed class EmailPhoneState extends Equatable {
-  const EmailPhoneState();
+sealed class SignUpEmailPhoneState extends Equatable {
+  const SignUpEmailPhoneState();
 
   @override
   List<Object> get props => [];
 }
 
-final class EmailPhoneInitial extends EmailPhoneState {}
+final class EmailPhoneInitial extends SignUpEmailPhoneState {}
 
-final class EmailMode extends EmailPhoneState {
+final class EmailMode extends SignUpEmailPhoneState {
   const EmailMode(this.email);
 
   final String email;
@@ -18,7 +18,7 @@ final class EmailMode extends EmailPhoneState {
   List<String> get props => [email];
 }
 
-final class PhoneMode extends EmailPhoneState {
+final class PhoneMode extends SignUpEmailPhoneState {
   const PhoneMode(this.phone);
 
   final String phone;
@@ -27,7 +27,7 @@ final class PhoneMode extends EmailPhoneState {
   List<String> get props => [phone];
 }
 
-final class InvalidEmail extends EmailPhoneState {
+final class InvalidEmail extends SignUpEmailPhoneState {
   const InvalidEmail(this.emailError);
 
   final String emailError;
@@ -36,7 +36,7 @@ final class InvalidEmail extends EmailPhoneState {
   List<Object> get props => [emailError];
 }
 
-final class InvalidPhone extends EmailPhoneState {
+final class InvalidPhone extends SignUpEmailPhoneState {
   const InvalidPhone(this.phoneError);
 
   final String phoneError;
@@ -45,9 +45,9 @@ final class InvalidPhone extends EmailPhoneState {
   List<Object> get props => [phoneError];
 }
 
-final class ConfirmedEmailOrPhone extends EmailPhoneState {}
+final class ConfirmedEmailOrPhone extends SignUpEmailPhoneState {}
 
-final class EmailPhoneError extends EmailPhoneState {
+final class EmailPhoneError extends SignUpEmailPhoneState {
   const EmailPhoneError(this.error);
 
   final String error;

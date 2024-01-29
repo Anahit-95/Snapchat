@@ -3,17 +3,18 @@ import 'dart:async';
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 
-part 'username_event.dart';
-part 'username_state.dart';
+part 'sign_up_username_event.dart';
+part 'sign_up_username_state.dart';
 
-class UsernameBloc extends Bloc<UsernameEvent, UsernameState> {
-  UsernameBloc() : super(UsernameInitial()) {
+class SignUpUsernameBloc
+    extends Bloc<SignUpUsernameEvent, SignUpUsernameState> {
+  SignUpUsernameBloc() : super(UsernameInitial()) {
     on<OnChangeInputEvent>(_onOnChangeInputEvent);
     on<ConfirmingUsername>(_onConfirmingUsername);
   }
 
   FutureOr<void> _onOnChangeInputEvent(
-      OnChangeInputEvent event, Emitter<UsernameState> emit) {
+      OnChangeInputEvent event, Emitter<SignUpUsernameState> emit) {
     if (event.username.length >= 5) {
       // TODO: Do an actioin to ckeck if username is in use
       if (event.username != 'Anahit') {
@@ -29,7 +30,7 @@ class UsernameBloc extends Bloc<UsernameEvent, UsernameState> {
   }
 
   FutureOr<void> _onConfirmingUsername(
-      ConfirmingUsername event, Emitter<UsernameState> emit) {
+      ConfirmingUsername event, Emitter<SignUpUsernameState> emit) {
     emit(UsernameLoading());
     emit(UsernameConfirmed());
   }
