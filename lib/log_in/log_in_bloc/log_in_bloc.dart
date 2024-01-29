@@ -9,7 +9,7 @@ part 'log_in_state.dart';
 class LogInBloc extends Bloc<LogInEvent, LogInState> {
   LogInBloc() : super(LogInInitial()) {
     on<LoggingInEvent>(_logInHandler);
-    on<OnChangeInputEvent>(_activateButtonHandler);
+    on<OnChangeInputEvent>(_onChangeInputHandler);
   }
 
   Future<void> _logInHandler(
@@ -18,6 +18,8 @@ class LogInBloc extends Bloc<LogInEvent, LogInState> {
     var passwordError = '';
     if (event.email.isEmpty) {
       emailError = 'This field is required';
+    } else if (event.email.length < 5) {
+      emailError = 'Must have at least 5 characters';
     }
     if (event.password.isEmpty) {
       passwordError = 'This field is required';
@@ -35,7 +37,7 @@ class LogInBloc extends Bloc<LogInEvent, LogInState> {
     }
   }
 
-  void _activateButtonHandler(
+  void _onChangeInputHandler(
       OnChangeInputEvent event, Emitter<LogInState> emit) {
     if (event.email.isEmpty || event.password.isEmpty) {
       emit(ButtonIsDisabled());

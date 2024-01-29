@@ -4,7 +4,7 @@ import 'package:snapchat/core/common/widgets/continue_button.dart';
 import 'package:snapchat/core/common/widgets/custom_text_field.dart';
 import 'package:snapchat/core/common/widgets/header_text.dart';
 import 'package:snapchat/core/utils/consts/colors.dart';
-import 'package:snapchat/sign_up/screens/birthday_screen.dart';
+import 'package:snapchat/sign_up/screens/birthday/birthday_screen.dart';
 import 'package:snapchat/sign_up/screens/name/name_bloc/name_bloc.dart';
 
 class SignUpScreen extends StatefulWidget {
@@ -30,10 +30,6 @@ class _SignUpScreenState extends State<SignUpScreen> {
     _lastNameController = TextEditingController();
     _firstNameFocusNode = FocusNode();
     _lastNameFocusNode = FocusNode();
-    _nameBloc.add(OnChangeInputEvent(
-      firstName: _firstNameController.text,
-      lastName: _lastNameController.text,
-    ));
   }
 
   @override
@@ -122,7 +118,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
         firstName: _firstNameController.text,
         lastName: _lastNameController.text,
       ),
-      isEnabled: state is! ButtonIsDisabled,
+      isEnabled: state is! ButtonIsDisabled && state is! NameInitial,
       title: 'Sign Up & Accept',
     );
   }

@@ -29,10 +29,6 @@ class _LogInScreenState extends State<LogInScreen> {
     _passwordController = TextEditingController();
     _emailFocusNode = FocusNode();
     _passwordFocusNode = FocusNode();
-    _loginBloc.add(OnChangeInputEvent(
-      email: _emailController.text,
-      password: _passwordController.text,
-    ));
   }
 
   @override
@@ -177,7 +173,7 @@ class _LogInScreenState extends State<LogInScreen> {
         email: _emailController.text,
         password: _passwordController.text,
       ),
-      isEnabled: state is! ButtonIsDisabled,
+      isEnabled: state is! ButtonIsDisabled && state is! LogInInitial,
       title: 'Log In',
     );
   }

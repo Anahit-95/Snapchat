@@ -9,7 +9,7 @@ part 'name_state.dart';
 class NameBloc extends Bloc<NameEvent, NameState> {
   NameBloc() : super(NameInitial()) {
     on<OnChangeInputEvent>(_onChangeInputHandler);
-    on<SignUpAndAcceptEvent>(_onSignUpAndAcceptHandler);
+    on<SignUpAndAcceptEvent>(_onSignUpAndAccept);
   }
 
   void _onChangeInputHandler(
@@ -21,7 +21,7 @@ class NameBloc extends Bloc<NameEvent, NameState> {
     }
   }
 
-  FutureOr<void> _onSignUpAndAcceptHandler(
+  FutureOr<void> _onSignUpAndAccept(
       SignUpAndAcceptEvent event, Emitter<NameState> emit) {
     emit(NameLoading());
     emit(NameRegistered());
