@@ -1,4 +1,7 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:snapchat/core/common/widgets/continue_button.dart';
 import 'package:snapchat/core/common/widgets/custom_back_button.dart';
@@ -205,6 +208,11 @@ class _SignUpEmailPhoneScreenState extends State<SignUpEmailPhoneScreen> {
   }
 
   Widget _renderMobileInputFlagAndPhonCode() {
+    // return FutureBuilder(
+    //     future: _getDeviceCountry(),
+    //     builder: (context, snapshot) {
+    //       if (snapshot.connectionState == ConnectionState.done) {
+    //         selectedCountry = snapshot.data;
     return GestureDetector(
       onTap: _onTapNavigateCountriesScreen,
       child: Text(
@@ -215,6 +223,10 @@ class _SignUpEmailPhoneScreenState extends State<SignUpEmailPhoneScreen> {
         ),
       ),
     );
+    // } else {
+    //   return const SizedBox.shrink();
+    // }
+    // });
   }
 
   Widget _renderMobileInputDivider() {
@@ -290,6 +302,19 @@ class _SignUpEmailPhoneScreenState extends State<SignUpEmailPhoneScreen> {
     });
   }
 
+  Future<CountryModel> _getDeviceCountry() async {
+    var code = View.of(context).platformDispatcher.locale.countryCode;
+    final data =
+        await rootBundle.loadString('assets/resources/country_codes.json');
+    final List<dynamic> jsonList = jsonDecode(data);
+
+    final countries =
+        jsonList.map((json) => CountryModel.fromMap(json)).toList();
+    final currentCountry =
+        countries.firstWhere((country) => country.countryCode == code);
+    return currentCountry;
+  }
+
   void _onTapNavigateCountriesScreen() {
     Navigator.push(
       context,
@@ -297,6 +322,7 @@ class _SignUpEmailPhoneScreenState extends State<SignUpEmailPhoneScreen> {
         builder: (context) => CountriesScreen(
           onChange: (CountryModel country) {
             selectedCountry = country;
+            print(selectedCountry);
             setState(() {});
           },
         ),

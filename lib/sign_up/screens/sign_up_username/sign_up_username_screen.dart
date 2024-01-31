@@ -47,25 +47,27 @@ class _SignUpUsernameScreenState extends State<SignUpUsernameScreen> {
   Widget _render(SignUpUsernameState state) {
     return Scaffold(
       body: SafeArea(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const CustomBackButton(),
-            SingleChildScrollView(
-              child: Padding(
-                padding: const EdgeInsets.all(60),
-                child: Column(
-                  children: [
-                    const HeaderText(title: 'Pick a username'),
-                    _renderDescription(),
-                    _renderUsernameInput(),
-                    _rederAvailable(state),
-                    _renderContinueButton(state)
-                  ],
+        child: SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const CustomBackButton(),
+              SingleChildScrollView(
+                child: Padding(
+                  padding: const EdgeInsets.all(60),
+                  child: Column(
+                    children: [
+                      const HeaderText(title: 'Pick a username'),
+                      _renderDescription(),
+                      _renderUsernameInput(),
+                      _rederAvailable(state),
+                      _renderContinueButton(state)
+                    ],
+                  ),
                 ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );

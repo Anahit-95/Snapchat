@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:snapchat/core/common/widgets/custom_back_button.dart';
 import 'package:snapchat/core/models/country_model.dart';
 import 'package:snapchat/core/utils/consts/colors.dart';
 import 'package:snapchat/countries/countries_bloc/countries_bloc.dart';
@@ -33,9 +34,6 @@ class _CountriesScreenState extends State<CountriesScreen> {
 
   @override
   Widget build(BuildContext context) {
-    // var code = View.of(context).platformDispatcher.locale.countryCode;
-    // print(code);
-
     return BlocProvider(
       create: (context) => _countriesBloc,
       child: BlocBuilder<CountriesBloc, CountriesState>(
@@ -50,12 +48,11 @@ class _CountriesScreenState extends State<CountriesScreen> {
     return Scaffold(
       body: SafeArea(
         child: Padding(
-          padding:
-              const EdgeInsets.only(top: 10, left: 15, right: 15, bottom: 30),
+          padding: const EdgeInsets.only(top: 10, bottom: 30),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const BackButton(color: AppColors.primaryColor),
+              const CustomBackButton(),
               _renderSearchInput(),
               if (state is LoadingCountries) _renderLoadingText(),
               if (state is CountriesLoaded) _renderCountries(state.countries),
@@ -70,7 +67,7 @@ class _CountriesScreenState extends State<CountriesScreen> {
 
   Widget _renderSearchInput() {
     return Padding(
-      padding: const EdgeInsets.only(top: 30.0),
+      padding: const EdgeInsets.only(top: 30.0, left: 15, right: 15),
       child: TextField(
         controller: _searchController,
         onChanged: (value) =>
@@ -141,7 +138,7 @@ class _CountriesScreenState extends State<CountriesScreen> {
   Widget _renderCountries(List<CountryModel> countries) {
     return Expanded(
       child: ListView.builder(
-        padding: const EdgeInsets.symmetric(horizontal: 5),
+        padding: const EdgeInsets.symmetric(horizontal: 20),
         itemCount: countries.length,
         itemBuilder: (context, index) {
           return _renderCountryTile(
