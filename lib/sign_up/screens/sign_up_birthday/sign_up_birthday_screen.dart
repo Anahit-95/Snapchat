@@ -3,19 +3,20 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 import 'package:snapchat/core/common/widgets/continue_button.dart';
+import 'package:snapchat/core/common/widgets/custom_back_button.dart';
 import 'package:snapchat/core/common/widgets/header_text.dart';
 import 'package:snapchat/core/utils/consts/colors.dart';
 import 'package:snapchat/sign_up/screens/sign_up_birthday/sign_up_birthday_bloc/sign_up_birthday_bloc.dart';
 import 'package:snapchat/sign_up/screens/sign_up_username/sign_up_username_screen.dart';
 
-class SignUpBirthsayScreen extends StatefulWidget {
-  const SignUpBirthsayScreen({super.key});
+class SignUpBirthdayScreen extends StatefulWidget {
+  const SignUpBirthdayScreen({super.key});
 
   @override
-  State<SignUpBirthsayScreen> createState() => _SignUpBirthsayScreenState();
+  State<SignUpBirthdayScreen> createState() => _SignUpBirthdayScreenState();
 }
 
-class _SignUpBirthsayScreenState extends State<SignUpBirthsayScreen> {
+class _SignUpBirthdayScreenState extends State<SignUpBirthdayScreen> {
   late TextEditingController _dateController;
   DateTime? _selectedDate;
 
@@ -38,25 +39,22 @@ class _SignUpBirthsayScreenState extends State<SignUpBirthsayScreen> {
     return BlocProvider(
       create: (context) => _birthdayBloc,
       child: BlocConsumer<SignUpBirthdayBloc, SignUpBirthdayState>(
-        listener: (context, state) {
-          if (state is BirthdayConfirmed) {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                  builder: (context) => const SignUpUsernameScreen()),
-            );
-          }
-          if (state is BirthdaySelected) {
-            _selectedDate = state.selectedDate;
-            _dateController.text =
-                DateFormat('d MMMM yyyy').format(state.selectedDate);
-          }
-        },
+        listener: _listener,
         builder: (context, state) {
-          return Scaffold(
-            appBar: AppBar(),
-            body: Container(
-              width: double.infinity,
+          return _render(state);
+        },
+      ),
+    );
+  }
+
+  Widget _render(SignUpBirthdayState state) {
+    return Scaffold(
+      body: SafeArea(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const CustomBackButton(),
+            Padding(
               padding: const EdgeInsets.only(top: 60, left: 60, right: 60),
               child: Column(
                 children: [
@@ -67,8 +65,8 @@ class _SignUpBirthsayScreenState extends State<SignUpBirthsayScreen> {
                 ],
               ),
             ),
-          );
-        },
+          ],
+        ),
       ),
     );
   }
@@ -94,8 +92,8 @@ class _SignUpBirthsayScreenState extends State<SignUpBirthsayScreen> {
 
   Widget _renderBirthdayContinueButton(SignUpBirthdayState state) {
     return ContinueButton(
-      onPressed: () => _birthdayBloc.add(ConfirmingDate(_selectedDate!)),
-      isEnabled: state is ValidBirthday || state is BirthdayConfirmed,
+      onPressed: _continuePressed,
+      isEnabled: state is ValidBirthday,
       title: 'Continue',
     );
   }
@@ -118,6 +116,9 @@ class _SignUpBirthsayScreenState extends State<SignUpBirthsayScreen> {
   Future<void> _openDatePicker() async {
     FocusScope.of(context).unfocus();
     final currentDate = DateTime.now();
+    final firstValidDate = currentDate.subtract(
+      const Duration(days: 16 * 365 + 4),
+    );
     showCupertinoModalPopup(
       context: context,
       builder: (context) {
@@ -125,7 +126,7 @@ class _SignUpBirthsayScreenState extends State<SignUpBirthsayScreen> {
           height: 250,
           child: CupertinoDatePicker(
             mode: CupertinoDatePickerMode.date,
-            initialDateTime: _selectedDate ?? currentDate,
+            initialDateTime: _selectedDate ?? firstValidDate,
             minimumDate: DateTime(1900),
             maximumDate: currentDate,
             dateOrder: DatePickerDateOrder.dmy,
@@ -136,5 +137,24 @@ class _SignUpBirthsayScreenState extends State<SignUpBirthsayScreen> {
         );
       },
     );
+  }
+
+  void _continuePressed() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => const SignUpUsernameScreen(),
+      ),
+    );
+  }
+}
+
+extension _BlocAddition on _SignUpBirthdayScreenState {
+  void _listener(BuildContext context, SignUpBirthdayState state) {
+    if (state is BirthdaySelected) {
+      _selectedDate = state.selectedDate;
+      _dateController.text =
+          DateFormat('d MMMM yyyy').format(state.selectedDate);
+    }
   }
 }

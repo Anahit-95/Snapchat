@@ -18,19 +18,19 @@ final class BirthdaySelected extends SignUpBirthdayState {
   List<Object> get props => [selectedDate];
 }
 
-final class LoadingBirthday extends SignUpBirthdayState {}
-
 final class InvalidBirthday extends SignUpBirthdayState {}
 
 final class ValidBirthday extends SignUpBirthdayState {}
 
-final class BirthdayConfirmed extends SignUpBirthdayState {}
+// final class LoadingBirthday extends SignUpBirthdayState {}
 
-final class BirthdayError extends SignUpBirthdayState {
-  const BirthdayError(this.error);
+// final class BirthdayConfirmed extends SignUpBirthdayState {}
 
-  final String error;
+// final class BirthdayError extends SignUpBirthdayState {
+//   const BirthdayError(this.error);
 
-  @override
-  List<String> get props => [error];
-}
+//   final String error;
+
+//   @override
+//   List<String> get props => [error];
+// }

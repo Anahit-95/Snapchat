@@ -1,5 +1,3 @@
-import 'dart:async';
-
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 
@@ -9,19 +7,9 @@ part 'sign_up_email_phone_state.dart';
 class SignUpEmailPhoneBloc
     extends Bloc<SignUpEmailPhoneEvent, SignUpEmailPhoneState> {
   SignUpEmailPhoneBloc() : super(EmailPhoneInitial()) {
-    on<SwitchModesEvent>(_onSwitchModes);
     on<EmailOnChangeEvent>(_onEmailOnChange);
     on<PhoneOnChangeEvent>(_onMobileOnChange);
-    on<ConfirmEmailOrPhoneEvent>(_onConfirmEmailOrPhone);
-  }
-
-  void _onSwitchModes(
-      SwitchModesEvent event, Emitter<SignUpEmailPhoneState> emit) {
-    if (event.mode == 'phone') {
-      emit(const PhoneMode(''));
-    } else {
-      emit(const EmailMode(''));
-    }
+    // on<ConfirmEmailOrPhoneEvent>(_onConfirmEmailOrPhone);
   }
 
   void _onEmailOnChange(
@@ -51,8 +39,8 @@ class SignUpEmailPhoneBloc
     }
   }
 
-  FutureOr<void> _onConfirmEmailOrPhone(
-      ConfirmEmailOrPhoneEvent event, Emitter<SignUpEmailPhoneState> emit) {
-    emit(ConfirmedEmailOrPhone());
-  }
+  // FutureOr<void> _onConfirmEmailOrPhone(
+  //     ConfirmEmailOrPhoneEvent event, Emitter<SignUpEmailPhoneState> emit) {
+  //   emit(ConfirmedEmailOrPhone());
+  // }
 }

@@ -16,11 +16,11 @@ final class OnChangeInputEvent extends SignUpUsernameEvent {
   List<Object> get props => [username];
 }
 
-final class ConfirmingUsername extends SignUpUsernameEvent {
-  const ConfirmingUsername(this.username);
+// final class ConfirmingUsername extends SignUpUsernameEvent {
+//   const ConfirmingUsername(this.username);
 
-  final String username;
+//   final String username;
 
-  @override
-  List<Object> get props => [username];
-}
+//   @override
+//   List<Object> get props => [username];
+// }

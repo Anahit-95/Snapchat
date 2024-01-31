@@ -7,17 +7,6 @@ sealed class SignUpEmailPhoneEvent extends Equatable {
   List<Object> get props => [];
 }
 
-final class SwitchModesEvent extends SignUpEmailPhoneEvent {
-  const SwitchModesEvent({
-    required this.mode,
-  });
-
-  final String mode;
-
-  @override
-  List<Object> get props => [mode];
-}
-
 final class EmailOnChangeEvent extends SignUpEmailPhoneEvent {
   const EmailOnChangeEvent(this.email);
 
@@ -36,12 +25,12 @@ final class PhoneOnChangeEvent extends SignUpEmailPhoneEvent {
   List<Object> get props => [phone];
 }
 
-final class ConfirmEmailOrPhoneEvent extends SignUpEmailPhoneEvent {
-  const ConfirmEmailOrPhoneEvent({this.email, this.phone});
+// final class ConfirmEmailOrPhoneEvent extends SignUpEmailPhoneEvent {
+//   const ConfirmEmailOrPhoneEvent({this.email, this.phone});
 
-  final String? email;
-  final String? phone;
+//   final String? email;
+//   final String? phone;
 
-  @override
-  List<Object> get props => [email!, phone!];
-}
+//   @override
+//   List<Object> get props => [email!, phone!];
+// }

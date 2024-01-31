@@ -9,9 +9,9 @@ sealed class SignUpNameState extends Equatable {
 
 final class NameInitial extends SignUpNameState {}
 
-final class NameLoading extends SignUpNameState {}
+// final class NameLoading extends SignUpNameState {}
 
-final class NameRegistered extends SignUpNameState {}
+// final class NameRegistered extends SignUpNameState {}
 
 final class ButtonIsDisabled extends SignUpNameState {}
 

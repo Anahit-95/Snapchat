@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:snapchat/core/common/widgets/continue_button.dart';
+import 'package:snapchat/core/common/widgets/custom_back_button.dart';
 import 'package:snapchat/core/common/widgets/custom_text_field.dart';
 import 'package:snapchat/core/common/widgets/header_text.dart';
 import 'package:snapchat/core/utils/consts/colors.dart';
@@ -35,22 +36,23 @@ class _SignUpUsernameScreenState extends State<SignUpUsernameScreen> {
   Widget build(BuildContext context) {
     return BlocProvider(
       create: (context) => _usernameBloc,
-      child: BlocConsumer<SignUpUsernameBloc, SignUpUsernameState>(
-        listener: (context, state) {
-          if (state is UsernameConfirmed) {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                  builder: (context) => const SignUpEmailPhoneScreen()),
-            );
-          }
-        },
+      child: BlocBuilder<SignUpUsernameBloc, SignUpUsernameState>(
         builder: (context, state) {
-          return Scaffold(
-            appBar: AppBar(),
-            body: SingleChildScrollView(
-              child: Container(
-                width: double.maxFinite,
+          return _render(state);
+        },
+      ),
+    );
+  }
+
+  Widget _render(SignUpUsernameState state) {
+    return Scaffold(
+      body: SafeArea(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const CustomBackButton(),
+            SingleChildScrollView(
+              child: Padding(
                 padding: const EdgeInsets.all(60),
                 child: Column(
                   children: [
@@ -63,8 +65,8 @@ class _SignUpUsernameScreenState extends State<SignUpUsernameScreen> {
                 ),
               ),
             ),
-          );
-        },
+          ],
+        ),
       ),
     );
   }
@@ -116,16 +118,16 @@ class _SignUpUsernameScreenState extends State<SignUpUsernameScreen> {
 
   Widget _renderContinueButton(SignUpUsernameState state) {
     return ContinueButton(
-      onPressed: () => _usernameBloc.add(ConfirmingUsername(_controller.text)),
+      onPressed: _continuePressed,
       isEnabled: _controller.text.length >= 5 && state is! InvalidUsername,
       title: 'Continue',
     );
   }
 
-  // void _renderContinue(String username) {
-  //   Navigator.push(
-  //     context,
-  //     MaterialPageRoute(builder: (context) => const EmailPhoneScreen()),
-  //   );
-  // }
+  void _continuePressed() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => const SignUpEmailPhoneScreen()),
+    );
+  }
 }

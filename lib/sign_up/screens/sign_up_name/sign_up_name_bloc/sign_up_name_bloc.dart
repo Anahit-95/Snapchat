@@ -1,5 +1,3 @@
-import 'dart:async';
-
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 
@@ -9,7 +7,6 @@ part 'sign_up_name_state.dart';
 class SignUpNameBloc extends Bloc<SignUpNameEvent, SignUpNameState> {
   SignUpNameBloc() : super(NameInitial()) {
     on<OnChangeInputEvent>(_onOnChangeInput);
-    on<SignUpAndAcceptEvent>(_onSignUpAndAccept);
   }
 
   void _onOnChangeInput(
@@ -19,11 +16,5 @@ class SignUpNameBloc extends Bloc<SignUpNameEvent, SignUpNameState> {
     } else {
       emit(ButtonIsEnabled());
     }
-  }
-
-  FutureOr<void> _onSignUpAndAccept(
-      SignUpAndAcceptEvent event, Emitter<SignUpNameState> emit) {
-    emit(NameLoading());
-    emit(NameRegistered());
   }
 }

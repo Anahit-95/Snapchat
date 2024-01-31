@@ -10,7 +10,7 @@ class SignUpUsernameBloc
     extends Bloc<SignUpUsernameEvent, SignUpUsernameState> {
   SignUpUsernameBloc() : super(UsernameInitial()) {
     on<OnChangeInputEvent>(_onOnChangeInputEvent);
-    on<ConfirmingUsername>(_onConfirmingUsername);
+    // on<ConfirmingUsername>(_onConfirmingUsername);
   }
 
   FutureOr<void> _onOnChangeInputEvent(
@@ -29,9 +29,9 @@ class SignUpUsernameBloc
     }
   }
 
-  FutureOr<void> _onConfirmingUsername(
-      ConfirmingUsername event, Emitter<SignUpUsernameState> emit) {
-    emit(UsernameLoading());
-    emit(UsernameConfirmed());
-  }
+  // FutureOr<void> _onConfirmingUsername(
+  //     ConfirmingUsername event, Emitter<SignUpUsernameState> emit) {
+  //   emit(UsernameLoading());
+  //   emit(UsernameConfirmed());
+  // }
 }

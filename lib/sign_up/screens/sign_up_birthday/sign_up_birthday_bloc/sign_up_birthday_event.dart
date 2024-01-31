@@ -10,10 +10,10 @@ sealed class SignUpBirthdayEvent extends Equatable {
 final class SelectingDate extends SignUpBirthdayEvent {
   const SelectingDate(this.birthDate);
 
-  final DateTime? birthDate;
+  final DateTime birthDate;
 
   @override
-  List<Object> get props => [birthDate!];
+  List<Object> get props => [birthDate];
 }
 
 final class ConfirmingDate extends SignUpBirthdayEvent {

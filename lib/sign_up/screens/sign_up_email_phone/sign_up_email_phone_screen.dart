@@ -1,11 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:snapchat/core/common/widgets/continue_button.dart';
+import 'package:snapchat/core/common/widgets/custom_back_button.dart';
 import 'package:snapchat/core/common/widgets/custom_text_field.dart';
 import 'package:snapchat/core/common/widgets/header_text.dart';
+import 'package:snapchat/core/models/country_model.dart';
 import 'package:snapchat/core/utils/consts/colors.dart';
-import 'package:snapchat/sign_up/screens/password_screen.dart';
+import 'package:snapchat/countries/countries_screen.dart';
 import 'package:snapchat/sign_up/screens/sign_up_email_phone/sign_up_email_phone_bloc/sign_up_email_phone_bloc.dart';
+import 'package:snapchat/sign_up/screens/sign_up_password/sign_up_password_screen.dart';
+
+enum SignUpMode { email, phone }
 
 class SignUpEmailPhoneScreen extends StatefulWidget {
   const SignUpEmailPhoneScreen({super.key});
@@ -20,6 +25,15 @@ class _SignUpEmailPhoneScreenState extends State<SignUpEmailPhoneScreen> {
   late FocusNode _emailFocusNode;
   late FocusNode _mobileFocusNode;
   String countryCode = 'am';
+  CountryModel? selectedCountry = const CountryModel(
+    phoneCode: '374',
+    countryCode: 'AM',
+    level: 1,
+    countryName: 'Armenia',
+    example: '77123456',
+  );
+
+  SignUpMode _signUpMode = SignUpMode.email;
 
   final SignUpEmailPhoneBloc _emailPhoneBloc = SignUpEmailPhoneBloc();
 
@@ -30,7 +44,6 @@ class _SignUpEmailPhoneScreenState extends State<SignUpEmailPhoneScreen> {
     _mobileController = TextEditingController();
     _emailFocusNode = FocusNode();
     _mobileFocusNode = FocusNode();
-    _emailPhoneBloc.add(const SwitchModesEvent(mode: 'email'));
   }
 
   @override
@@ -42,74 +55,68 @@ class _SignUpEmailPhoneScreenState extends State<SignUpEmailPhoneScreen> {
     super.dispose();
   }
 
-  void _renderContinue(String email) {
-    Navigator.push(
-      context,
-      MaterialPageRoute(builder: (context) => const PasswordScreen()),
-    );
-  }
-
-  String getFlag(String countryCode) {
-    final flag = countryCode.toUpperCase().replaceAllMapped(RegExp(r'[A-Z]'),
-        (match) => String.fromCharCode(match.group(0)!.codeUnitAt(0) + 127397));
-    return flag;
-  }
-
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
       create: (context) => _emailPhoneBloc,
       child: Scaffold(
-        appBar: AppBar(),
-        body: SingleChildScrollView(
-          child: Container(
-            width: double.maxFinite,
-            padding: const EdgeInsets.all(60),
-            child: BlocConsumer<SignUpEmailPhoneBloc, SignUpEmailPhoneState>(
-              listener: (context, state) {
-                if (state is ConfirmedEmailOrPhone) {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => const PasswordScreen()),
-                  );
-                }
-              },
-              builder: (context, state) {
-                if (state is PhoneMode || state is InvalidPhone) {
-                  return Column(
-                    children: [
-                      _renderHeader("What's your \nmobile number?"),
-                      _renderSignUpWithEmailPhone(state),
-                      _renderMobileInput(),
-                      _renderPhoneErrorText(state),
-                      _renderVarificationText(),
-                      _renderContinueButton1(
-                        state: state,
-                        isEnabled: state is! InvalidPhone &&
-                            _mobileController.text.isNotEmpty,
-                      ),
-                    ],
-                  );
-                }
-                return Column(
-                  children: [
-                    _renderHeader("What's your email?"),
-                    _renderSignUpWithEmailPhone(state),
-                    _renderEmailInput(),
-                    _renderEmailErrorText(state),
-                    _renderContinueButton1(
-                      state: state,
-                      isEnabled: state is! InvalidEmail &&
-                          _emailController.text.isNotEmpty,
-                    ),
-                  ],
-                );
-              },
+        body: SafeArea(
+          child: SingleChildScrollView(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const CustomBackButton(),
+                Padding(
+                  padding: const EdgeInsets.all(60),
+                  child:
+                      BlocBuilder<SignUpEmailPhoneBloc, SignUpEmailPhoneState>(
+                    builder: (context, state) {
+                      return _render(state);
+                    },
+                  ),
+                ),
+              ],
             ),
           ),
         ),
       ),
+    );
+  }
+
+  Widget _render(SignUpEmailPhoneState state) {
+    if (_signUpMode == SignUpMode.phone) {
+      return _renderPhoneMode(state);
+    }
+    return _renderEmailMode(state);
+  }
+
+  Widget _renderEmailMode(SignUpEmailPhoneState state) {
+    return Column(
+      children: [
+        _renderHeader("What's your email?"),
+        _renderSignUpWithEmailPhone(),
+        _renderEmailInput(),
+        _renderEmailErrorText(state),
+        _renderContinueButton(
+          isEnabled: state is! InvalidEmail && _emailController.text.isNotEmpty,
+        ),
+      ],
+    );
+  }
+
+  Widget _renderPhoneMode(SignUpEmailPhoneState state) {
+    return Column(
+      children: [
+        _renderHeader("What's your \nmobile number?"),
+        _renderSignUpWithEmailPhone(),
+        _renderMobileInput(),
+        _renderPhoneErrorText(state),
+        _renderVarificationText(),
+        _renderContinueButton(
+          isEnabled:
+              state is! InvalidPhone && _mobileController.text.isNotEmpty,
+        ),
+      ],
     );
   }
 
@@ -118,28 +125,25 @@ class _SignUpEmailPhoneScreenState extends State<SignUpEmailPhoneScreen> {
   }
 
   Widget _renderEmailInput() {
-    return CustomTextField(
-      controller: _emailController,
-      labelText: 'EMAIL',
-      onChanged: (p0) =>
-          _emailPhoneBloc.add(EmailOnChangeEvent(_emailController.text)),
-      keyboardType: TextInputType.emailAddress,
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 4.0),
+      child: CustomTextField(
+        controller: _emailController,
+        labelText: 'EMAIL',
+        onChanged: (_) =>
+            _emailPhoneBloc.add(EmailOnChangeEvent(_emailController.text)),
+        keyboardType: TextInputType.emailAddress,
+      ),
     );
   }
 
-  Widget _renderSignUpWithEmailPhone(SignUpEmailPhoneState state) {
+  Widget _renderSignUpWithEmailPhone() {
     return GestureDetector(
-      onTap: () {
-        if (state is PhoneMode || state is InvalidPhone) {
-          _emailPhoneBloc.add(const SwitchModesEvent(mode: 'email'));
-        } else {
-          _emailPhoneBloc.add(const SwitchModesEvent(mode: 'phone'));
-        }
-      },
+      onTap: _onTapChangeMode,
       child: Padding(
         padding: const EdgeInsets.symmetric(vertical: 20),
         child: Text(
-          state is PhoneMode || state is InvalidPhone
+          _signUpMode == SignUpMode.phone
               ? 'Sign up with email instead'
               : 'Sign up with phone instead',
           style: const TextStyle(
@@ -168,6 +172,7 @@ class _SignUpEmailPhoneScreenState extends State<SignUpEmailPhoneScreen> {
 
   Widget _renderMobileInput() {
     return Container(
+      margin: const EdgeInsets.only(bottom: 2),
       decoration: const BoxDecoration(
         border: Border(
           bottom: BorderSide(
@@ -179,45 +184,64 @@ class _SignUpEmailPhoneScreenState extends State<SignUpEmailPhoneScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text(
-            'MOBILE NUMBER',
-            textAlign: TextAlign.start,
-            style: TextStyle(color: AppColors.blueText2, fontSize: 13),
-          ),
+          _renderMobileInputLabel(),
           Row(
-            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              Text(
-                '${getFlag(countryCode)} +374',
-                style:
-                    const TextStyle(fontSize: 18, color: AppColors.blueText2),
-              ),
-              Container(
-                width: 1,
-                height: 24,
-                margin: const EdgeInsets.only(left: 6, right: 6),
-                decoration: const BoxDecoration(
-                  border: Border(
-                    left: BorderSide(
-                      color: AppColors.greyText2,
-                      width: 1,
-                    ),
-                  ),
-                ),
-              ),
-              Expanded(
-                child: TextField(
-                  autofocus: true,
-                  controller: _mobileController,
-                  decoration: const InputDecoration(border: InputBorder.none),
-                  keyboardType: TextInputType.phone,
-                  onChanged: (_) => _emailPhoneBloc
-                      .add(PhoneOnChangeEvent(_mobileController.text)),
-                ),
-              ),
+              _renderMobileInputFlagAndPhonCode(),
+              _renderMobileInputDivider(),
+              _renderMobileInputNumberField(),
             ],
           ),
         ],
+      ),
+    );
+  }
+
+  Widget _renderMobileInputLabel() {
+    return const Text(
+      'MOBILE NUMBER',
+      style: TextStyle(color: AppColors.blueText2, fontSize: 13),
+    );
+  }
+
+  Widget _renderMobileInputFlagAndPhonCode() {
+    return GestureDetector(
+      onTap: _onTapNavigateCountriesScreen,
+      child: Text(
+        '${selectedCountry?.getFlagEmoji ?? selectedCountry!.countryCode} +${selectedCountry!.phoneCode}',
+        style: const TextStyle(
+          fontSize: 18,
+          color: AppColors.blueText2,
+        ),
+      ),
+    );
+  }
+
+  Widget _renderMobileInputDivider() {
+    return Container(
+      width: 1,
+      height: 24,
+      margin: const EdgeInsets.only(left: 6, right: 6),
+      decoration: const BoxDecoration(
+        border: Border(
+          left: BorderSide(
+            color: AppColors.greyText2,
+            width: 1,
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _renderMobileInputNumberField() {
+    return Expanded(
+      child: TextField(
+        autofocus: true,
+        controller: _mobileController,
+        decoration: const InputDecoration(border: InputBorder.none),
+        keyboardType: TextInputType.phone,
+        onChanged: (_) =>
+            _emailPhoneBloc.add(PhoneOnChangeEvent(_mobileController.text)),
       ),
     );
   }
@@ -243,38 +267,47 @@ class _SignUpEmailPhoneScreenState extends State<SignUpEmailPhoneScreen> {
       width: double.maxFinite,
       child: const Text(
         "We'll send you SMS verification code.",
-        textAlign: TextAlign.start,
         style: TextStyle(fontSize: 12),
       ),
     );
   }
 
-  // Widget _renderContinueButton(
-  //     {required bool isEnabled, required Function() onPressed}) {
-  //   return ContinueButton(
-  //     onPressed: () => onPressed(),
-  //     isEnabled: isEnabled,
-  //     title: 'Continue',
-  //   );
-  // }
-
-  Widget _renderContinueButton1(
-      {required SignUpEmailPhoneState state, required bool isEnabled}) {
+  Widget _renderContinueButton({required bool isEnabled}) {
     return ContinueButton(
-      onPressed: () {
-        if (state is EmailMode) {
-          _emailPhoneBloc.add(
-            ConfirmEmailOrPhoneEvent(email: _emailController.text),
-          );
-        }
-        if (state is PhoneMode) {
-          _emailPhoneBloc.add(
-            ConfirmEmailOrPhoneEvent(phone: _mobileController.text),
-          );
-        }
-      },
+      onPressed: _continueClicked,
       isEnabled: isEnabled,
       title: 'Continue',
+    );
+  }
+
+  void _onTapChangeMode() {
+    setState(() {
+      if (_signUpMode == SignUpMode.email) {
+        _signUpMode = SignUpMode.phone;
+      } else {
+        _signUpMode = SignUpMode.email;
+      }
+    });
+  }
+
+  void _onTapNavigateCountriesScreen() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => CountriesScreen(
+          onChange: (CountryModel country) {
+            selectedCountry = country;
+            setState(() {});
+          },
+        ),
+      ),
+    );
+  }
+
+  void _continueClicked() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => const SignUpPasswordScreen()),
     );
   }
 }

@@ -21,9 +21,7 @@ final class LogInInvalidState extends LogInState {
   List<Object> get props => [emailError, passwordError];
 }
 
-final class ButtonIsDisabled extends LogInState {}
-
-final class ButtonIsEnabled extends LogInState {}
+final class LoginValidState extends LogInState {}
 
 final class LoggingIn extends LogInState {}
 

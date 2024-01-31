@@ -2,26 +2,23 @@ import 'package:flutter/material.dart';
 import 'package:snapchat/core/utils/consts/colors.dart';
 
 class CustomTextField extends StatefulWidget {
-  final TextEditingController controller;
-  final String labelText;
-  final FocusNode? focusNode;
-  final TextInputType? keyboardType;
-  final bool obscureText;
-  final String? Function(String?)? validator;
-  final void Function(String)? onChanged;
-  final void Function(String)? onFieldSubmitted;
-
   const CustomTextField({
-    super.key,
     required this.controller,
     required this.labelText,
     this.focusNode,
     this.keyboardType,
     this.obscureText = false,
-    this.validator,
     this.onChanged,
     this.onFieldSubmitted,
+    super.key,
   });
+  final TextEditingController controller;
+  final String labelText;
+  final FocusNode? focusNode;
+  final TextInputType? keyboardType;
+  final bool obscureText;
+  final void Function(String)? onChanged;
+  final void Function(String)? onFieldSubmitted;
 
   @override
   State<CustomTextField> createState() => _CustomTextFieldState();
@@ -75,7 +72,6 @@ class _CustomTextFieldState extends State<CustomTextField> {
           obscureText: widget.obscureText ? isObscured : false,
           controller: widget.controller,
           focusNode: widget.focusNode,
-          validator: widget.validator,
           onChanged: widget.onChanged,
           onFieldSubmitted: widget.onFieldSubmitted,
         ),

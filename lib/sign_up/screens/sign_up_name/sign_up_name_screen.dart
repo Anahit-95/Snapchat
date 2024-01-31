@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:snapchat/core/common/widgets/continue_button.dart';
+import 'package:snapchat/core/common/widgets/custom_back_button.dart';
 import 'package:snapchat/core/common/widgets/custom_text_field.dart';
 import 'package:snapchat/core/common/widgets/header_text.dart';
 import 'package:snapchat/core/utils/consts/colors.dart';
@@ -45,26 +46,26 @@ class _SignUpNameScreenState extends State<SignUpNameScreen> {
   Widget build(BuildContext context) {
     return BlocProvider(
       create: (BuildContext context) => _nameBloc,
-      child: BlocConsumer<SignUpNameBloc, SignUpNameState>(
-        listener: (context, state) {
-          if (state is NameRegistered) {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => const SignUpBirthsayScreen(),
-              ),
-            );
-          }
-        },
+      child: BlocBuilder<SignUpNameBloc, SignUpNameState>(
+        // listener: _listener,
         builder: (context, state) {
-          return Scaffold(
-            appBar: AppBar(),
-            body: SingleChildScrollView(
-              child: Container(
-                width: double.maxFinite,
+          return _render(state);
+        },
+      ),
+    );
+  }
+
+  Widget _render(SignUpNameState state) {
+    return Scaffold(
+      body: SafeArea(
+        child: SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const CustomBackButton(),
+              Padding(
                 padding: const EdgeInsets.all(60),
                 child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     const HeaderText(title: "What's your name?"),
                     _renderFirstNameInput(),
@@ -74,9 +75,9 @@ class _SignUpNameScreenState extends State<SignUpNameScreen> {
                   ],
                 ),
               ),
-            ),
-          );
-        },
+            ],
+          ),
+        ),
       ),
     );
   }
@@ -116,10 +117,7 @@ class _SignUpNameScreenState extends State<SignUpNameScreen> {
 
   Widget _renderSignUpButton(SignUpNameState state) {
     return ContinueButton(
-      onPressed: () => _renderSignUpAndAccept(
-        firstName: _firstNameController.text,
-        lastName: _lastNameController.text,
-      ),
+      onPressed: _renderSignUpAndAccept,
       isEnabled: state is! ButtonIsDisabled && state is! NameInitial,
       title: 'Sign Up & Accept',
     );
@@ -154,19 +152,35 @@ class _SignUpNameScreenState extends State<SignUpNameScreen> {
     );
   }
 
-  void _renderSignUpAndAccept({
-    required String firstName,
-    required String lastName,
-  }) {
+  void _renderSignUpAndAccept() {
     if (_firstNameFocusNode.hasFocus) {
       _firstNameFocusNode.unfocus();
     }
     if (_lastNameFocusNode.hasFocus) {
       _lastNameFocusNode.unfocus();
     }
-    _nameBloc.add(SignUpAndAcceptEvent(
-      firstName: firstName,
-      lastName: lastName,
-    ));
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => const SignUpBirthdayScreen(),
+      ),
+    );
+    // _nameBloc.add(SignUpAndAcceptEvent(
+    //   firstName: _firstNameController.text,
+    //   lastName: _lastNameController.text,
+    // ));
   }
 }
+
+// extension _BlocAddition on _SignUpNameScreenState {
+//   void _listener(BuildContext context, SignUpNameState state) {
+//     if (state is NameRegistered) {
+//       Navigator.push(
+//         context,
+//         MaterialPageRoute(
+//           builder: (context) => const SignUpBirthsayScreen(),
+//         ),
+//       );
+//     }
+//   }
+// }
