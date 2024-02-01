@@ -4,6 +4,7 @@ import 'package:snapchat/core/common/widgets/custom_back_button.dart';
 import 'package:snapchat/core/models/country_model.dart';
 import 'package:snapchat/core/utils/consts/colors.dart';
 import 'package:snapchat/countries/countries_bloc/countries_bloc.dart';
+import 'package:snapchat/countries/repository/load_countries_repo_impl.dart';
 
 class CountriesScreen extends StatefulWidget {
   const CountriesScreen({super.key, this.onChange});
@@ -17,7 +18,7 @@ class CountriesScreen extends StatefulWidget {
 class _CountriesScreenState extends State<CountriesScreen> {
   final TextEditingController _searchController = TextEditingController();
 
-  final CountriesBloc _countriesBloc = CountriesBloc();
+  final CountriesBloc _countriesBloc = CountriesBloc(LoadCountriesRepoImpl());
 
   @override
   void initState() {

@@ -4,21 +4,22 @@ import 'dart:convert';
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/services.dart';
-import 'package:http/http.dart' as http;
 import 'package:snapchat/core/models/country_model.dart';
-import 'package:snapchat/countries/services/countries_api_service.dart';
+import 'package:snapchat/countries/repository/load_countries_repo_impl.dart';
 
 part 'countries_event.dart';
 part 'countries_state.dart';
 
 class CountriesBloc extends Bloc<CountriesEvent, CountriesState> {
-  CountriesBloc() : super(CountriesInitial()) {
+  CountriesBloc(LoadCountriesRepoImpl repoImpl)
+      : _repoImpl = repoImpl,
+        super(CountriesInitial()) {
     on<LoadCountriesEvent>(_onLoadCountriesEvent);
     on<GetCountriesApiEvent>(_onGetCountriesApi);
     on<SearchingCountriesEvent>(_onSearchingCountries);
   }
 
-  final CountriesApiService _apiService = CountriesApiService(http.Client());
+  final LoadCountriesRepoImpl _repoImpl;
   List<CountryModel> _countries = [];
 
   Future<void> _onLoadCountriesEvent(
@@ -40,7 +41,7 @@ class CountriesBloc extends Bloc<CountriesEvent, CountriesState> {
       GetCountriesApiEvent event, Emitter<CountriesState> emit) async {
     try {
       emit(LoadingCountries());
-      _countries = await _apiService.getCountriesApi();
+      _countries = await _repoImpl.loadCountries();
       emit(CountriesLoaded(countries: _countries));
     } catch (e) {
       emit(const CountriesError('Failed loading countries.'));

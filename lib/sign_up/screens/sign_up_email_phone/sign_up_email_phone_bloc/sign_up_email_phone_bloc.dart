@@ -38,9 +38,4 @@ class SignUpEmailPhoneBloc
       emit(const InvalidPhone('Your phone number is invalid'));
     }
   }
-
-  // FutureOr<void> _onConfirmEmailOrPhone(
-  //     ConfirmEmailOrPhoneEvent event, Emitter<SignUpEmailPhoneState> emit) {
-  //   emit(ConfirmedEmailOrPhone());
-  // }
 }

@@ -45,8 +45,6 @@ final class InvalidPhone extends SignUpEmailPhoneState {
   List<Object> get props => [phoneError];
 }
 
-// final class ConfirmedEmailOrPhone extends SignUpEmailPhoneState {}
-
 final class EmailPhoneError extends SignUpEmailPhoneState {
   const EmailPhoneError(this.error);
 

@@ -9,6 +9,8 @@ sealed class SignUpBirthdayState extends Equatable {
 
 final class BirthdayInitial extends SignUpBirthdayState {}
 
+final class OpenDatePicker extends SignUpBirthdayState {}
+
 final class BirthdaySelected extends SignUpBirthdayState {
   const BirthdaySelected(this.selectedDate);
 
@@ -21,16 +23,3 @@ final class BirthdaySelected extends SignUpBirthdayState {
 final class InvalidBirthday extends SignUpBirthdayState {}
 
 final class ValidBirthday extends SignUpBirthdayState {}
-
-// final class LoadingBirthday extends SignUpBirthdayState {}
-
-// final class BirthdayConfirmed extends SignUpBirthdayState {}
-
-// final class BirthdayError extends SignUpBirthdayState {
-//   const BirthdayError(this.error);
-
-//   final String error;
-
-//   @override
-//   List<String> get props => [error];
-// }

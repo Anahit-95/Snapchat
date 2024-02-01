@@ -3,8 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 import 'package:snapchat/core/common/widgets/continue_button.dart';
-import 'package:snapchat/core/common/widgets/custom_back_button.dart';
 import 'package:snapchat/core/common/widgets/header_text.dart';
+import 'package:snapchat/core/common/widgets/sign_screen_wrapper.dart';
 import 'package:snapchat/core/utils/consts/colors.dart';
 import 'package:snapchat/sign_up/screens/sign_up_birthday/sign_up_birthday_bloc/sign_up_birthday_bloc.dart';
 import 'package:snapchat/sign_up/screens/sign_up_username/sign_up_username_screen.dart';
@@ -26,6 +26,7 @@ class _SignUpBirthdayScreenState extends State<SignUpBirthdayScreen> {
   void initState() {
     super.initState();
     _dateController = TextEditingController();
+    _birthdayBloc.add(OpenDatePickerEvent());
   }
 
   @override
@@ -48,25 +49,14 @@ class _SignUpBirthdayScreenState extends State<SignUpBirthdayScreen> {
   }
 
   Widget _render(SignUpBirthdayState state) {
-    return Scaffold(
-      body: SafeArea(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const CustomBackButton(),
-            Padding(
-              padding: const EdgeInsets.only(top: 60, left: 60, right: 60),
-              child: Column(
-                children: [
-                  const HeaderText(title: "When's your birthday?"),
-                  _renderBirthdayInput(),
-                  _renderBirthdayErrorText(state),
-                  _renderBirthdayContinueButton(state)
-                ],
-              ),
-            ),
-          ],
-        ),
+    return SignScreenWrapper(
+      child: Column(
+        children: [
+          const HeaderText(title: "When's your birthday?"),
+          _renderBirthdayInput(),
+          _renderBirthdayErrorText(state),
+          _renderBirthdayContinueButton(state)
+        ],
       ),
     );
   }
@@ -75,6 +65,7 @@ class _SignUpBirthdayScreenState extends State<SignUpBirthdayScreen> {
     return Padding(
       padding: const EdgeInsets.only(top: 20.0, bottom: 2),
       child: TextField(
+        autofocus: true,
         readOnly: true,
         controller: _dateController,
         keyboardType: TextInputType.datetime,
@@ -119,6 +110,7 @@ class _SignUpBirthdayScreenState extends State<SignUpBirthdayScreen> {
     final firstValidDate = currentDate.subtract(
       const Duration(days: 16 * 365 + 4),
     );
+    _selectedDate ?? _birthdayBloc.add(SelectingDate(firstValidDate));
     showCupertinoModalPopup(
       context: context,
       builder: (context) {
@@ -151,6 +143,9 @@ class _SignUpBirthdayScreenState extends State<SignUpBirthdayScreen> {
 
 extension _BlocAddition on _SignUpBirthdayScreenState {
   void _listener(BuildContext context, SignUpBirthdayState state) {
+    if (state is OpenDatePicker) {
+      _openDatePicker();
+    }
     if (state is BirthdaySelected) {
       _selectedDate = state.selectedDate;
       _dateController.text =

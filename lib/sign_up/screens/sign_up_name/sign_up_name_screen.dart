@@ -5,6 +5,7 @@ import 'package:snapchat/core/common/widgets/custom_back_button.dart';
 import 'package:snapchat/core/common/widgets/custom_text_field.dart';
 import 'package:snapchat/core/common/widgets/header_text.dart';
 import 'package:snapchat/core/utils/consts/colors.dart';
+import 'package:snapchat/core/validation_repository/validation_repo_impl.dart';
 import 'package:snapchat/sign_up/screens/sign_up_birthday/sign_up_birthday_screen.dart';
 import 'package:snapchat/sign_up/screens/sign_up_name/sign_up_name_bloc/sign_up_name_bloc.dart';
 
@@ -22,7 +23,8 @@ class _SignUpNameScreenState extends State<SignUpNameScreen> {
   late FocusNode _firstNameFocusNode;
   late FocusNode _lastNameFocusNode;
 
-  final SignUpNameBloc _nameBloc = SignUpNameBloc();
+  final SignUpNameBloc _nameBloc =
+      SignUpNameBloc(repoImpl: ValidationRepoImpl());
 
   @override
   void initState() {
@@ -47,7 +49,6 @@ class _SignUpNameScreenState extends State<SignUpNameScreen> {
     return BlocProvider(
       create: (BuildContext context) => _nameBloc,
       child: BlocBuilder<SignUpNameBloc, SignUpNameState>(
-        // listener: _listener,
         builder: (context, state) {
           return _render(state);
         },
@@ -165,22 +166,5 @@ class _SignUpNameScreenState extends State<SignUpNameScreen> {
         builder: (context) => const SignUpBirthdayScreen(),
       ),
     );
-    // _nameBloc.add(SignUpAndAcceptEvent(
-    //   firstName: _firstNameController.text,
-    //   lastName: _lastNameController.text,
-    // ));
   }
 }
-
-// extension _BlocAddition on _SignUpNameScreenState {
-//   void _listener(BuildContext context, SignUpNameState state) {
-//     if (state is NameRegistered) {
-//       Navigator.push(
-//         context,
-//         MaterialPageRoute(
-//           builder: (context) => const SignUpBirthsayScreen(),
-//         ),
-//       );
-//     }
-//   }
-// }

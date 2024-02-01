@@ -1,12 +1,13 @@
 import 'dart:convert';
 
+// import 'package:country_codes/country_codes.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:snapchat/core/common/widgets/continue_button.dart';
-import 'package:snapchat/core/common/widgets/custom_back_button.dart';
 import 'package:snapchat/core/common/widgets/custom_text_field.dart';
 import 'package:snapchat/core/common/widgets/header_text.dart';
+import 'package:snapchat/core/common/widgets/sign_screen_wrapper.dart';
 import 'package:snapchat/core/models/country_model.dart';
 import 'package:snapchat/core/utils/consts/colors.dart';
 import 'package:snapchat/countries/countries_screen.dart';
@@ -27,14 +28,13 @@ class _SignUpEmailPhoneScreenState extends State<SignUpEmailPhoneScreen> {
   late TextEditingController _mobileController;
   late FocusNode _emailFocusNode;
   late FocusNode _mobileFocusNode;
-  String countryCode = 'am';
-  CountryModel? selectedCountry = const CountryModel(
-    phoneCode: '374',
-    countryCode: 'AM',
-    level: 1,
-    countryName: 'Armenia',
-    example: '77123456',
-  );
+
+  // 1.1 find device local country by country picker package
+
+  // CountryDetails details = CountryCodes.detailsForLocale();
+  // Locale locale = CountryCodes.getDeviceLocale()!;
+
+  CountryModel? _selectedCountry;
 
   SignUpMode _signUpMode = SignUpMode.email;
 
@@ -47,6 +47,16 @@ class _SignUpEmailPhoneScreenState extends State<SignUpEmailPhoneScreen> {
     _mobileController = TextEditingController();
     _emailFocusNode = FocusNode();
     _mobileFocusNode = FocusNode();
+    // 1.2 find device local country by country picker package
+    // give values to _selected country
+
+    // _selectedCountry = CountryModel(
+    //   phoneCode: details.dialCode!.substring(1),
+    //   countryCode: locale.countryCode!,
+    //   level: 1,
+    //   countryName: details.localizedName!,
+    //   example: '77123456',
+    // );
   }
 
   @override
@@ -62,35 +72,19 @@ class _SignUpEmailPhoneScreenState extends State<SignUpEmailPhoneScreen> {
   Widget build(BuildContext context) {
     return BlocProvider(
       create: (context) => _emailPhoneBloc,
-      child: Scaffold(
-        body: SafeArea(
-          child: SingleChildScrollView(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const CustomBackButton(),
-                Padding(
-                  padding: const EdgeInsets.all(60),
-                  child:
-                      BlocBuilder<SignUpEmailPhoneBloc, SignUpEmailPhoneState>(
-                    builder: (context, state) {
-                      return _render(state);
-                    },
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ),
+      child: BlocBuilder<SignUpEmailPhoneBloc, SignUpEmailPhoneState>(
+        builder: (context, state) {
+          return _render(state);
+        },
       ),
     );
   }
 
   Widget _render(SignUpEmailPhoneState state) {
-    if (_signUpMode == SignUpMode.phone) {
-      return _renderPhoneMode(state);
-    }
-    return _renderEmailMode(state);
+    return SignScreenWrapper(
+        child: _signUpMode == SignUpMode.phone
+            ? _renderPhoneMode(state)
+            : _renderEmailMode(state));
   }
 
   Widget _renderEmailMode(SignUpEmailPhoneState state) {
@@ -142,7 +136,7 @@ class _SignUpEmailPhoneScreenState extends State<SignUpEmailPhoneScreen> {
 
   Widget _renderSignUpWithEmailPhone() {
     return GestureDetector(
-      onTap: _onTapChangeMode,
+      onTap: () async => await _onTapChangeMode(),
       child: Padding(
         padding: const EdgeInsets.symmetric(vertical: 20),
         child: Text(
@@ -207,26 +201,29 @@ class _SignUpEmailPhoneScreenState extends State<SignUpEmailPhoneScreen> {
     );
   }
 
+  // 2. Future builder verson of getting devices local country
+
   Widget _renderMobileInputFlagAndPhonCode() {
     // return FutureBuilder(
-    //     future: _getDeviceCountry(),
-    //     builder: (context, snapshot) {
-    //       if (snapshot.connectionState == ConnectionState.done) {
-    //         selectedCountry = snapshot.data;
+    //   future: _getDeviceCountry(),
+    //   builder: (context, snapshot) {
+    //     if (snapshot.connectionState == ConnectionState.done) {
+    //       _selectedCountry ??= snapshot.data;
     return GestureDetector(
       onTap: _onTapNavigateCountriesScreen,
       child: Text(
-        '${selectedCountry?.getFlagEmoji ?? selectedCountry!.countryCode} +${selectedCountry!.phoneCode}',
+        '${_selectedCountry?.getFlagEmoji ?? _selectedCountry!.countryCode} +${_selectedCountry!.phoneCode}',
         style: const TextStyle(
           fontSize: 18,
           color: AppColors.blueText2,
         ),
       ),
     );
-    // } else {
-    //   return const SizedBox.shrink();
-    // }
-    // });
+    //     } else {
+    //       return const SizedBox.shrink();
+    //     }
+    //   },
+    // );
   }
 
   Widget _renderMobileInputDivider() {
@@ -292,7 +289,11 @@ class _SignUpEmailPhoneScreenState extends State<SignUpEmailPhoneScreen> {
     );
   }
 
-  void _onTapChangeMode() {
+  Future<void> _onTapChangeMode() async {
+    // 3. get device local country while swithing to phone mode
+    if (_signUpMode == SignUpMode.email && _selectedCountry == null) {
+      _selectedCountry = await _getDeviceCountry();
+    }
     setState(() {
       if (_signUpMode == SignUpMode.email) {
         _signUpMode = SignUpMode.phone;
@@ -303,7 +304,7 @@ class _SignUpEmailPhoneScreenState extends State<SignUpEmailPhoneScreen> {
   }
 
   Future<CountryModel> _getDeviceCountry() async {
-    var code = View.of(context).platformDispatcher.locale.countryCode;
+    final code = View.of(context).platformDispatcher.locale.countryCode;
     final data =
         await rootBundle.loadString('assets/resources/country_codes.json');
     final List<dynamic> jsonList = jsonDecode(data);
@@ -321,8 +322,8 @@ class _SignUpEmailPhoneScreenState extends State<SignUpEmailPhoneScreen> {
       MaterialPageRoute(
         builder: (context) => CountriesScreen(
           onChange: (CountryModel country) {
-            selectedCountry = country;
-            print(selectedCountry);
+            _selectedCountry = country;
+            print('from country page $_selectedCountry');
             setState(() {});
           },
         ),

@@ -24,3 +24,5 @@ final class ConfirmingDate extends SignUpBirthdayEvent {
   @override
   List<Object> get props => [birthDate];
 }
+
+final class OpenDatePickerEvent extends SignUpBirthdayEvent {}

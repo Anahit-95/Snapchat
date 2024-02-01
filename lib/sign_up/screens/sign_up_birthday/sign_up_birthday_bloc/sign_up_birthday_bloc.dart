@@ -10,7 +10,7 @@ class SignUpBirthdayBloc
     extends Bloc<SignUpBirthdayEvent, SignUpBirthdayState> {
   SignUpBirthdayBloc() : super(BirthdayInitial()) {
     on<SelectingDate>(_onSelectingDate);
-    // on<ConfirmingDate>(_onConfirmingDate);
+    on<OpenDatePickerEvent>(_onOpenDatePicker);
   }
 
   FutureOr<void> _onSelectingDate(
@@ -26,9 +26,8 @@ class SignUpBirthdayBloc
     }
   }
 
-  // FutureOr<void> _onConfirmingDate(
-  //     ConfirmingDate event, Emitter<SignUpBirthdayState> emit) {
-  //   emit(LoadingBirthday());
-  //   emit(BirthdayConfirmed());
-  // }
+  void _onOpenDatePicker(
+      OpenDatePickerEvent event, Emitter<SignUpBirthdayState> emit) {
+    emit(OpenDatePicker());
+  }
 }

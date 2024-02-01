@@ -5,6 +5,7 @@ import 'package:snapchat/core/common/widgets/custom_text_field.dart';
 import 'package:snapchat/core/common/widgets/header_text.dart';
 import 'package:snapchat/core/common/widgets/sign_screen_wrapper.dart';
 import 'package:snapchat/core/utils/consts/colors.dart';
+import 'package:snapchat/core/validation_repository/validation_repo_impl.dart';
 import 'package:snapchat/log_in/log_in_bloc/log_in_bloc.dart';
 
 class LogInScreen extends StatefulWidget {
@@ -21,7 +22,7 @@ class _LogInScreenState extends State<LogInScreen> {
   late FocusNode _emailFocusNode;
   late FocusNode _passwordFocusNode;
 
-  final LogInBloc _loginBloc = LogInBloc();
+  final LogInBloc _loginBloc = LogInBloc(repoImpl: ValidationRepoImpl());
 
   @override
   void initState() {

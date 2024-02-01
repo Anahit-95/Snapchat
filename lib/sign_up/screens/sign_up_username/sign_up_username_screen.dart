@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:snapchat/core/common/widgets/continue_button.dart';
-import 'package:snapchat/core/common/widgets/custom_back_button.dart';
 import 'package:snapchat/core/common/widgets/custom_text_field.dart';
 import 'package:snapchat/core/common/widgets/header_text.dart';
+import 'package:snapchat/core/common/widgets/sign_screen_wrapper.dart';
 import 'package:snapchat/core/utils/consts/colors.dart';
 import 'package:snapchat/sign_up/screens/sign_up_email_phone/sign_up_email_phone_screen.dart';
 import 'package:snapchat/sign_up/screens/sign_up_username/sign_up_username_bloc/sign_up_username_bloc.dart';
@@ -45,30 +45,15 @@ class _SignUpUsernameScreenState extends State<SignUpUsernameScreen> {
   }
 
   Widget _render(SignUpUsernameState state) {
-    return Scaffold(
-      body: SafeArea(
-        child: SingleChildScrollView(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const CustomBackButton(),
-              SingleChildScrollView(
-                child: Padding(
-                  padding: const EdgeInsets.all(60),
-                  child: Column(
-                    children: [
-                      const HeaderText(title: 'Pick a username'),
-                      _renderDescription(),
-                      _renderUsernameInput(),
-                      _rederAvailable(state),
-                      _renderContinueButton(state)
-                    ],
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ),
+    return SignScreenWrapper(
+      child: Column(
+        children: [
+          const HeaderText(title: 'Pick a username'),
+          _renderDescription(),
+          _renderUsernameInput(),
+          _rederAvailable(state),
+          _renderContinueButton(state)
+        ],
       ),
     );
   }

@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:snapchat/core/common/widgets/continue_button.dart';
-import 'package:snapchat/core/common/widgets/custom_back_button.dart';
 import 'package:snapchat/core/common/widgets/custom_text_field.dart';
 import 'package:snapchat/core/common/widgets/header_text.dart';
+import 'package:snapchat/core/common/widgets/sign_screen_wrapper.dart';
 import 'package:snapchat/core/utils/consts/colors.dart';
 import 'package:snapchat/sign_up/screens/sign_up_password/sign_up_password_bloc/sign_up_password_bloc.dart';
 
@@ -45,28 +45,16 @@ class _SignUpPasswordScreenState extends State<SignUpPasswordScreen> {
   }
 
   Widget _render(SignUpPasswordState state) {
-    return Scaffold(
-      body: SafeArea(
+    return SignScreenWrapper(
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const CustomBackButton(),
-            Padding(
-              padding: const EdgeInsets.all(60),
-              child: Column(
-                children: [
-                  const HeaderText(title: 'Set a password'),
-                  _renderDescription(),
-                  _renderPasswordInput(),
-                  _renderPasswordErrorText(state),
-                  _renderContinueButton(state),
-                ],
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
+      children: [
+        const HeaderText(title: 'Set a password'),
+        _renderDescription(),
+        _renderPasswordInput(),
+        _renderPasswordErrorText(state),
+        _renderContinueButton(state),
+      ],
+    ));
   }
 
   Widget _renderDescription() {
