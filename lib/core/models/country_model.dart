@@ -4,7 +4,6 @@ class CountryModel extends Equatable {
   const CountryModel({
     required this.phoneCode,
     required this.countryCode,
-    required this.level,
     required this.countryName,
     required this.example,
   });
@@ -13,15 +12,22 @@ class CountryModel extends Equatable {
     return CountryModel(
       phoneCode: map['e164_cc'] as String,
       countryCode: map['iso2_cc'] as String,
-      level: map['level'] as int,
       countryName: map['name'] as String,
+      example: map['example'] as String,
+    );
+  }
+
+  factory CountryModel.fromMapDB(Map<String, dynamic> map) {
+    return CountryModel(
+      phoneCode: map['phoneCode'] as String,
+      countryCode: map['countryCode'] as String,
+      countryName: map['countryName'] as String,
       example: map['example'] as String,
     );
   }
 
   final String phoneCode;
   final String countryCode;
-  final int level;
   final String countryName;
   final String example;
 
@@ -35,7 +41,6 @@ class CountryModel extends Equatable {
     return CountryModel(
       phoneCode: phoneCode ?? this.phoneCode,
       countryCode: countryCode ?? this.countryCode,
-      level: level ?? this.level,
       countryName: countryName ?? this.countryName,
       example: example ?? this.example,
     );
@@ -45,6 +50,15 @@ class CountryModel extends Equatable {
     final flag = countryCode.toUpperCase().replaceAllMapped(RegExp(r'[A-Z]'),
         (match) => String.fromCharCode(match.group(0)!.codeUnitAt(0) + 127397));
     return flag;
+  }
+
+  Map<String, dynamic> toMap() {
+    return <String, dynamic>{
+      'phoneCode': phoneCode,
+      'countryCode': countryCode,
+      'countryName': countryName,
+      'example': example,
+    };
   }
 
   @override

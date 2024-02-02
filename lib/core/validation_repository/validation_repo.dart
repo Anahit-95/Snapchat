@@ -1,7 +1,11 @@
 abstract class ValidatonRepo {
   bool isValidUsername(String name);
 
+  bool isValidUsernameAndNotEmpty(String username);
+
   bool isValidPassword(String password);
+
+  bool isValidPasswordAndNotEmpty(String password);
 
   bool isValidEmail(String email);
 

@@ -4,11 +4,17 @@ import 'package:snapchat/core/common/widgets/continue_button.dart';
 import 'package:snapchat/core/common/widgets/custom_text_field.dart';
 import 'package:snapchat/core/common/widgets/header_text.dart';
 import 'package:snapchat/core/common/widgets/sign_screen_wrapper.dart';
+import 'package:snapchat/core/database_repository/database_repo_impl.dart';
+import 'package:snapchat/core/models/user_model.dart';
 import 'package:snapchat/core/utils/consts/colors.dart';
+import 'package:snapchat/core/validation_repository/validation_repo_impl.dart';
+import 'package:snapchat/home/home_screen.dart';
 import 'package:snapchat/sign_up/screens/sign_up_password/sign_up_password_bloc/sign_up_password_bloc.dart';
 
 class SignUpPasswordScreen extends StatefulWidget {
-  const SignUpPasswordScreen({super.key});
+  const SignUpPasswordScreen({required this.user, super.key});
+
+  final UserModel user;
 
   @override
   State<SignUpPasswordScreen> createState() => _SignUpPasswordScreenState();
@@ -17,7 +23,10 @@ class SignUpPasswordScreen extends StatefulWidget {
 class _SignUpPasswordScreenState extends State<SignUpPasswordScreen> {
   late TextEditingController _controller;
 
-  final SignUpPasswordBloc _passwordBloc = SignUpPasswordBloc();
+  final SignUpPasswordBloc _passwordBloc = SignUpPasswordBloc(
+    validationRepo: ValidationRepoImpl(),
+    dbRepo: DatabaseRepoImpl(),
+  );
 
   @override
   void initState() {
@@ -101,9 +110,9 @@ class _SignUpPasswordScreenState extends State<SignUpPasswordScreen> {
 
   Widget _renderContinueButton(SignUpPasswordState state) {
     return ContinueButton(
-      onPressed: () =>
-          _passwordBloc.add(ConfirmingPasswordEvent(_controller.text)),
-      isEnabled: state is! InvalidPassword && state is! PasswordInitial,
+      onPressed: () => _passwordBloc.add(ConfirmingPasswordEvent(
+          widget.user.copyWith(password: _controller.text))),
+      isEnabled: state is ValidPassword,
       title: 'Continue',
     );
   }
@@ -112,8 +121,9 @@ class _SignUpPasswordScreenState extends State<SignUpPasswordScreen> {
 extension _BlocAddition on _SignUpPasswordScreenState {
   void _listener(BuildContext context, SignUpPasswordState state) {
     if (state is ConfirmPassword) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Sign up completed successfully.')),
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => const HomeScreen()),
       );
     }
   }

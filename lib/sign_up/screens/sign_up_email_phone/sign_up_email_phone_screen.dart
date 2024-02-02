@@ -9,7 +9,9 @@ import 'package:snapchat/core/common/widgets/custom_text_field.dart';
 import 'package:snapchat/core/common/widgets/header_text.dart';
 import 'package:snapchat/core/common/widgets/sign_screen_wrapper.dart';
 import 'package:snapchat/core/models/country_model.dart';
+import 'package:snapchat/core/models/user_model.dart';
 import 'package:snapchat/core/utils/consts/colors.dart';
+import 'package:snapchat/core/validation_repository/validation_repo_impl.dart';
 import 'package:snapchat/countries/countries_screen.dart';
 import 'package:snapchat/sign_up/screens/sign_up_email_phone/sign_up_email_phone_bloc/sign_up_email_phone_bloc.dart';
 import 'package:snapchat/sign_up/screens/sign_up_password/sign_up_password_screen.dart';
@@ -17,7 +19,9 @@ import 'package:snapchat/sign_up/screens/sign_up_password/sign_up_password_scree
 enum SignUpMode { email, phone }
 
 class SignUpEmailPhoneScreen extends StatefulWidget {
-  const SignUpEmailPhoneScreen({super.key});
+  const SignUpEmailPhoneScreen({required this.user, super.key});
+
+  final UserModel user;
 
   @override
   State<SignUpEmailPhoneScreen> createState() => _SignUpEmailPhoneScreenState();
@@ -38,7 +42,8 @@ class _SignUpEmailPhoneScreenState extends State<SignUpEmailPhoneScreen> {
 
   SignUpMode _signUpMode = SignUpMode.email;
 
-  final SignUpEmailPhoneBloc _emailPhoneBloc = SignUpEmailPhoneBloc();
+  final SignUpEmailPhoneBloc _emailPhoneBloc =
+      SignUpEmailPhoneBloc(repoImpl: ValidationRepoImpl());
 
   @override
   void initState() {
@@ -332,9 +337,19 @@ class _SignUpEmailPhoneScreenState extends State<SignUpEmailPhoneScreen> {
   }
 
   void _continueClicked() {
+    var updatedUser;
+    if (_signUpMode == SignUpMode.email) {
+      updatedUser = widget.user.copyWith(email: _emailController.text);
+    } else {
+      updatedUser = widget.user.copyWith(
+        phoneNumber:
+            '+${_selectedCountry!.phoneCode} ${_mobileController.text}',
+      );
+    }
     Navigator.push(
       context,
-      MaterialPageRoute(builder: (context) => const SignUpPasswordScreen()),
+      MaterialPageRoute(
+          builder: (context) => SignUpPasswordScreen(user: updatedUser)),
     );
   }
 }

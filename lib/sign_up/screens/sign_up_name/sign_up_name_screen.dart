@@ -4,6 +4,7 @@ import 'package:snapchat/core/common/widgets/continue_button.dart';
 import 'package:snapchat/core/common/widgets/custom_back_button.dart';
 import 'package:snapchat/core/common/widgets/custom_text_field.dart';
 import 'package:snapchat/core/common/widgets/header_text.dart';
+import 'package:snapchat/core/models/user_model.dart';
 import 'package:snapchat/core/utils/consts/colors.dart';
 import 'package:snapchat/core/validation_repository/validation_repo_impl.dart';
 import 'package:snapchat/sign_up/screens/sign_up_birthday/sign_up_birthday_screen.dart';
@@ -25,6 +26,14 @@ class _SignUpNameScreenState extends State<SignUpNameScreen> {
 
   final SignUpNameBloc _nameBloc =
       SignUpNameBloc(repoImpl: ValidationRepoImpl());
+
+  final user = UserModel(
+    firstName: '',
+    lastName: '',
+    birthday: DateTime.now(),
+    username: '',
+    password: '',
+  );
 
   @override
   void initState() {
@@ -163,7 +172,12 @@ class _SignUpNameScreenState extends State<SignUpNameScreen> {
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => const SignUpBirthdayScreen(),
+        builder: (context) => SignUpBirthdayScreen(
+          user: user.copyWith(
+            firstName: _firstNameController.text,
+            lastName: _lastNameController.text,
+          ),
+        ),
       ),
     );
   }

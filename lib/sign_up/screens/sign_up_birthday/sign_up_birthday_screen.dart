@@ -5,12 +5,16 @@ import 'package:intl/intl.dart';
 import 'package:snapchat/core/common/widgets/continue_button.dart';
 import 'package:snapchat/core/common/widgets/header_text.dart';
 import 'package:snapchat/core/common/widgets/sign_screen_wrapper.dart';
+import 'package:snapchat/core/models/user_model.dart';
 import 'package:snapchat/core/utils/consts/colors.dart';
+import 'package:snapchat/core/validation_repository/validation_repo_impl.dart';
 import 'package:snapchat/sign_up/screens/sign_up_birthday/sign_up_birthday_bloc/sign_up_birthday_bloc.dart';
 import 'package:snapchat/sign_up/screens/sign_up_username/sign_up_username_screen.dart';
 
 class SignUpBirthdayScreen extends StatefulWidget {
-  const SignUpBirthdayScreen({super.key});
+  const SignUpBirthdayScreen({required this.user, super.key});
+
+  final UserModel user;
 
   @override
   State<SignUpBirthdayScreen> createState() => _SignUpBirthdayScreenState();
@@ -20,7 +24,8 @@ class _SignUpBirthdayScreenState extends State<SignUpBirthdayScreen> {
   late TextEditingController _dateController;
   DateTime? _selectedDate;
 
-  final SignUpBirthdayBloc _birthdayBloc = SignUpBirthdayBloc();
+  final SignUpBirthdayBloc _birthdayBloc =
+      SignUpBirthdayBloc(repoImpl: ValidationRepoImpl());
 
   @override
   void initState() {
@@ -135,7 +140,8 @@ class _SignUpBirthdayScreenState extends State<SignUpBirthdayScreen> {
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => const SignUpUsernameScreen(),
+        builder: (context) => SignUpUsernameScreen(
+            user: widget.user.copyWith(birthday: _selectedDate)),
       ),
     );
   }

@@ -3,14 +3,30 @@ import 'package:snapchat/core/validation_repository/validation_repo.dart';
 class ValidationRepoImpl implements ValidatonRepo {
   @override
   bool isValidBirthday(DateTime date) {
-    // TODO: implement isValidBirthday
-    throw UnimplementedError();
+    final now = DateTime.now();
+    final difference = now.difference(date);
+    final years = difference.inDays ~/ 365;
+    if (years < 16) {
+      return false;
+    }
+    return true;
   }
 
   @override
   bool isValidEmail(String email) {
-    // TODO: implement isValidEmail
-    throw UnimplementedError();
+    const pattern = r"(?:[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'"
+        r'*+/=?^_`{|}~-]+)*|"(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21\x23-\x5b\x5d-'
+        r'\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])*")@(?:(?:[a-z0-9](?:[a-z0-9-]*'
+        r'[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?|\[(?:(?:(2(5[0-5]|[0-4]'
+        r'[0-9])|1[0-9][0-9]|[1-9]?[0-9]))\.){3}(?:(2(5[0-5]|[0-4][0-9])|1[0-9]'
+        r'[0-9]|[1-9]?[0-9])|[a-z0-9-]*[a-z0-9]:(?:[\x01-\x08\x0b\x0c\x0e-\x1f\'
+        r'x21-\x5a\x53-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])+)\])';
+    final regex = RegExp(pattern);
+
+    if (regex.hasMatch(email)) {
+      return true;
+    }
+    return false;
   }
 
   @override
@@ -22,9 +38,19 @@ class ValidationRepoImpl implements ValidatonRepo {
   }
 
   @override
+  bool isValidPasswordAndNotEmpty(String password) {
+    if (password.length >= 8) {
+      return true;
+    }
+    return false;
+  }
+
+  @override
   bool isValidPhoneNumber(String phoneNumber) {
-    // TODO: implement isValidPhoneNumber
-    throw UnimplementedError();
+    if (phoneNumber.isNotEmpty && int.tryParse(phoneNumber) != null) {
+      return true;
+    }
+    return false;
   }
 
   @override
@@ -33,6 +59,14 @@ class ValidationRepoImpl implements ValidatonRepo {
       return false;
     }
     return true;
+  }
+
+  @override
+  bool isValidUsernameAndNotEmpty(String username) {
+    if (username.length >= 5) {
+      return true;
+    }
+    return false;
   }
 
   @override

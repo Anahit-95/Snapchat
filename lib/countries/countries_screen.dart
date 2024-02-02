@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:snapchat/core/common/widgets/custom_back_button.dart';
+import 'package:snapchat/core/database_repository/database_repo_impl.dart';
 import 'package:snapchat/core/models/country_model.dart';
 import 'package:snapchat/core/utils/consts/colors.dart';
 import 'package:snapchat/countries/countries_bloc/countries_bloc.dart';
@@ -18,7 +19,10 @@ class CountriesScreen extends StatefulWidget {
 class _CountriesScreenState extends State<CountriesScreen> {
   final TextEditingController _searchController = TextEditingController();
 
-  final CountriesBloc _countriesBloc = CountriesBloc(LoadCountriesRepoImpl());
+  final CountriesBloc _countriesBloc = CountriesBloc(
+    apiRepo: LoadCountriesRepoImpl(),
+    dbRepo: DatabaseRepoImpl(),
+  );
 
   @override
   void initState() {

@@ -17,10 +17,10 @@ final class OnChangePasswordInputEvent extends SignUpPasswordEvent {
 }
 
 final class ConfirmingPasswordEvent extends SignUpPasswordEvent {
-  const ConfirmingPasswordEvent(this.password);
+  const ConfirmingPasswordEvent(this.user);
 
-  final String password;
+  final UserModel user;
 
   @override
-  List<Object> get props => [password];
+  List<Object> get props => [user];
 }

@@ -2,20 +2,23 @@ import 'dart:async';
 
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
+import 'package:snapchat/core/validation_repository/validation_repo_impl.dart';
 
 part 'sign_up_username_event.dart';
 part 'sign_up_username_state.dart';
 
 class SignUpUsernameBloc
     extends Bloc<SignUpUsernameEvent, SignUpUsernameState> {
-  SignUpUsernameBloc() : super(UsernameInitial()) {
+  SignUpUsernameBloc({required ValidationRepoImpl repoImpl})
+      : _repoImpl = repoImpl,
+        super(UsernameInitial()) {
     on<OnChangeInputEvent>(_onOnChangeInputEvent);
-    // on<ConfirmingUsername>(_onConfirmingUsername);
   }
+  final ValidationRepoImpl _repoImpl;
 
   FutureOr<void> _onOnChangeInputEvent(
       OnChangeInputEvent event, Emitter<SignUpUsernameState> emit) {
-    if (event.username.length >= 5) {
+    if (_repoImpl.isValidUsernameAndNotEmpty(event.username)) {
       // TODO: Do an actioin to ckeck if username is in use
       if (event.username != 'Anahit') {
         emit(UsernameAvailable());
@@ -28,10 +31,4 @@ class SignUpUsernameBloc
       );
     }
   }
-
-  // FutureOr<void> _onConfirmingUsername(
-  //     ConfirmingUsername event, Emitter<SignUpUsernameState> emit) {
-  //   emit(UsernameLoading());
-  //   emit(UsernameConfirmed());
-  // }
 }
