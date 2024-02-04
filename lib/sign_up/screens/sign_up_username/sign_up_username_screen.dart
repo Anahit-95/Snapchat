@@ -23,7 +23,7 @@ class _SignUpUsernameScreenState extends State<SignUpUsernameScreen> {
   late TextEditingController _controller;
 
   final SignUpUsernameBloc _usernameBloc =
-      SignUpUsernameBloc(repoImpl: ValidationRepoImpl());
+      SignUpUsernameBloc(validationRepo: ValidationRepoImpl());
 
   @override
   void initState() {

@@ -43,7 +43,7 @@ class _SignUpEmailPhoneScreenState extends State<SignUpEmailPhoneScreen> {
   SignUpMode _signUpMode = SignUpMode.email;
 
   final SignUpEmailPhoneBloc _emailPhoneBloc =
-      SignUpEmailPhoneBloc(repoImpl: ValidationRepoImpl());
+      SignUpEmailPhoneBloc(validationRepo: ValidationRepoImpl());
 
   @override
   void initState() {

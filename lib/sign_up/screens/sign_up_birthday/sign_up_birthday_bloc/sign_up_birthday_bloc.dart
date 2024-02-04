@@ -9,18 +9,18 @@ part 'sign_up_birthday_state.dart';
 
 class SignUpBirthdayBloc
     extends Bloc<SignUpBirthdayEvent, SignUpBirthdayState> {
-  SignUpBirthdayBloc({required ValidationRepoImpl repoImpl})
-      : _repoImpl = repoImpl,
+  SignUpBirthdayBloc({required ValidationRepoImpl validationRepo})
+      : _validationRepo = validationRepo,
         super(BirthdayInitial()) {
     on<SelectingDate>(_onSelectingDate);
     on<OpenDatePickerEvent>(_onOpenDatePicker);
   }
-  final ValidationRepoImpl _repoImpl;
+  final ValidationRepoImpl _validationRepo;
 
   FutureOr<void> _onSelectingDate(
       SelectingDate event, Emitter<SignUpBirthdayState> emit) {
     emit(BirthdaySelected(event.birthDate));
-    if (_repoImpl.isValidBirthday(event.birthDate)) {
+    if (_validationRepo.isValidBirthday(event.birthDate)) {
       emit(ValidBirthday());
     } else {
       emit(InvalidBirthday());

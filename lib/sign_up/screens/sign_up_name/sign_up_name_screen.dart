@@ -25,7 +25,7 @@ class _SignUpNameScreenState extends State<SignUpNameScreen> {
   late FocusNode _lastNameFocusNode;
 
   final SignUpNameBloc _nameBloc =
-      SignUpNameBloc(repoImpl: ValidationRepoImpl());
+      SignUpNameBloc(validationRepo: ValidationRepoImpl());
 
   final user = UserModel(
     firstName: '',

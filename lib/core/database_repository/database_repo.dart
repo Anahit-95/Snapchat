@@ -12,9 +12,11 @@ abstract class DatabaseRepo {
 
   Future<List<UserModel>> getAllUsers();
 
+  Future<UserModel> getUserByUsername(String username);
+
   Future<UserModel?> loginUser({
     required String password,
-    String? email,
-    String? username,
+    required String text,
+    required bool isEmail,
   });
 }

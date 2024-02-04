@@ -25,7 +25,14 @@ final class LoginValidState extends LogInState {}
 
 final class LoggingIn extends LogInState {}
 
-final class LogInSuccess extends LogInState {}
+final class LogInSuccess extends LogInState {
+  const LogInSuccess({required this.user});
+
+  final UserModel user;
+
+  @override
+  List<Object> get props => [user];
+}
 
 final class LogInError extends LogInState {
   const LogInError(this.error);

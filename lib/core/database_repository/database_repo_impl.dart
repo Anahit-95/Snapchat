@@ -38,6 +38,7 @@ class DatabaseRepoImpl implements DatabaseRepo {
               )
             ''');
         await db.execute('''CREATE TABLE IF NOT EXISTS Users (
+              firstName TEXT,
               lastName TEXT, 
               birthday TEXT, 
               username TEXT PRIMARY KEY,
@@ -87,8 +88,14 @@ class DatabaseRepoImpl implements DatabaseRepo {
   @override
   Future<int> insertUser(UserModel user) async {
     final db = await database;
-    final userId = await db.insert('Users', user.toMap());
-    return userId;
+    final userMap = await db
+        .query('Users', where: 'username = ?', whereArgs: [user.username]);
+    if (userMap.isEmpty) {
+      final userId = await db.insert('Users', user.toMap());
+      return userId;
+    } else {
+      throw Exception('User already exists');
+    }
   }
 
   @override
@@ -101,20 +108,31 @@ class DatabaseRepoImpl implements DatabaseRepo {
 
   @override
   Future<UserModel?> loginUser(
-      {required String password, String? email, String? username}) async {
+      {required String password,
+      required String text,
+      required bool isEmail}) async {
     final db = await database;
     List<Map<String, dynamic>> userMap;
-    if (username == null) {
+    if (isEmail) {
       userMap = await db.query('Users',
-          where: 'email = ? AND password = ?', whereArgs: [email, password]);
+          where: 'email = ? AND password = ?', whereArgs: [text, password]);
     } else {
       userMap = await db.query('Users',
-          where: 'username = ? AND password = ?', whereArgs: [email, password]);
+          where: 'username = ? AND password = ?', whereArgs: [text, password]);
     }
     if (userMap.isNotEmpty) {
       final user = UserModel.fromMap(userMap[0]);
       return user;
     }
     return null;
+  }
+
+  @override
+  Future<UserModel> getUserByUsername(String username) async {
+    final db = await database;
+    List<Map<String, dynamic>> userMap;
+    userMap =
+        await db.query('Users', where: 'username = ?', whereArgs: [username]);
+    return UserModel.fromMap(userMap[0]);
   }
 }

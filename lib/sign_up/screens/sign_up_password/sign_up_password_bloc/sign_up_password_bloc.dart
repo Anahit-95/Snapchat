@@ -42,7 +42,8 @@ class SignUpPasswordBloc
       await _dbRepo.insertUser(event.user);
       emit(ConfirmPassword());
     } catch (e) {
-      emit(const InvalidPassword('Failed to sign up'));
+      print(e);
+      emit(InvalidPassword('Failed to sign up: ${e.toString()}'));
     }
   }
 }

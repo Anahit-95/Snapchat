@@ -9,16 +9,16 @@ part 'sign_up_username_state.dart';
 
 class SignUpUsernameBloc
     extends Bloc<SignUpUsernameEvent, SignUpUsernameState> {
-  SignUpUsernameBloc({required ValidationRepoImpl repoImpl})
-      : _repoImpl = repoImpl,
+  SignUpUsernameBloc({required ValidationRepoImpl validationRepo})
+      : _validationRepo = validationRepo,
         super(UsernameInitial()) {
     on<OnChangeInputEvent>(_onOnChangeInputEvent);
   }
-  final ValidationRepoImpl _repoImpl;
+  final ValidationRepoImpl _validationRepo;
 
   FutureOr<void> _onOnChangeInputEvent(
       OnChangeInputEvent event, Emitter<SignUpUsernameState> emit) {
-    if (_repoImpl.isValidUsernameAndNotEmpty(event.username)) {
+    if (_validationRepo.isValidUsernameAndNotEmpty(event.username)) {
       // TODO: Do an actioin to ckeck if username is in use
       if (event.username != 'Anahit') {
         emit(UsernameAvailable());

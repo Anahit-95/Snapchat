@@ -7,18 +7,18 @@ part 'sign_up_email_phone_state.dart';
 
 class SignUpEmailPhoneBloc
     extends Bloc<SignUpEmailPhoneEvent, SignUpEmailPhoneState> {
-  SignUpEmailPhoneBloc({required ValidationRepoImpl repoImpl})
-      : _repoImpl = repoImpl,
+  SignUpEmailPhoneBloc({required ValidationRepoImpl validationRepo})
+      : _validationRepo = validationRepo,
         super(EmailPhoneInitial()) {
     on<EmailOnChangeEvent>(_onEmailOnChange);
     on<PhoneOnChangeEvent>(_onMobileOnChange);
   }
 
-  final ValidationRepoImpl _repoImpl;
+  final ValidationRepoImpl _validationRepo;
 
   void _onEmailOnChange(
       EmailOnChangeEvent event, Emitter<SignUpEmailPhoneState> emit) {
-    if (_repoImpl.isValidEmail(event.email)) {
+    if (_validationRepo.isValidEmail(event.email)) {
       emit(EmailMode(event.email));
     } else {
       emit(const InvalidEmail('Your email is invalid.'));
@@ -27,7 +27,7 @@ class SignUpEmailPhoneBloc
 
   void _onMobileOnChange(
       PhoneOnChangeEvent event, Emitter<SignUpEmailPhoneState> emit) {
-    if (_repoImpl.isValidPhoneNumber(event.phone)) {
+    if (_validationRepo.isValidPhoneNumber(event.phone)) {
       emit(PhoneMode(event.phone));
     } else {
       emit(const InvalidPhone('Your phone number is invalid'));

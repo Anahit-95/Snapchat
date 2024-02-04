@@ -123,7 +123,11 @@ extension _BlocAddition on _SignUpPasswordScreenState {
     if (state is ConfirmPassword) {
       Navigator.push(
         context,
-        MaterialPageRoute(builder: (context) => const HomeScreen()),
+        MaterialPageRoute(
+          builder: (context) => HomeScreen(
+            user: widget.user.copyWith(password: _controller.text),
+          ),
+        ),
       );
     }
   }

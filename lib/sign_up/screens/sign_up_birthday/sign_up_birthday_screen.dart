@@ -25,7 +25,7 @@ class _SignUpBirthdayScreenState extends State<SignUpBirthdayScreen> {
   DateTime? _selectedDate;
 
   final SignUpBirthdayBloc _birthdayBloc =
-      SignUpBirthdayBloc(repoImpl: ValidationRepoImpl());
+      SignUpBirthdayBloc(validationRepo: ValidationRepoImpl());
 
   @override
   void initState() {

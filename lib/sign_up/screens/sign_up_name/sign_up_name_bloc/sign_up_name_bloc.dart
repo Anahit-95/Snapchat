@@ -6,16 +6,16 @@ part 'sign_up_name_event.dart';
 part 'sign_up_name_state.dart';
 
 class SignUpNameBloc extends Bloc<SignUpNameEvent, SignUpNameState> {
-  SignUpNameBloc({required ValidationRepoImpl repoImpl})
-      : _repoImpl = repoImpl,
+  SignUpNameBloc({required ValidationRepoImpl validationRepo})
+      : _validationRepo = validationRepo,
         super(NameInitial()) {
     on<OnChangeInputEvent>(_onOnChangeInput);
   }
-  final ValidationRepoImpl _repoImpl;
+  final ValidationRepoImpl _validationRepo;
 
   void _onOnChangeInput(
       OnChangeInputEvent event, Emitter<SignUpNameState> emit) {
-    if (_repoImpl.isValidNameState(
+    if (_validationRepo.isValidNameState(
       firstName: event.firstName,
       lastName: event.lastName,
     )) {

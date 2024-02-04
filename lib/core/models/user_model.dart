@@ -65,7 +65,15 @@ class UserModel extends Equatable {
   }
 
   @override
-  List<Object?> get props => [username, email, phoneNumber];
+  List<Object?> get props => [
+        username,
+        firstName,
+        lastName,
+        birthday,
+        email,
+        phoneNumber,
+        password,
+      ];
 
   @override
   bool get stringify => true;
