@@ -19,16 +19,3 @@ final class InvalidUsername extends SignUpUsernameState {
 }
 
 final class UsernameAvailable extends SignUpUsernameState {}
-
-// final class UsernameLoading extends SignUpUsernameState {}
-
-// final class UsernameConfirmed extends SignUpUsernameState {}
-
-// final class UsernameError extends SignUpUsernameState {
-//   const UsernameError(this.error);
-
-//   final String error;
-
-//   @override
-//   List<String> get props => [error];
-// }

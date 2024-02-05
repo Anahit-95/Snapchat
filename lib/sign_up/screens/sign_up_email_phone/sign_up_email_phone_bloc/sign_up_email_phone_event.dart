@@ -17,10 +17,12 @@ final class EmailOnChangeEvent extends SignUpEmailPhoneEvent {
 }
 
 final class PhoneOnChangeEvent extends SignUpEmailPhoneEvent {
-  const PhoneOnChangeEvent(this.phone);
+  const PhoneOnChangeEvent(
+      {required this.phoneNumber, required this.phoneCode});
 
-  final String phone;
+  final String phoneNumber;
+  final String phoneCode;
 
   @override
-  List<Object> get props => [phone];
+  List<Object> get props => [phoneCode, phoneNumber];
 }

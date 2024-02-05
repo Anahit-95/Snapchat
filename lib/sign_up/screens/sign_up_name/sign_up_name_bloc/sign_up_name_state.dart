@@ -9,18 +9,6 @@ sealed class SignUpNameState extends Equatable {
 
 final class NameInitial extends SignUpNameState {}
 
-// final class NameLoading extends SignUpNameState {}
-
-// final class NameRegistered extends SignUpNameState {}
-
 final class ButtonIsDisabled extends SignUpNameState {}
 
 final class ButtonIsEnabled extends SignUpNameState {}
-
-final class NameSignUpError extends SignUpNameState {
-  const NameSignUpError(this.error);
-  final String error;
-
-  @override
-  List<String> get props => [error];
-}

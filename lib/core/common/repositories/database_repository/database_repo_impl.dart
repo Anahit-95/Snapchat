@@ -1,4 +1,5 @@
-import 'package:snapchat/core/database_repository/database_repo.dart';
+import 'package:snapchat/core/common/repositories/database_repository/database_repo.dart';
+import 'package:snapchat/core/common/repositories/validation_repository/validation_repo_impl.dart';
 import 'package:snapchat/core/models/country_model.dart';
 import 'package:snapchat/core/models/user_model.dart';
 import 'package:sqflite/sqflite.dart';
@@ -86,16 +87,10 @@ class DatabaseRepoImpl implements DatabaseRepo {
   }
 
   @override
-  Future<int> insertUser(UserModel user) async {
+  Future<void> insertUser(UserModel user) async {
     final db = await database;
-    final userMap = await db
-        .query('Users', where: 'username = ?', whereArgs: [user.username]);
-    if (userMap.isEmpty) {
-      final userId = await db.insert('Users', user.toMap());
-      return userId;
-    } else {
-      throw Exception('User already exists');
-    }
+
+    await db.insert('Users', user.toMap());
   }
 
   @override
@@ -107,13 +102,14 @@ class DatabaseRepoImpl implements DatabaseRepo {
   }
 
   @override
-  Future<UserModel?> loginUser(
-      {required String password,
-      required String text,
-      required bool isEmail}) async {
+  Future<UserModel?> loginUser({
+    required String password,
+    required String text,
+    required ValidationRepoImpl validationRepo,
+  }) async {
     final db = await database;
     List<Map<String, dynamic>> userMap;
-    if (isEmail) {
+    if (validationRepo.isValidEmail(text)) {
       userMap = await db.query('Users',
           where: 'email = ? AND password = ?', whereArgs: [text, password]);
     } else {

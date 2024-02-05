@@ -44,12 +44,3 @@ final class InvalidPhone extends SignUpEmailPhoneState {
   @override
   List<Object> get props => [phoneError];
 }
-
-final class EmailPhoneError extends SignUpEmailPhoneState {
-  const EmailPhoneError(this.error);
-
-  final String error;
-
-  @override
-  List<Object> get props => [error];
-}

@@ -23,3 +23,12 @@ final class InvalidPassword extends SignUpPasswordState {
 }
 
 final class ConfirmPassword extends SignUpPasswordState {}
+
+final class SignUpError extends SignUpPasswordState {
+  const SignUpError(this.error);
+
+  final String error;
+
+  @override
+  List<Object> get props => [error];
+}

@@ -1,9 +1,12 @@
 import 'dart:convert';
+import 'dart:developer';
 
 // import 'package:country_codes/country_codes.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:snapchat/core/common/repositories/database_repository/database_repo_impl.dart';
+import 'package:snapchat/core/common/repositories/validation_repository/validation_repo_impl.dart';
 import 'package:snapchat/core/common/widgets/continue_button.dart';
 import 'package:snapchat/core/common/widgets/custom_text_field.dart';
 import 'package:snapchat/core/common/widgets/header_text.dart';
@@ -11,7 +14,6 @@ import 'package:snapchat/core/common/widgets/sign_screen_wrapper.dart';
 import 'package:snapchat/core/models/country_model.dart';
 import 'package:snapchat/core/models/user_model.dart';
 import 'package:snapchat/core/utils/consts/colors.dart';
-import 'package:snapchat/core/validation_repository/validation_repo_impl.dart';
 import 'package:snapchat/countries/countries_screen.dart';
 import 'package:snapchat/sign_up/screens/sign_up_email_phone/sign_up_email_phone_bloc/sign_up_email_phone_bloc.dart';
 import 'package:snapchat/sign_up/screens/sign_up_password/sign_up_password_screen.dart';
@@ -42,8 +44,10 @@ class _SignUpEmailPhoneScreenState extends State<SignUpEmailPhoneScreen> {
 
   SignUpMode _signUpMode = SignUpMode.email;
 
-  final SignUpEmailPhoneBloc _emailPhoneBloc =
-      SignUpEmailPhoneBloc(validationRepo: ValidationRepoImpl());
+  final SignUpEmailPhoneBloc _emailPhoneBloc = SignUpEmailPhoneBloc(
+    validationRepo: ValidationRepoImpl(),
+    dbRepo: DatabaseRepoImpl(),
+  );
 
   @override
   void initState() {
@@ -254,8 +258,10 @@ class _SignUpEmailPhoneScreenState extends State<SignUpEmailPhoneScreen> {
         controller: _mobileController,
         decoration: const InputDecoration(border: InputBorder.none),
         keyboardType: TextInputType.phone,
-        onChanged: (_) =>
-            _emailPhoneBloc.add(PhoneOnChangeEvent(_mobileController.text)),
+        onChanged: (_) => _emailPhoneBloc.add(PhoneOnChangeEvent(
+          phoneCode: _selectedCountry!.phoneCode,
+          phoneNumber: _mobileController.text,
+        )),
       ),
     );
   }
@@ -328,7 +334,7 @@ class _SignUpEmailPhoneScreenState extends State<SignUpEmailPhoneScreen> {
         builder: (context) => CountriesScreen(
           onChange: (CountryModel country) {
             _selectedCountry = country;
-            print('from country page $_selectedCountry');
+            log('from country page $_selectedCountry');
             setState(() {});
           },
         ),
@@ -337,7 +343,7 @@ class _SignUpEmailPhoneScreenState extends State<SignUpEmailPhoneScreen> {
   }
 
   void _continueClicked() {
-    var updatedUser;
+    UserModel updatedUser;
     if (_signUpMode == SignUpMode.email) {
       updatedUser = widget.user.copyWith(email: _emailController.text);
     } else {

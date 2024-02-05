@@ -16,13 +16,4 @@ final class SelectingDate extends SignUpBirthdayEvent {
   List<Object> get props => [birthDate];
 }
 
-final class ConfirmingDate extends SignUpBirthdayEvent {
-  const ConfirmingDate(this.birthDate);
-
-  final DateTime birthDate;
-
-  @override
-  List<Object> get props => [birthDate];
-}
-
 final class OpenDatePickerEvent extends SignUpBirthdayEvent {}

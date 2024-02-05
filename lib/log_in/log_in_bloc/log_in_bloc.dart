@@ -2,9 +2,9 @@ import 'dart:async';
 
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
-import 'package:snapchat/core/database_repository/database_repo_impl.dart';
+import 'package:snapchat/core/common/repositories/database_repository/database_repo_impl.dart';
+import 'package:snapchat/core/common/repositories/validation_repository/validation_repo_impl.dart';
 import 'package:snapchat/core/models/user_model.dart';
-import 'package:snapchat/core/validation_repository/validation_repo_impl.dart';
 
 part 'log_in_event.dart';
 part 'log_in_state.dart';
@@ -26,11 +26,10 @@ class LogInBloc extends Bloc<LogInEvent, LogInState> {
       LoggingInEvent event, Emitter<LogInState> emit) async {
     try {
       emit(LoggingIn());
-      final isEmail = _validationRepo.isValidEmail(event.email);
       final user = await _dbRepo.loginUser(
         text: event.email,
         password: event.password,
-        isEmail: isEmail,
+        validationRepo: _validationRepo,
       );
       if (user != null) {
         emit(LogInSuccess(user: user));

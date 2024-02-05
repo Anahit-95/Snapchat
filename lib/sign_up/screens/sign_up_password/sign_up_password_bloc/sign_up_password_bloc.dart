@@ -2,9 +2,9 @@ import 'dart:async';
 
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
-import 'package:snapchat/core/database_repository/database_repo_impl.dart';
+import 'package:snapchat/core/common/repositories/database_repository/database_repo_impl.dart';
+import 'package:snapchat/core/common/repositories/validation_repository/validation_repo_impl.dart';
 import 'package:snapchat/core/models/user_model.dart';
-import 'package:snapchat/core/validation_repository/validation_repo_impl.dart';
 
 part 'sign_up_password_event.dart';
 part 'sign_up_password_state.dart';
@@ -43,7 +43,7 @@ class SignUpPasswordBloc
       emit(ConfirmPassword());
     } catch (e) {
       print(e);
-      emit(InvalidPassword('Failed to sign up: ${e.toString()}'));
+      emit(SignUpError('Failed to sign up: ${e.toString()}'));
     }
   }
 }

@@ -4,7 +4,7 @@ import 'dart:convert';
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/services.dart';
-import 'package:snapchat/core/database_repository/database_repo_impl.dart';
+import 'package:snapchat/core/common/repositories/database_repository/database_repo_impl.dart';
 import 'package:snapchat/core/models/country_model.dart';
 import 'package:snapchat/countries/repository/load_countries_repo_impl.dart';
 

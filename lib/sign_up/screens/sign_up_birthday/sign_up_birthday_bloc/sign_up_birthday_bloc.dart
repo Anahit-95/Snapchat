@@ -2,7 +2,7 @@ import 'dart:async';
 
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
-import 'package:snapchat/core/validation_repository/validation_repo_impl.dart';
+import 'package:snapchat/core/common/repositories/validation_repository/validation_repo_impl.dart';
 
 part 'sign_up_birthday_event.dart';
 part 'sign_up_birthday_state.dart';

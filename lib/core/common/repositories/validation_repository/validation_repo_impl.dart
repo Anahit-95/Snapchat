@@ -1,6 +1,35 @@
-import 'package:snapchat/core/validation_repository/validation_repo.dart';
+import 'package:snapchat/core/common/repositories/validation_repository/validation_repo.dart';
+import 'package:snapchat/core/models/user_model.dart';
 
 class ValidationRepoImpl implements ValidatonRepo {
+  @override
+  bool isValidUsername(String name) {
+    if (name.length < 5 && name.isNotEmpty) {
+      return false;
+    }
+    return true;
+  }
+
+  @override
+  bool isValidUsernameAndNotEmpty(String username) {
+    if (username.length >= 5) {
+      return true;
+    }
+    return false;
+  }
+
+  @override
+  bool isUsernameAvailable(
+      {required String username, required List<UserModel> allUsers}) {
+    final existingUsername =
+        allUsers.where((user) => user.username == username);
+    if (existingUsername.isEmpty) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
   @override
   bool isValidBirthday(DateTime date) {
     final now = DateTime.now();
@@ -30,6 +59,17 @@ class ValidationRepoImpl implements ValidatonRepo {
   }
 
   @override
+  bool isEmailAvailable(
+      {required String email, required List<UserModel> allUsers}) {
+    final existingEmail = allUsers.where((user) => user.email == email);
+    if (existingEmail.isEmpty) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  @override
   bool isValidPassword(String password) {
     if (password.length < 8 && password.isNotEmpty) {
       return false;
@@ -54,19 +94,15 @@ class ValidationRepoImpl implements ValidatonRepo {
   }
 
   @override
-  bool isValidUsername(String name) {
-    if (name.length < 5 && name.isNotEmpty) {
+  bool isPhoneNumberAvailable(
+      {required String phoneNumber, required List<UserModel> allUsers}) {
+    final existingPhone =
+        allUsers.where((user) => user.phoneNumber == phoneNumber);
+    if (existingPhone.isEmpty) {
+      return true;
+    } else {
       return false;
     }
-    return true;
-  }
-
-  @override
-  bool isValidUsernameAndNotEmpty(String username) {
-    if (username.length >= 5) {
-      return true;
-    }
-    return false;
   }
 
   @override
