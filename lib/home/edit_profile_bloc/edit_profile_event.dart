@@ -16,7 +16,8 @@ final class EditingOnChangeEvent extends EditProfileEvent {
     required this.password,
     required this.user,
     this.email,
-    this.phone,
+    this.phoneCode,
+    this.phoneNumber,
   });
 
   final String firstName;
@@ -24,7 +25,8 @@ final class EditingOnChangeEvent extends EditProfileEvent {
   final DateTime birthday;
   final String username;
   final String? email;
-  final String? phone;
+  final String? phoneCode;
+  final String? phoneNumber;
   final String password;
   final UserModel user;
 
@@ -35,7 +37,7 @@ final class EditingOnChangeEvent extends EditProfileEvent {
         birthday,
         username,
         email!,
-        phone!,
+        phoneNumber!,
         password,
       ];
 }

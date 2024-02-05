@@ -7,6 +7,7 @@ import 'package:snapchat/core/common/repositories/validation_repository/validati
 import 'package:snapchat/core/common/widgets/continue_button.dart';
 import 'package:snapchat/core/common/widgets/custom_text_field.dart';
 import 'package:snapchat/core/common/widgets/header_text.dart';
+import 'package:snapchat/core/models/country_model.dart';
 import 'package:snapchat/core/models/user_model.dart';
 import 'package:snapchat/core/utils/consts/colors.dart';
 import 'package:snapchat/home/edit_profile_bloc/edit_profile_bloc.dart';
@@ -35,6 +36,7 @@ class _HomeScreenState extends State<HomeScreen> {
   );
 
   DateTime? _selectedDate;
+  CountryModel? _selectedCountry;
 
   @override
   void initState() {
@@ -69,6 +71,7 @@ class _HomeScreenState extends State<HomeScreen> {
       create: (context) => _editProfileBloc,
       child: BlocBuilder<EditProfileBloc, EditProfileState>(
         builder: (context, state) {
+          print(widget.user);
           print(state.runtimeType);
           return Scaffold(
             body: SafeArea(
@@ -92,8 +95,11 @@ class _HomeScreenState extends State<HomeScreen> {
                       _renderUsernameInput(),
                       _renderUsernameErrorText(state),
                       _renderEmailInput(),
+                      _renderEmailErrorText(state),
                       _renderMobileInput(),
+                      _renderPhoneErrorText(state),
                       _renderPasswordInput(),
+                      _renderPasswordErrorText(state),
                       Container(
                         padding: const EdgeInsets.symmetric(horizontal: 40),
                         width: double.maxFinite,
@@ -204,10 +210,6 @@ class _HomeScreenState extends State<HomeScreen> {
   Future<void> _openDatePicker() async {
     FocusScope.of(context).unfocus();
     final currentDate = DateTime.now();
-    final firstValidDate = currentDate.subtract(
-      const Duration(days: 16 * 365 + 4),
-    );
-    // _selectedDate ?? _birthdayBloc.add(SelectingDate(firstValidDate));
     showCupertinoModalPopup(
       context: context,
       builder: (context) {
@@ -224,7 +226,6 @@ class _HomeScreenState extends State<HomeScreen> {
               _dateController.text =
                   DateFormat('d MMMM yyyy').format(_selectedDate!);
               _onChangeInputs();
-              print(_selectedDate);
             },
           ),
         );
@@ -283,35 +284,34 @@ class _HomeScreenState extends State<HomeScreen> {
 
   Widget _renderEmailInput() {
     return Padding(
-      padding: const EdgeInsets.only(bottom: 0.0),
+      padding: const EdgeInsets.only(bottom: 4.0),
       child: CustomTextField(
         controller: _emailController,
         labelText: 'EMAIL',
-        // onChanged: (_) =>
-        //     _emailPhoneBloc.add(EmailOnChangeEvent(_emailController.text)),
+        onChanged: (_) => _onChangeInputs(),
         keyboardType: TextInputType.emailAddress,
       ),
     );
   }
 
-  // Widget _renderEmailErrorText(SignUpEmailPhoneState state) {
-  //   if (state is InvalidEmail) {
-  //     return SizedBox(
-  //       width: double.maxFinite,
-  //       height: 15,
-  //       child: Text(
-  //         state.emailError,
-  //         style: const TextStyle(color: Colors.red, fontSize: 12),
-  //       ),
-  //     );
-  //   } else {
-  //     return const SizedBox(height: 15);
-  //   }
-  // }
+  Widget _renderEmailErrorText(EditProfileState state) {
+    if (state is InvalidEditState) {
+      return SizedBox(
+        width: double.maxFinite,
+        height: 15,
+        child: Text(
+          state.emailError,
+          style: const TextStyle(color: Colors.red, fontSize: 12),
+        ),
+      );
+    } else {
+      return const SizedBox(height: 15);
+    }
+  }
 
   Widget _renderMobileInput() {
     return Container(
-      margin: const EdgeInsets.only(top: 10, bottom: 0),
+      margin: const EdgeInsets.only(top: 10, bottom: 2),
       decoration: const BoxDecoration(
         border: Border(
           bottom: BorderSide(
@@ -394,56 +394,52 @@ class _HomeScreenState extends State<HomeScreen> {
         controller: _phoneController,
         decoration: const InputDecoration(border: InputBorder.none),
         keyboardType: TextInputType.phone,
-        // onChanged: (_) => _emailPhoneBloc.add(PhoneOnChangeEvent(
-        //   phoneCode: _selectedCountry!.phoneCode,
-        //   phoneNumber: _mobileController.text,
-        // )),
+        onChanged: (_) => _onChangeInputs(),
       ),
     );
   }
 
-  // Widget _renderPhoneErrorText(SignUpEmailPhoneState state) {
-  //   if (state is InvalidPhone) {
-  //     return SizedBox(
-  //       width: double.maxFinite,
-  //       height: 15,
-  //       child: Text(
-  //         state.phoneError,
-  //         style: const TextStyle(color: Colors.red, fontSize: 12),
-  //       ),
-  //     );
-  //   } else {
-  //     return const SizedBox(height: 15);
-  //   }
-  // }
+  Widget _renderPhoneErrorText(EditProfileState state) {
+    if (state is InvalidEditState) {
+      return SizedBox(
+        width: double.maxFinite,
+        height: 15,
+        child: Text(
+          state.phoneError,
+          style: const TextStyle(color: Colors.red, fontSize: 12),
+        ),
+      );
+    } else {
+      return const SizedBox(height: 15);
+    }
+  }
 
   Widget _renderPasswordInput() {
     return Padding(
-      padding: const EdgeInsets.only(bottom: 0),
+      padding: const EdgeInsets.only(bottom: 4),
       child: CustomTextField(
         controller: _passwordController,
         labelText: 'PASSWORD',
         obscureText: true,
-        // onChanged: (_) =>
-        //     _passwordBloc.add(OnChangePasswordInputEvent(_controller.text)),
+        onChanged: (_) => _onChangeInputs(),
       ),
     );
   }
 
-  // Widget _renderPasswordErrorText(SignUpPasswordState state) {
-  //   if (state is InvalidPassword) {
-  //     return SizedBox(
-  //       width: double.maxFinite,
-  //       height: 15,
-  //       child: Text(
-  //         state.passwordError,
-  //         style: const TextStyle(color: Colors.red, fontSize: 12),
-  //       ),
-  //     );
-  //   } else {
-  //     return const SizedBox(height: 15);
-  //   }
-  // }
+  Widget _renderPasswordErrorText(EditProfileState state) {
+    if (state is InvalidEditState) {
+      return SizedBox(
+        width: double.maxFinite,
+        height: 15,
+        child: Text(
+          state.passwordError,
+          style: const TextStyle(color: Colors.red, fontSize: 12),
+        ),
+      );
+    } else {
+      return const SizedBox(height: 15);
+    }
+  }
 
   void _onChangeInputs() {
     _editProfileBloc.add(EditingOnChangeEvent(
@@ -452,7 +448,12 @@ class _HomeScreenState extends State<HomeScreen> {
       birthday: _selectedDate ?? widget.user.birthday,
       username: _usernameController.text,
       email: _emailController.text,
-      phone: _phoneController.text,
+      phoneCode: _selectedCountry != null
+          ? _selectedCountry!.phoneCode
+          : widget.user.phoneNumber != null
+              ? widget.user.phoneNumber!.split(' ')[0]
+              : '1',
+      phoneNumber: _phoneController.text,
       password: _passwordController.text,
       user: widget.user,
     ));

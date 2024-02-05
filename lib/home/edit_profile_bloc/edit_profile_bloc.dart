@@ -31,13 +31,14 @@ class EditProfileBloc extends Bloc<EditProfileEvent, EditProfileState> {
     String lastNameError;
     String birthdayError;
     String usernameError;
-    String emailError = '';
-    String phoneError = '';
+    String emailError;
+    String phoneError;
     String passwordError = '';
 
     if (_allUsers.isEmpty) {
       _allUsers = await _dbRepo.getAllUsers();
     }
+    print(_allUsers);
 
     if (event.firstName.isEmpty) {
       firstNameError = 'This field must not be empty.';
@@ -66,21 +67,51 @@ class EditProfileBloc extends Bloc<EditProfileEvent, EditProfileState> {
       usernameError = 'Your username must have at least 5 characters';
     }
 
-    if ((event.email == null || event.email!.isEmpty) &&
-        (event.phone == null || event.phone!.isEmpty)) {
-      emailError = 'You must provide either email or phone';
-      phoneError = 'You must provide either email or phone';
-    } else if (event.email!.isNotEmpty) {
-      phoneError = '';
+    if (event.email!.isNotEmpty) {
       if (_validationRepo.isValidEmail(event.email!)) {
-        emailError = 'Your email is invalid';
-      } else if (_validationRepo.isEmailAvailable(
-              email: event.email!, allUsers: _allUsers) ||
-          event.email! == event.user.email) {
-        emailError = '';
+        if (_validationRepo.isEmailAvailable(
+                email: event.email!, allUsers: _allUsers) ||
+            event.email! == event.user.email) {
+          emailError = '';
+        } else {
+          emailError = 'This email is already in use';
+        }
       } else {
-        emailError = 'This email is already in use';
+        emailError = 'Your email is invalid';
       }
+    } else if (event.email!.isEmpty && event.phoneNumber!.isEmpty) {
+      emailError = 'You must provide either email or phone';
+    } else {
+      emailError = '';
+    }
+    print('${event.phoneCode} ${event.phoneNumber}');
+    print(event.phoneCode);
+
+    if (event.phoneNumber!.isNotEmpty) {
+      if (_validationRepo.isValidPhoneNumber(event.phoneNumber!)) {
+        if (_validationRepo.isPhoneNumberAvailable(
+              phoneNumber: '${event.phoneCode} ${event.phoneNumber}',
+              allUsers: _allUsers,
+            ) ||
+            '${event.phoneCode} ${event.phoneNumber}' ==
+                event.user.phoneNumber) {
+          phoneError = '';
+        } else {
+          phoneError = 'This phone number is already in use';
+        }
+      } else {
+        phoneError = 'Your phone number is invalid';
+      }
+    } else if (event.phoneNumber!.isEmpty && event.email!.isEmpty) {
+      phoneError = 'You must provide either email or phone';
+    } else {
+      phoneError = '';
+    }
+
+    if (_validationRepo.isValidPasswordAndNotEmpty(event.password)) {
+      passwordError = '';
+    } else {
+      passwordError = 'Your password must have at least 8 characters';
     }
 
     if (firstNameError.isEmpty &&
@@ -88,7 +119,8 @@ class EditProfileBloc extends Bloc<EditProfileEvent, EditProfileState> {
         birthdayError.isEmpty &&
         usernameError.isEmpty &&
         emailError.isEmpty &&
-        phoneError.isNotEmpty) {
+        phoneError.isEmpty &&
+        passwordError.isEmpty) {
       emit(ValidEditState());
     } else {
       print(firstNameError);
