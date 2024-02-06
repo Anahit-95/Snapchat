@@ -20,4 +20,7 @@ abstract class DatabaseRepo {
     required String text,
     required ValidationRepoImpl validationRepo,
   });
+
+  Future<void> updateUser(
+      {required String oldUsername, required UserModel updatedUser});
 }

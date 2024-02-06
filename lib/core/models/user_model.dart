@@ -1,4 +1,3 @@
-// ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:equatable/equatable.dart';
 
 class UserModel extends Equatable {
@@ -9,6 +8,8 @@ class UserModel extends Equatable {
     required this.username,
     required this.password,
     this.email,
+    this.countryCode,
+    this.phoneCode,
     this.phoneNumber,
   });
 
@@ -19,6 +20,9 @@ class UserModel extends Equatable {
       birthday: DateTime.parse(map['birthday']),
       username: map['username'] as String,
       email: map['email'] != null ? map['email'] as String : null,
+      countryCode:
+          map['countryCode'] != null ? map['countryCode'] as String : null,
+      phoneCode: map['phoneCode'] != null ? map['phoneCode'] as String : null,
       phoneNumber:
           map['phoneNumber'] != null ? map['phoneNumber'] as String : null,
       password: map['password'] as String,
@@ -30,6 +34,8 @@ class UserModel extends Equatable {
   final DateTime birthday;
   final String username;
   final String? email;
+  final String? countryCode;
+  final String? phoneCode;
   final String? phoneNumber;
   final String password;
 
@@ -39,17 +45,22 @@ class UserModel extends Equatable {
     DateTime? birthday,
     String? username,
     String? email,
+    String? countryCode,
+    String? phoneCode,
     String? phoneNumber,
     String? password,
   }) {
     return UserModel(
-        firstName: firstName ?? this.firstName,
-        lastName: lastName ?? this.lastName,
-        birthday: birthday ?? this.birthday,
-        username: username ?? this.username,
-        email: email ?? this.email,
-        phoneNumber: phoneNumber ?? this.phoneNumber,
-        password: password ?? this.password);
+      firstName: firstName ?? this.firstName,
+      lastName: lastName ?? this.lastName,
+      birthday: birthday ?? this.birthday,
+      username: username ?? this.username,
+      email: email ?? this.email,
+      countryCode: countryCode ?? this.countryCode,
+      phoneCode: phoneCode ?? this.phoneCode,
+      phoneNumber: phoneNumber ?? this.phoneNumber,
+      password: password ?? this.password,
+    );
   }
 
   Map<String, dynamic> toMap() {
@@ -59,8 +70,10 @@ class UserModel extends Equatable {
       'birthday': birthday.toIso8601String(),
       'username': username,
       'email': email,
+      'countryCode': countryCode,
+      'phoneCode': phoneCode,
       'phoneNumber': phoneNumber,
-      'password': password
+      'password': password,
     };
   }
 
@@ -71,6 +84,8 @@ class UserModel extends Equatable {
         lastName,
         birthday,
         email,
+        countryCode,
+        phoneCode,
         phoneNumber,
         password,
       ];

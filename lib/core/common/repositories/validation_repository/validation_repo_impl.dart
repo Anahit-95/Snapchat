@@ -95,9 +95,11 @@ class ValidationRepoImpl implements ValidatonRepo {
 
   @override
   bool isPhoneNumberAvailable(
-      {required String phoneNumber, required List<UserModel> allUsers}) {
-    final existingPhone =
-        allUsers.where((user) => user.phoneNumber == phoneNumber);
+      {required String phoneCode,
+      required String phoneNumber,
+      required List<UserModel> allUsers}) {
+    final existingPhone = allUsers.where((user) =>
+        user.phoneNumber == phoneNumber && user.phoneCode == phoneCode);
     if (existingPhone.isEmpty) {
       return true;
     } else {

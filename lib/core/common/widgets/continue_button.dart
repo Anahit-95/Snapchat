@@ -6,16 +6,18 @@ class ContinueButton extends StatelessWidget {
     required this.onPressed,
     required this.isEnabled,
     required this.title,
+    this.top = 100,
     super.key,
   });
   final void Function()? onPressed;
   final bool isEnabled;
   final String title;
+  final double top;
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.only(top: 100),
+      padding: EdgeInsets.only(top: top),
       width: MediaQuery.of(context).size.width * .6,
       child: ElevatedButton(
         onPressed: isEnabled ? onPressed : null,

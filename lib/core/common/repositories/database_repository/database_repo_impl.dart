@@ -44,6 +44,8 @@ class DatabaseRepoImpl implements DatabaseRepo {
               birthday TEXT, 
               username TEXT PRIMARY KEY,
               email TEXT,
+              countryCode TEXT,
+              phoneCode TEXT,
               phoneNumber TEXT,
               password TEXT
             )
@@ -130,5 +132,17 @@ class DatabaseRepoImpl implements DatabaseRepo {
     userMap =
         await db.query('Users', where: 'username = ?', whereArgs: [username]);
     return UserModel.fromMap(userMap[0]);
+  }
+
+  @override
+  Future<void> updateUser(
+      {required String oldUsername, required UserModel updatedUser}) async {
+    final db = await database;
+    await db.update(
+      'Users',
+      updatedUser.toMap(),
+      where: 'username = ?',
+      whereArgs: [oldUsername],
+    );
   }
 }

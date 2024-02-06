@@ -33,7 +33,7 @@ class EditProfileBloc extends Bloc<EditProfileEvent, EditProfileState> {
     String usernameError;
     String emailError;
     String phoneError;
-    String passwordError = '';
+    String passwordError;
 
     if (_allUsers.isEmpty) {
       _allUsers = await _dbRepo.getAllUsers();
@@ -84,17 +84,16 @@ class EditProfileBloc extends Bloc<EditProfileEvent, EditProfileState> {
     } else {
       emailError = '';
     }
-    print('${event.phoneCode} ${event.phoneNumber}');
-    print(event.phoneCode);
 
     if (event.phoneNumber!.isNotEmpty) {
       if (_validationRepo.isValidPhoneNumber(event.phoneNumber!)) {
         if (_validationRepo.isPhoneNumberAvailable(
-              phoneNumber: '${event.phoneCode} ${event.phoneNumber}',
+              phoneCode: event.phoneCode!,
+              phoneNumber: event.phoneNumber!,
               allUsers: _allUsers,
             ) ||
-            '${event.phoneCode} ${event.phoneNumber}' ==
-                event.user.phoneNumber) {
+            (event.phoneCode == event.user.phoneCode &&
+                event.phoneNumber == event.user.phoneNumber)) {
           phoneError = '';
         } else {
           phoneError = 'This phone number is already in use';
@@ -123,10 +122,6 @@ class EditProfileBloc extends Bloc<EditProfileEvent, EditProfileState> {
         passwordError.isEmpty) {
       emit(ValidEditState());
     } else {
-      print(firstNameError);
-      print(lastNameError);
-      print(birthdayError);
-      print(usernameError);
       emit(InvalidEditState(
         firstNameError: firstNameError,
         lastNameError: lastNameError,
@@ -139,6 +134,12 @@ class EditProfileBloc extends Bloc<EditProfileEvent, EditProfileState> {
     }
   }
 
-  FutureOr<void> _onSaveProfileChanges(
-      SaveProfileChanges event, Emitter<EditProfileState> emit) {}
+  Future<void> _onSaveProfileChanges(
+      SaveProfileChanges event, Emitter<EditProfileState> emit) async {
+    emit(LoadingEditProfile());
+    await _dbRepo.updateUser(
+        oldUsername: event.username, updatedUser: event.user);
+    _allUsers = await _dbRepo.getAllUsers();
+    emit(UpdatedProfile());
+  }
 }

@@ -43,10 +43,11 @@ final class EditingOnChangeEvent extends EditProfileEvent {
 }
 
 final class SaveProfileChanges extends EditProfileEvent {
-  const SaveProfileChanges(this.user);
+  const SaveProfileChanges({required this.user, required this.username});
 
   final UserModel user;
+  final String username;
 
   @override
-  List<Object> get props => [user];
+  List<Object> get props => [username, user];
 }

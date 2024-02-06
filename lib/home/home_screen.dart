@@ -2,15 +2,20 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
 import 'package:snapchat/core/common/repositories/database_repository/database_repo_impl.dart';
 import 'package:snapchat/core/common/repositories/validation_repository/validation_repo_impl.dart';
 import 'package:snapchat/core/common/widgets/continue_button.dart';
 import 'package:snapchat/core/common/widgets/custom_text_field.dart';
 import 'package:snapchat/core/common/widgets/header_text.dart';
+import 'package:snapchat/core/enums/edit_field_name.dart';
 import 'package:snapchat/core/models/country_model.dart';
 import 'package:snapchat/core/models/user_model.dart';
+import 'package:snapchat/core/providers/country_notifier.dart';
 import 'package:snapchat/core/utils/consts/colors.dart';
+import 'package:snapchat/countries/countries_screen.dart';
 import 'package:snapchat/home/edit_profile_bloc/edit_profile_bloc.dart';
+import 'package:snapchat/log_in/log_in_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({required this.user, super.key});
@@ -35,22 +40,30 @@ class _HomeScreenState extends State<HomeScreen> {
     dbRepo: DatabaseRepoImpl(),
   );
 
+  late CountryNotifier _countryNotifier;
+
   DateTime? _selectedDate;
   CountryModel? _selectedCountry;
 
   @override
   void initState() {
+    // _countryNotifier.getCountry();
     _firstNameController.text = widget.user.firstName;
     _lastNameController.text = widget.user.lastName;
     _dateController.text =
         DateFormat('d MMMM yyyy').format(widget.user.birthday);
     _usernameController.text = widget.user.username;
     _emailController.text = widget.user.email ?? '';
-    _phoneController.text = widget.user.phoneNumber != null
-        ? widget.user.phoneNumber!.split(' ')[1]
-        : '';
+    _phoneController.text = widget.user.phoneNumber ?? '';
     _passwordController.text = widget.user.password;
     super.initState();
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+
+    _countryNotifier = Provider.of(context, listen: false);
   }
 
   @override
@@ -73,50 +86,61 @@ class _HomeScreenState extends State<HomeScreen> {
         builder: (context, state) {
           print(widget.user);
           print(state.runtimeType);
-          return Scaffold(
-            body: SafeArea(
-              child: Padding(
-                padding: const EdgeInsets.only(top: 30, right: 40, left: 40),
-                child: SingleChildScrollView(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const HeaderText(
-                        title: 'Edit Profile',
-                        fontSize: 22,
-                        color: AppColors.blueText1,
-                      ),
-                      _renderFirstNameInput(),
-                      _renderFirstNameErrorText(state),
-                      _renderLastNameInput(),
-                      _renderLastNameErrorText(state),
-                      _renderBirthdayInput(),
-                      _renderBirthdayErrorText(state),
-                      _renderUsernameInput(),
-                      _renderUsernameErrorText(state),
-                      _renderEmailInput(),
-                      _renderEmailErrorText(state),
-                      _renderMobileInput(),
-                      _renderPhoneErrorText(state),
-                      _renderPasswordInput(),
-                      _renderPasswordErrorText(state),
-                      Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 40),
-                        width: double.maxFinite,
-                        child: ContinueButton(
-                          onPressed: () {},
-                          isEnabled: true,
-                          title: 'Save',
-                        ),
-                      )
-                    ],
-                  ),
-                ),
-              ),
-            ),
-          );
+          return _render(state);
         },
       ),
+    );
+  }
+
+  Widget _render(EditProfileState state) {
+    return Scaffold(
+      body: SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.only(top: 30, right: 40, left: 40),
+          child: SingleChildScrollView(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                _renderHeader(),
+                _renderFirstNameInput(),
+                _renderErrorText(state, EditFieldName.firstName),
+                _renderLastNameInput(),
+                _renderErrorText(state, EditFieldName.lastName),
+                _renderBirthdayInput(),
+                _renderErrorText(state, EditFieldName.birthday),
+                _renderUsernameInput(),
+                _renderErrorText(state, EditFieldName.username),
+                _renderEmailInput(),
+                _renderErrorText(state, EditFieldName.email),
+                _renderMobileInput(),
+                _renderErrorText(state, EditFieldName.phone),
+                _renderPasswordInput(),
+                _renderErrorText(state, EditFieldName.password),
+                _renderSaveButton(state)
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _renderHeader() {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        const HeaderText(
+          title: 'Edit Profile',
+          fontSize: 22,
+          color: AppColors.blueText1,
+        ),
+        GestureDetector(
+          onTap: () {
+            Navigator.pushReplacementNamed(context, LogInScreen.routeName);
+          },
+          child: const Icon(Icons.logout_sharp),
+        )
+      ],
     );
   }
 
@@ -131,13 +155,38 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  Widget _renderFirstNameErrorText(EditProfileState state) {
-    if (state is InvalidEditState && state.firstNameError.isNotEmpty) {
+  Widget _renderErrorText(EditProfileState state, EditFieldName fieldName) {
+    if (state is InvalidEditState) {
+      String errorText;
+      switch (fieldName) {
+        case EditFieldName.firstName:
+          errorText = state.firstNameError;
+          break;
+        case EditFieldName.lastName:
+          errorText = state.lastNameError;
+          break;
+        case EditFieldName.birthday:
+          errorText = state.birthdayError;
+          break;
+        case EditFieldName.username:
+          errorText = state.usernameError;
+          break;
+        case EditFieldName.email:
+          errorText = state.emailError;
+          break;
+        case EditFieldName.phone:
+          errorText = state.phoneError;
+          break;
+        case EditFieldName.password:
+          errorText = state.passwordError;
+        default:
+          errorText = '';
+      }
       return SizedBox(
         width: double.maxFinite,
         height: 15,
         child: Text(
-          state.firstNameError,
+          errorText,
           style: const TextStyle(color: Colors.red, fontSize: 12),
         ),
       );
@@ -155,21 +204,6 @@ class _HomeScreenState extends State<HomeScreen> {
         onChanged: (_) => _onChangeInputs(),
       ),
     );
-  }
-
-  Widget _renderLastNameErrorText(EditProfileState state) {
-    if (state is InvalidEditState && state.lastNameError.isNotEmpty) {
-      return SizedBox(
-        width: double.maxFinite,
-        height: 15,
-        child: Text(
-          state.lastNameError,
-          style: const TextStyle(color: Colors.red, fontSize: 12),
-        ),
-      );
-    } else {
-      return const SizedBox(height: 15);
-    }
   }
 
   Widget _renderBirthdayInput() {
@@ -192,29 +226,18 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  Widget _renderBirthdayErrorText(EditProfileState state) {
-    if (state is InvalidEditState && state.birthdayError.isNotEmpty) {
-      return SizedBox(
-        width: double.maxFinite,
-        height: 15,
-        child: Text(
-          state.birthdayError,
-          style: const TextStyle(color: Colors.red, fontSize: 12),
-        ),
-      );
-    } else {
-      return const SizedBox(height: 15);
-    }
-  }
-
   Future<void> _openDatePicker() async {
     FocusScope.of(context).unfocus();
     final currentDate = DateTime.now();
     showCupertinoModalPopup(
       context: context,
       builder: (context) {
-        return SizedBox(
+        return Container(
+          color: Colors.white,
           height: 250,
+          padding: EdgeInsets.only(
+            bottom: MediaQuery.of(context).viewInsets.bottom,
+          ),
           child: CupertinoDatePicker(
             mode: CupertinoDatePickerMode.date,
             initialDateTime: _selectedDate ?? widget.user.birthday,
@@ -244,44 +267,6 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  // Widget _rederAvailable(EditProfileState state) {
-  //   return Container(
-  //     width: double.maxFinite,
-  //     height: 25,
-  //     padding: const EdgeInsets.only(top: 10),
-  //     child: (state is ValidEditState)
-  //         ? const Text(
-  //             'Username available',
-  //             textAlign: TextAlign.start,
-  //             style: TextStyle(
-  //               color: AppColors.greyText2,
-  //               fontSize: 12,
-  //             ),
-  //           )
-  //         : (state is InvalidEditState)
-  //             ? Text(
-  //                 state.usernameError,
-  //                 style: const TextStyle(color: Colors.red, fontSize: 12),
-  //               )
-  //             : null,
-  //   );
-  // }
-
-  Widget _renderUsernameErrorText(EditProfileState state) {
-    if (state is InvalidEditState && state.usernameError.isNotEmpty) {
-      return SizedBox(
-        width: double.maxFinite,
-        height: 15,
-        child: Text(
-          state.usernameError,
-          style: const TextStyle(color: Colors.red, fontSize: 12),
-        ),
-      );
-    } else {
-      return const SizedBox(height: 15);
-    }
-  }
-
   Widget _renderEmailInput() {
     return Padding(
       padding: const EdgeInsets.only(bottom: 4.0),
@@ -292,21 +277,6 @@ class _HomeScreenState extends State<HomeScreen> {
         keyboardType: TextInputType.emailAddress,
       ),
     );
-  }
-
-  Widget _renderEmailErrorText(EditProfileState state) {
-    if (state is InvalidEditState) {
-      return SizedBox(
-        width: double.maxFinite,
-        height: 15,
-        child: Text(
-          state.emailError,
-          style: const TextStyle(color: Colors.red, fontSize: 12),
-        ),
-      );
-    } else {
-      return const SizedBox(height: 15);
-    }
   }
 
   Widget _renderMobileInput() {
@@ -351,19 +321,25 @@ class _HomeScreenState extends State<HomeScreen> {
     //   builder: (context, snapshot) {
     //     if (snapshot.connectionState == ConnectionState.done) {
     //       _selectedCountry ??= snapshot.data;
-    return GestureDetector(
-      // onTap: _onTapNavigateCountriesScreen,
-      child: Text(
-        widget.user.phoneNumber != null
-            ? widget.user.phoneNumber!.split(' ')[0]
-            : '+',
-        // '${_selectedCountry?.getFlagEmoji ?? _selectedCountry!.countryCode} +${_selectedCountry!.phoneCode}',
-        style: const TextStyle(
-          fontSize: 18,
-          color: AppColors.blueText2,
-        ),
-      ),
+    return Consumer(
+      builder: (context, value, child) {
+        return GestureDetector(
+          onTap: _onTapNavigateCountriesScreen,
+          child: Text(
+            _selectedCountry != null
+                ? '${_selectedCountry!.getFlagEmoji} +${_selectedCountry!.phoneCode}'
+                : widget.user.phoneNumber != null
+                    ? '$getFlagEmoji +${widget.user.phoneCode}'
+                    : '+',
+            style: const TextStyle(
+              fontSize: 18,
+              color: AppColors.blueText2,
+            ),
+          ),
+        );
+      },
     );
+
     //     } else {
     //       return const SizedBox.shrink();
     //     }
@@ -399,21 +375,6 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  Widget _renderPhoneErrorText(EditProfileState state) {
-    if (state is InvalidEditState) {
-      return SizedBox(
-        width: double.maxFinite,
-        height: 15,
-        child: Text(
-          state.phoneError,
-          style: const TextStyle(color: Colors.red, fontSize: 12),
-        ),
-      );
-    } else {
-      return const SizedBox(height: 15);
-    }
-  }
-
   Widget _renderPasswordInput() {
     return Padding(
       padding: const EdgeInsets.only(bottom: 4),
@@ -426,19 +387,30 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  Widget _renderPasswordErrorText(EditProfileState state) {
-    if (state is InvalidEditState) {
-      return SizedBox(
-        width: double.maxFinite,
-        height: 15,
-        child: Text(
-          state.passwordError,
-          style: const TextStyle(color: Colors.red, fontSize: 12),
-        ),
-      );
-    } else {
-      return const SizedBox(height: 15);
-    }
+  Widget _renderSaveButton(EditProfileState state) {
+    return ContinueButton(
+      onPressed: _onPressedSave,
+      isEnabled: state is! InvalidEditState,
+      title: 'Save',
+      top: 40,
+    );
+  }
+
+  String get getFlagEmoji {
+    final flag = widget.user.countryCode!.toUpperCase().replaceAllMapped(
+        RegExp(r'[A-Z]'),
+        (match) => String.fromCharCode(match.group(0)!.codeUnitAt(0) + 127397));
+    return flag;
+  }
+
+  void _onTapNavigateCountriesScreen() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) =>
+            CountriesScreen(countryNotifier: _countryNotifier),
+      ),
+    );
   }
 
   void _onChangeInputs() {
@@ -451,11 +423,32 @@ class _HomeScreenState extends State<HomeScreen> {
       phoneCode: _selectedCountry != null
           ? _selectedCountry!.phoneCode
           : widget.user.phoneNumber != null
-              ? widget.user.phoneNumber!.split(' ')[0]
-              : '1',
+              ? widget.user.phoneCode
+              : null,
       phoneNumber: _phoneController.text,
       password: _passwordController.text,
       user: widget.user,
     ));
   }
+
+  void _onPressedSave() => _editProfileBloc.add(
+        SaveProfileChanges(
+          username: widget.user.username,
+          user: widget.user.copyWith(
+            firstName: _firstNameController.text,
+            lastName: _lastNameController.text,
+            birthday: _selectedDate ?? widget.user.birthday,
+            username: _usernameController.text,
+            email: _emailController.text.isEmpty ? null : _emailController.text,
+            phoneCode: _phoneController.text.isEmpty
+                ? null
+                : _selectedCountry != null
+                    ? _selectedCountry!.phoneCode
+                    : widget.user.phoneCode,
+            phoneNumber:
+                _phoneController.text.isEmpty ? null : _phoneController.text,
+            password: _passwordController.text,
+          ),
+        ),
+      );
 }

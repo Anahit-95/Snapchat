@@ -11,14 +11,13 @@ import 'package:snapchat/core/common/widgets/continue_button.dart';
 import 'package:snapchat/core/common/widgets/custom_text_field.dart';
 import 'package:snapchat/core/common/widgets/header_text.dart';
 import 'package:snapchat/core/common/widgets/sign_screen_wrapper.dart';
+import 'package:snapchat/core/enums/sign_up_mode.dart';
 import 'package:snapchat/core/models/country_model.dart';
 import 'package:snapchat/core/models/user_model.dart';
 import 'package:snapchat/core/utils/consts/colors.dart';
 import 'package:snapchat/countries/countries_screen.dart';
 import 'package:snapchat/sign_up/screens/sign_up_email_phone/sign_up_email_phone_bloc/sign_up_email_phone_bloc.dart';
 import 'package:snapchat/sign_up/screens/sign_up_password/sign_up_password_screen.dart';
-
-enum SignUpMode { email, phone }
 
 class SignUpEmailPhoneScreen extends StatefulWidget {
   const SignUpEmailPhoneScreen({required this.user, super.key});
@@ -348,8 +347,9 @@ class _SignUpEmailPhoneScreenState extends State<SignUpEmailPhoneScreen> {
       updatedUser = widget.user.copyWith(email: _emailController.text);
     } else {
       updatedUser = widget.user.copyWith(
-        phoneNumber:
-            '+${_selectedCountry!.phoneCode} ${_mobileController.text}',
+        countryCode: _selectedCountry!.countryCode,
+        phoneCode: _selectedCountry!.phoneCode,
+        phoneNumber: _mobileController.text,
       );
     }
     Navigator.push(

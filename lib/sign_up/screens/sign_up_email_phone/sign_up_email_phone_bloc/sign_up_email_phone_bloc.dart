@@ -48,7 +48,8 @@ class SignUpEmailPhoneBloc
         _allUsers = await _dbRepo.getAllUsers();
       }
       if (_validationRepo.isPhoneNumberAvailable(
-          phoneNumber: '+${event.phoneCode} ${event.phoneNumber}',
+          phoneCode: event.phoneCode,
+          phoneNumber: event.phoneNumber,
           allUsers: _allUsers)) {
         emit(PhoneMode(event.phoneNumber));
       } else {

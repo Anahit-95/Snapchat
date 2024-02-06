@@ -3,14 +3,16 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:snapchat/core/common/repositories/database_repository/database_repo_impl.dart';
 import 'package:snapchat/core/common/widgets/custom_back_button.dart';
 import 'package:snapchat/core/models/country_model.dart';
+import 'package:snapchat/core/providers/country_notifier.dart';
 import 'package:snapchat/core/utils/consts/colors.dart';
 import 'package:snapchat/countries/countries_bloc/countries_bloc.dart';
 import 'package:snapchat/countries/repository/load_countries_repo_impl.dart';
 
 class CountriesScreen extends StatefulWidget {
-  const CountriesScreen({super.key, this.onChange});
+  const CountriesScreen({super.key, this.onChange, this.countryNotifier});
 
   final Function(CountryModel)? onChange;
+  final CountryNotifier? countryNotifier;
 
   @override
   State<CountriesScreen> createState() => _CountriesScreenState();
@@ -171,7 +173,11 @@ class _CountriesScreenState extends State<CountriesScreen> {
             ),
       child: ListTile(
         onTap: () {
-          widget.onChange?.call(country);
+          if (widget.onChange != null) {
+            widget.onChange?.call(country);
+          } else {
+            widget.countryNotifier!.setCountry(country);
+          }
           Navigator.pop(context);
         },
         horizontalTitleGap: 5,

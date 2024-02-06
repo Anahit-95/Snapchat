@@ -5,8 +5,10 @@ abstract class ValidatonRepo {
 
   bool isValidUsernameAndNotEmpty(String username);
 
-  bool isUsernameAvailable(
-      {required String username, required List<UserModel> allUsers});
+  bool isUsernameAvailable({
+    required String username,
+    required List<UserModel> allUsers,
+  });
 
   bool isValidPassword(String password);
 
@@ -14,15 +16,20 @@ abstract class ValidatonRepo {
 
   bool isValidEmail(String email);
 
-  bool isEmailAvailable(
-      {required String email, required List<UserModel> allUsers});
+  bool isEmailAvailable({
+    required String email,
+    required List<UserModel> allUsers,
+  });
 
   bool isValidBirthday(DateTime date);
 
   bool isValidPhoneNumber(String phoneNumber);
 
-  bool isPhoneNumberAvailable(
-      {required String phoneNumber, required List<UserModel> allUsers});
+  bool isPhoneNumberAvailable({
+    required String phoneCode,
+    required String phoneNumber,
+    required List<UserModel> allUsers,
+  });
 
   bool isValidNameState({required firstName, required lastName});
 
