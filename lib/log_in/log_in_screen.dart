@@ -9,8 +9,8 @@ import 'package:snapchat/core/common/widgets/header_text.dart';
 import 'package:snapchat/core/common/widgets/sign_screen_wrapper.dart';
 import 'package:snapchat/core/providers/country_notifier.dart';
 import 'package:snapchat/core/utils/consts/colors.dart';
-import 'package:snapchat/home/home_screen.dart';
 import 'package:snapchat/log_in/log_in_bloc/log_in_bloc.dart';
+import 'package:snapchat/profile/edit_profile_screen.dart';
 
 class LogInScreen extends StatefulWidget {
   const LogInScreen({super.key});
@@ -185,13 +185,14 @@ class _LogInScreenState extends State<LogInScreen> {
 extension _BlocAddition on _LogInScreenState {
   void _listener(BuildContext context, LogInState state) {
     if (state is LogInSuccess) {
-      Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => ChangeNotifierProvider<CountryNotifier>(
-                create: (_) => CountryNotifier(),
-                child: HomeScreen(user: state.user)),
-          ));
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(
+          builder: (context) => ChangeNotifierProvider<CountryNotifier>(
+              create: (_) => CountryNotifier(),
+              child: EditProfileScreen(user: state.user)),
+        ),
+      );
     }
     if (state is LogInError) {
       ScaffoldMessenger.of(context)

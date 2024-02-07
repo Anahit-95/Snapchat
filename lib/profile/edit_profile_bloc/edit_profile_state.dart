@@ -40,6 +40,17 @@ final class InvalidEditState extends EditProfileState {
       ];
 }
 
+final class FindingCountry extends EditProfileState {}
+
+final class CountryFounded extends EditProfileState {
+  const CountryFounded(this.country);
+
+  final CountryModel country;
+
+  @override
+  List<Object> get props => [country];
+}
+
 final class ValidEditState extends EditProfileState {}
 
 final class LoadingEditProfile extends EditProfileState {}

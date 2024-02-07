@@ -7,6 +7,15 @@ sealed class EditProfileEvent extends Equatable {
   List<Object> get props => [];
 }
 
+final class GetCountryEvent extends EditProfileEvent {
+  const GetCountryEvent(this.countryCode);
+
+  final String? countryCode;
+
+  @override
+  List<Object> get props => [countryCode!];
+}
+
 final class EditingOnChangeEvent extends EditProfileEvent {
   const EditingOnChangeEvent({
     required this.firstName,

@@ -32,6 +32,9 @@ class LogInBloc extends Bloc<LogInEvent, LogInState> {
         validationRepo: _validationRepo,
       );
       if (user != null) {
+        // TODO: call to storage service
+        // StorageService()
+        //     .setUser(username: user.username, password: user.password);
         emit(LogInSuccess(user: user));
       } else {
         emit(const LogInError('Wrong username or password'));

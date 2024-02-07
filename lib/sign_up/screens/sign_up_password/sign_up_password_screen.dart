@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:provider/provider.dart';
 import 'package:snapchat/core/common/repositories/database_repository/database_repo_impl.dart';
 import 'package:snapchat/core/common/repositories/validation_repository/validation_repo_impl.dart';
 import 'package:snapchat/core/common/widgets/continue_button.dart';
@@ -7,8 +8,9 @@ import 'package:snapchat/core/common/widgets/custom_text_field.dart';
 import 'package:snapchat/core/common/widgets/header_text.dart';
 import 'package:snapchat/core/common/widgets/sign_screen_wrapper.dart';
 import 'package:snapchat/core/models/user_model.dart';
+import 'package:snapchat/core/providers/country_notifier.dart';
 import 'package:snapchat/core/utils/consts/colors.dart';
-import 'package:snapchat/home/home_screen.dart';
+import 'package:snapchat/profile/edit_profile_screen.dart';
 import 'package:snapchat/sign_up/screens/sign_up_password/sign_up_password_bloc/sign_up_password_bloc.dart';
 
 class SignUpPasswordScreen extends StatefulWidget {
@@ -121,13 +123,17 @@ class _SignUpPasswordScreenState extends State<SignUpPasswordScreen> {
 extension _BlocAddition on _SignUpPasswordScreenState {
   void _listener(BuildContext context, SignUpPasswordState state) {
     if (state is ConfirmPassword) {
-      Navigator.push(
+      Navigator.pushAndRemoveUntil(
         context,
         MaterialPageRoute(
-          builder: (context) => HomeScreen(
-            user: widget.user.copyWith(password: _controller.text),
+          builder: (context) => ChangeNotifierProvider(
+            create: (context) => CountryNotifier(),
+            child: EditProfileScreen(
+              user: widget.user.copyWith(password: _controller.text),
+            ),
           ),
         ),
+        (route) => route.isFirst,
       );
     }
     if (state is SignUpError) {

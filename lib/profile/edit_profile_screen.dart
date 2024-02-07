@@ -3,30 +3,31 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
+import 'package:snapchat/core/common/repositories/api_repository/api_repo_impl.dart';
+import 'package:snapchat/core/common/repositories/countries_repository/countries_repo_impl.dart';
 import 'package:snapchat/core/common/repositories/database_repository/database_repo_impl.dart';
 import 'package:snapchat/core/common/repositories/validation_repository/validation_repo_impl.dart';
 import 'package:snapchat/core/common/widgets/continue_button.dart';
 import 'package:snapchat/core/common/widgets/custom_text_field.dart';
 import 'package:snapchat/core/common/widgets/header_text.dart';
 import 'package:snapchat/core/enums/edit_field_name.dart';
-import 'package:snapchat/core/models/country_model.dart';
 import 'package:snapchat/core/models/user_model.dart';
 import 'package:snapchat/core/providers/country_notifier.dart';
 import 'package:snapchat/core/utils/consts/colors.dart';
 import 'package:snapchat/countries/countries_screen.dart';
-import 'package:snapchat/home/edit_profile_bloc/edit_profile_bloc.dart';
 import 'package:snapchat/log_in/log_in_screen.dart';
+import 'package:snapchat/profile/edit_profile_bloc/edit_profile_bloc.dart';
 
-class HomeScreen extends StatefulWidget {
-  const HomeScreen({required this.user, super.key});
+class EditProfileScreen extends StatefulWidget {
+  const EditProfileScreen({required this.user, super.key});
 
   final UserModel user;
 
   @override
-  State<HomeScreen> createState() => _HomeScreenState();
+  State<EditProfileScreen> createState() => _EditProfileScreenState();
 }
 
-class _HomeScreenState extends State<HomeScreen> {
+class _EditProfileScreenState extends State<EditProfileScreen> {
   final TextEditingController _firstNameController = TextEditingController();
   final TextEditingController _lastNameController = TextEditingController();
   final TextEditingController _dateController = TextEditingController();
@@ -38,16 +39,18 @@ class _HomeScreenState extends State<HomeScreen> {
   final EditProfileBloc _editProfileBloc = EditProfileBloc(
     validationRepo: ValidationRepoImpl(),
     dbRepo: DatabaseRepoImpl(),
+    countriesRepo: CountriesRepoImpl(
+      apiRepo: ApiRepoImpl(),
+      dbRepo: DatabaseRepoImpl(),
+    ),
   );
 
   late CountryNotifier _countryNotifier;
 
   DateTime? _selectedDate;
-  CountryModel? _selectedCountry;
 
   @override
   void initState() {
-    // _countryNotifier.getCountry();
     _firstNameController.text = widget.user.firstName;
     _lastNameController.text = widget.user.lastName;
     _dateController.text =
@@ -56,6 +59,7 @@ class _HomeScreenState extends State<HomeScreen> {
     _emailController.text = widget.user.email ?? '';
     _phoneController.text = widget.user.phoneNumber ?? '';
     _passwordController.text = widget.user.password;
+    _editProfileBloc.add(GetCountryEvent(widget.user.countryCode));
     super.initState();
   }
 
@@ -82,10 +86,9 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     return BlocProvider(
       create: (context) => _editProfileBloc,
-      child: BlocBuilder<EditProfileBloc, EditProfileState>(
+      child: BlocConsumer<EditProfileBloc, EditProfileState>(
+        listener: _listener,
         builder: (context, state) {
-          print(widget.user);
-          print(state.runtimeType);
           return _render(state);
         },
       ),
@@ -313,38 +316,24 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  // 2. Future builder verson of getting devices local country
-
   Widget _renderMobileInputFlagAndPhonCode() {
-    // return FutureBuilder(
-    //   future: _getDeviceCountry(),
-    //   builder: (context, snapshot) {
-    //     if (snapshot.connectionState == ConnectionState.done) {
-    //       _selectedCountry ??= snapshot.data;
-    return Consumer(
-      builder: (context, value, child) {
+    return Consumer<CountryNotifier>(
+      builder: (context, countryNotifier, _) {
         return GestureDetector(
-          onTap: _onTapNavigateCountriesScreen,
-          child: Text(
-            _selectedCountry != null
-                ? '${_selectedCountry!.getFlagEmoji} +${_selectedCountry!.phoneCode}'
-                : widget.user.phoneNumber != null
-                    ? '$getFlagEmoji +${widget.user.phoneCode}'
-                    : '+',
-            style: const TextStyle(
-              fontSize: 18,
-              color: AppColors.blueText2,
-            ),
-          ),
-        );
+            onTap: _onTapNavigateCountriesScreen,
+            child: Text(
+              countryNotifier.country != null
+                  ? '${countryNotifier.country!.getFlagEmoji} +${countryNotifier.country!.phoneCode}'
+                  : widget.user.phoneNumber != null
+                      ? '$getFlagEmoji +${widget.user.phoneCode}'
+                      : '+',
+              style: const TextStyle(
+                fontSize: 18,
+                color: AppColors.blueText2,
+              ),
+            ));
       },
     );
-
-    //     } else {
-    //       return const SizedBox.shrink();
-    //     }
-    //   },
-    // );
   }
 
   Widget _renderMobileInputDivider() {
@@ -420,11 +409,7 @@ class _HomeScreenState extends State<HomeScreen> {
       birthday: _selectedDate ?? widget.user.birthday,
       username: _usernameController.text,
       email: _emailController.text,
-      phoneCode: _selectedCountry != null
-          ? _selectedCountry!.phoneCode
-          : widget.user.phoneNumber != null
-              ? widget.user.phoneCode
-              : null,
+      phoneCode: _countryNotifier.country!.phoneCode,
       phoneNumber: _phoneController.text,
       password: _passwordController.text,
       user: widget.user,
@@ -440,15 +425,29 @@ class _HomeScreenState extends State<HomeScreen> {
             birthday: _selectedDate ?? widget.user.birthday,
             username: _usernameController.text,
             email: _emailController.text.isEmpty ? null : _emailController.text,
+            countryCode: _phoneController.text.isEmpty
+                ? null
+                : _countryNotifier.country!.countryCode,
             phoneCode: _phoneController.text.isEmpty
                 ? null
-                : _selectedCountry != null
-                    ? _selectedCountry!.phoneCode
-                    : widget.user.phoneCode,
+                : _countryNotifier.country!.phoneCode,
             phoneNumber:
                 _phoneController.text.isEmpty ? null : _phoneController.text,
             password: _passwordController.text,
           ),
         ),
       );
+}
+
+extension _BlocAddition on _EditProfileScreenState {
+  void _listener(BuildContext context, EditProfileState state) {
+    if (state is CountryFounded) {
+      _countryNotifier.setCountry(state.country);
+    }
+    if (state is UpdatedProfile) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Changes saved successfully.')),
+      );
+    }
+  }
 }

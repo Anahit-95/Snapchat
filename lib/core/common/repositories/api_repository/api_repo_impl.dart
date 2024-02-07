@@ -1,10 +1,10 @@
 import 'dart:convert';
 
 import 'package:http/http.dart' as http;
+import 'package:snapchat/core/common/repositories/api_repository/api_repo.dart';
 import 'package:snapchat/core/models/country_model.dart';
-import 'package:snapchat/countries/repository/load_countries_repo.dart';
 
-class LoadCountriesRepoImpl implements LoadCountriesRepo {
+class ApiRepoImpl implements ApiRepo {
   static const _baseUrl =
       'https://drive.usercontent.google.com/download?id=1etEvdFNddpFfd5tQ-bYObtKsti7kbiu3';
 
