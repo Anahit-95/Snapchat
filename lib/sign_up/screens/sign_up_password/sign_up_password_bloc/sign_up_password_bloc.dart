@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:snapchat/core/common/repositories/database_repository/database_repo_impl.dart';
+import 'package:snapchat/core/common/repositories/storage_repo/storage_repo_impl.dart';
 import 'package:snapchat/core/common/repositories/validation_repository/validation_repo_impl.dart';
 import 'package:snapchat/core/models/user_model.dart';
 
@@ -11,11 +12,13 @@ part 'sign_up_password_state.dart';
 
 class SignUpPasswordBloc
     extends Bloc<SignUpPasswordEvent, SignUpPasswordState> {
-  SignUpPasswordBloc(
-      {required ValidationRepoImpl validationRepo,
-      required DatabaseRepoImpl dbRepo})
-      : _validationRepo = validationRepo,
+  SignUpPasswordBloc({
+    required ValidationRepoImpl validationRepo,
+    required DatabaseRepoImpl dbRepo,
+    required StorageRepoImpl storageRepo,
+  })  : _validationRepo = validationRepo,
         _dbRepo = dbRepo,
+        _storageRepo = storageRepo,
         super(PasswordInitial()) {
     on<OnChangePasswordInputEvent>(_onOnChangePasswordInput);
     on<ConfirmingPasswordEvent>(_onConfirmingPasswordEvent);
@@ -23,6 +26,7 @@ class SignUpPasswordBloc
 
   final ValidationRepoImpl _validationRepo;
   final DatabaseRepoImpl _dbRepo;
+  final StorageRepoImpl _storageRepo;
 
   void _onOnChangePasswordInput(
       OnChangePasswordInputEvent event, Emitter<SignUpPasswordState> emit) {
@@ -40,6 +44,10 @@ class SignUpPasswordBloc
     try {
       emit(LoadingPassword());
       await _dbRepo.insertUser(event.user);
+      await _storageRepo.setUser(
+        username: event.user.username,
+        password: event.user.password,
+      );
       emit(ConfirmPassword());
     } catch (e) {
       print(e);

@@ -37,45 +37,67 @@ class Home extends StatelessWidget {
       ),
       routes: {
         '/': (context) {
-          //   return BlocProvider(
-          //     create: (context) => NavigationWidgetBloc(
-          //       storageRepo: StorageRepoImpl(),
-          //       dbRepo: DatabaseRepoImpl(),
-          //     ),
-          //     child: BlocBuilder<NavigationWidgetBloc, NavigationWidgetState>(
-          //       builder: (context, state) {
-          //         return Container();
-          //       },
-          //     ),
-          //   );
-          return FutureBuilder(
-            future: _getUser(),
-            builder: (context, snapshot) {
-              switch (snapshot.connectionState) {
-                case ConnectionState.none:
-                case ConnectionState.waiting:
+          return BlocProvider(
+            create: (context) => NavigationWidgetBloc(
+              storageRepo: StorageRepoImpl(),
+              dbRepo: DatabaseRepoImpl(),
+            )..add(TryToGetUserEvent()),
+            child: BlocBuilder<NavigationWidgetBloc, NavigationWidgetState>(
+              builder: (context, state) {
+                if (state is IsOnStartScreen) {
+                  return const StartScreen();
+                } else if (state is IsOnEditProfileScreen) {
+                  return ChangeNotifierProvider<CountryNotifier>(
+                    create: (_) => CountryNotifier(),
+                    child: EditProfileScreen(user: state.user),
+                  );
+                } else if (state is NavigationWidgetError) {
+                  return Scaffold(
+                    body: Center(
+                      child: Text(
+                        state.error,
+                        style: const TextStyle(fontSize: 18),
+                      ),
+                    ),
+                  );
+                } else {
                   return const Scaffold(
                     body: Center(
                       child: CircularProgressIndicator(),
                     ),
                   );
-
-                case ConnectionState.active:
-                case ConnectionState.done:
-                  if (snapshot.hasError) {
-                    return Text('Error: ${snapshot.error}');
-                  } else {
-                    final user = snapshot.data;
-
-                    return user != null
-                        ? ChangeNotifierProvider<CountryNotifier>(
-                            create: (_) => CountryNotifier(),
-                            child: EditProfileScreen(user: user))
-                        : const StartScreen();
-                  }
-              }
-            },
+                }
+              },
+            ),
           );
+          // return FutureBuilder(
+          //   future: _getUser(),
+          //   builder: (context, snapshot) {
+          //     switch (snapshot.connectionState) {
+          //       case ConnectionState.none:
+          //       case ConnectionState.waiting:
+          //         return const Scaffold(
+          //           body: Center(
+          //             child: CircularProgressIndicator(),
+          //           ),
+          //         );
+
+          //       case ConnectionState.active:
+          //       case ConnectionState.done:
+          //         if (snapshot.hasError) {
+          //           return Text('Error: ${snapshot.error}');
+          //         } else {
+          //           final user = snapshot.data;
+
+          //           return user != null
+          //               ? ChangeNotifierProvider<CountryNotifier>(
+          //                   create: (_) => CountryNotifier(),
+          //                   child: EditProfileScreen(user: user))
+          //               : const StartScreen();
+          //         }
+          //     }
+          //   },
+          // );
         },
         LogInScreen.routeName: (context) => const LogInScreen(),
         SignUpNameScreen.routeName: (context) => const SignUpNameScreen(),

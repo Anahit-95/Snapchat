@@ -56,3 +56,5 @@ final class ValidEditState extends EditProfileState {}
 final class LoadingEditProfile extends EditProfileState {}
 
 final class UpdatedProfile extends EditProfileState {}
+
+final class LogOutState extends EditProfileState {}

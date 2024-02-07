@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:provider/provider.dart';
 import 'package:snapchat/core/common/repositories/database_repository/database_repo_impl.dart';
+import 'package:snapchat/core/common/repositories/storage_repo/storage_repo_impl.dart';
 import 'package:snapchat/core/common/repositories/validation_repository/validation_repo_impl.dart';
 import 'package:snapchat/core/common/widgets/continue_button.dart';
 import 'package:snapchat/core/common/widgets/custom_text_field.dart';
@@ -28,6 +29,7 @@ class _SignUpPasswordScreenState extends State<SignUpPasswordScreen> {
   final SignUpPasswordBloc _passwordBloc = SignUpPasswordBloc(
     validationRepo: ValidationRepoImpl(),
     dbRepo: DatabaseRepoImpl(),
+    storageRepo: StorageRepoImpl(),
   );
 
   @override

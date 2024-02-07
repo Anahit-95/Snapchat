@@ -5,6 +5,7 @@ import 'package:country_codes/country_codes.dart';
 import 'package:equatable/equatable.dart';
 import 'package:snapchat/core/common/repositories/countries_repository/countries_repo_impl.dart';
 import 'package:snapchat/core/common/repositories/database_repository/database_repo_impl.dart';
+import 'package:snapchat/core/common/repositories/storage_repo/storage_repo_impl.dart';
 import 'package:snapchat/core/common/repositories/validation_repository/validation_repo_impl.dart';
 import 'package:snapchat/core/models/country_model.dart';
 import 'package:snapchat/core/models/user_model.dart';
@@ -17,18 +18,22 @@ class EditProfileBloc extends Bloc<EditProfileEvent, EditProfileState> {
     required ValidationRepoImpl validationRepo,
     required DatabaseRepoImpl dbRepo,
     required CountriesRepoImpl countriesRepo,
+    required StorageRepoImpl storageRepo,
   })  : _validationRepo = validationRepo,
         _dbRepo = dbRepo,
         _countriesRepo = countriesRepo,
+        _storageRepo = storageRepo,
         super(EditProfileInitial()) {
     on<GetCountryEvent>(_onGetCountry);
     on<EditingOnChangeEvent>(_onEditingOnChange);
     on<SaveProfileChanges>(_onSaveProfileChanges);
+    on<LogOutEvent>(onLogOut);
   }
 
   final ValidationRepoImpl _validationRepo;
   final DatabaseRepoImpl _dbRepo;
   final CountriesRepoImpl _countriesRepo;
+  final StorageRepoImpl _storageRepo;
 
   List<UserModel> _allUsers = [];
 
@@ -164,5 +169,11 @@ class EditProfileBloc extends Bloc<EditProfileEvent, EditProfileState> {
         oldUsername: event.username, updatedUser: event.user);
     _allUsers = await _dbRepo.getAllUsers();
     emit(UpdatedProfile());
+  }
+
+  Future<void> onLogOut(
+      LogOutEvent event, Emitter<EditProfileState> emit) async {
+    await _storageRepo.deleteUser();
+    emit(LogOutState());
   }
 }

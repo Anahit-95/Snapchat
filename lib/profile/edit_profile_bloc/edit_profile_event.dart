@@ -60,3 +60,5 @@ final class SaveProfileChanges extends EditProfileEvent {
   @override
   List<Object> get props => [username, user];
 }
+
+final class LogOutEvent extends EditProfileEvent {}

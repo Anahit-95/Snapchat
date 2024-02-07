@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:snapchat/core/common/repositories/database_repository/database_repo_impl.dart';
+import 'package:snapchat/core/common/repositories/storage_repo/storage_repo_impl.dart';
 import 'package:snapchat/core/common/repositories/validation_repository/validation_repo_impl.dart';
 import 'package:snapchat/core/models/user_model.dart';
 
@@ -13,14 +14,17 @@ class LogInBloc extends Bloc<LogInEvent, LogInState> {
   LogInBloc({
     required ValidationRepoImpl validationRepo,
     required DatabaseRepoImpl dbRepo,
+    required StorageRepoImpl storageRepo,
   })  : _validationRepo = validationRepo,
         _dbRepo = dbRepo,
+        _storageRepo = storageRepo,
         super(LogInInitial()) {
     on<LoggingInEvent>(_onLoggingIn);
     on<OnChangeInputEvent>(_onChangeInput);
   }
   final ValidationRepoImpl _validationRepo;
   final DatabaseRepoImpl _dbRepo;
+  final StorageRepoImpl _storageRepo;
 
   Future<void> _onLoggingIn(
       LoggingInEvent event, Emitter<LogInState> emit) async {
@@ -32,9 +36,7 @@ class LogInBloc extends Bloc<LogInEvent, LogInState> {
         validationRepo: _validationRepo,
       );
       if (user != null) {
-        // TODO: call to storage service
-        // StorageService()
-        //     .setUser(username: user.username, password: user.password);
+        _storageRepo.setUser(username: user.username, password: user.password);
         emit(LogInSuccess(user: user));
       } else {
         emit(const LogInError('Wrong username or password'));

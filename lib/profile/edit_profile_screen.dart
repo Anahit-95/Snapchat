@@ -6,6 +6,7 @@ import 'package:provider/provider.dart';
 import 'package:snapchat/core/common/repositories/api_repository/api_repo_impl.dart';
 import 'package:snapchat/core/common/repositories/countries_repository/countries_repo_impl.dart';
 import 'package:snapchat/core/common/repositories/database_repository/database_repo_impl.dart';
+import 'package:snapchat/core/common/repositories/storage_repo/storage_repo_impl.dart';
 import 'package:snapchat/core/common/repositories/validation_repository/validation_repo_impl.dart';
 import 'package:snapchat/core/common/widgets/continue_button.dart';
 import 'package:snapchat/core/common/widgets/custom_text_field.dart';
@@ -15,7 +16,6 @@ import 'package:snapchat/core/models/user_model.dart';
 import 'package:snapchat/core/providers/country_notifier.dart';
 import 'package:snapchat/core/utils/consts/colors.dart';
 import 'package:snapchat/countries/countries_screen.dart';
-import 'package:snapchat/log_in/log_in_screen.dart';
 import 'package:snapchat/profile/edit_profile_bloc/edit_profile_bloc.dart';
 
 class EditProfileScreen extends StatefulWidget {
@@ -43,6 +43,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
       apiRepo: ApiRepoImpl(),
       dbRepo: DatabaseRepoImpl(),
     ),
+    storageRepo: StorageRepoImpl(),
   );
 
   late CountryNotifier _countryNotifier;
@@ -138,9 +139,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
           color: AppColors.blueText1,
         ),
         GestureDetector(
-          onTap: () {
-            Navigator.pushReplacementNamed(context, LogInScreen.routeName);
-          },
+          onTap: () => _editProfileBloc.add(LogOutEvent()),
           child: const Icon(Icons.logout_sharp),
         )
       ],
@@ -448,6 +447,9 @@ extension _BlocAddition on _EditProfileScreenState {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Changes saved successfully.')),
       );
+    }
+    if (state is LogOutState) {
+      Navigator.popUntil(context, (route) => route.isFirst);
     }
   }
 }
