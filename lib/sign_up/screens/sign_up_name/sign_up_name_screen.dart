@@ -27,13 +27,7 @@ class _SignUpNameScreenState extends State<SignUpNameScreen> {
   final SignUpNameBloc _nameBloc =
       SignUpNameBloc(validationRepo: ValidationRepoImpl());
 
-  final user = UserModel(
-    firstName: '',
-    lastName: '',
-    birthday: DateTime.now(),
-    username: '',
-    password: '',
-  );
+  final user = UserModel();
 
   @override
   void initState() {
@@ -137,7 +131,7 @@ class _SignUpNameScreenState extends State<SignUpNameScreen> {
     return RichText(
       text: const TextSpan(
         style: TextStyle(
-            color: AppColors.black, fontSize: 13, fontWeight: FontWeight.w300),
+            color: AppColors.black, fontSize: 12, fontWeight: FontWeight.w300),
         children: [
           TextSpan(
             text:
@@ -169,14 +163,14 @@ class _SignUpNameScreenState extends State<SignUpNameScreen> {
     if (_lastNameFocusNode.hasFocus) {
       _lastNameFocusNode.unfocus();
     }
+    user
+      ..firstName = _firstNameController.text
+      ..lastName = _lastNameController.text;
     Navigator.push(
       context,
       MaterialPageRoute(
         builder: (context) => SignUpBirthdayScreen(
-          user: user.copyWith(
-            firstName: _firstNameController.text,
-            lastName: _lastNameController.text,
-          ),
+          user: user,
         ),
       ),
     );

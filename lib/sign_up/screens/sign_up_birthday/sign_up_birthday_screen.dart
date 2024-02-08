@@ -22,7 +22,7 @@ class SignUpBirthdayScreen extends StatefulWidget {
 
 class _SignUpBirthdayScreenState extends State<SignUpBirthdayScreen> {
   late TextEditingController _dateController;
-  DateTime? _selectedDate;
+  late DateTime _selectedDate;
 
   final SignUpBirthdayBloc _birthdayBloc =
       SignUpBirthdayBloc(validationRepo: ValidationRepoImpl());
@@ -32,6 +32,9 @@ class _SignUpBirthdayScreenState extends State<SignUpBirthdayScreen> {
     super.initState();
     _dateController = TextEditingController();
     _birthdayBloc.add(OpenDatePickerEvent());
+    _selectedDate = DateTime.now().subtract(
+      const Duration(days: 16 * 365 + 4),
+    );
   }
 
   @override
@@ -111,21 +114,19 @@ class _SignUpBirthdayScreenState extends State<SignUpBirthdayScreen> {
 
   Future<void> _openDatePicker() async {
     FocusScope.of(context).unfocus();
-    final currentDate = DateTime.now();
-    final firstValidDate = currentDate.subtract(
-      const Duration(days: 16 * 365 + 4),
-    );
-    _selectedDate ?? _birthdayBloc.add(SelectingDate(firstValidDate));
+
     showCupertinoModalPopup(
       context: context,
+      // barrierColor: Colors.transparent,
+      // barrierDismissible: true,
       builder: (context) {
         return SizedBox(
           height: 250,
           child: CupertinoDatePicker(
             mode: CupertinoDatePickerMode.date,
-            initialDateTime: _selectedDate ?? firstValidDate,
+            initialDateTime: _selectedDate,
             minimumDate: DateTime(1900),
-            maximumDate: currentDate,
+            maximumDate: DateTime.now(),
             dateOrder: DatePickerDateOrder.dmy,
             onDateTimeChanged: (newDate) {
               _birthdayBloc.add(SelectingDate(newDate));
@@ -137,11 +138,11 @@ class _SignUpBirthdayScreenState extends State<SignUpBirthdayScreen> {
   }
 
   void _continuePressed() {
+    widget.user.birthday = _selectedDate;
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => SignUpUsernameScreen(
-            user: widget.user.copyWith(birthday: _selectedDate)),
+        builder: (context) => SignUpUsernameScreen(user: widget.user),
       ),
     );
   }
@@ -151,6 +152,7 @@ extension _BlocAddition on _SignUpBirthdayScreenState {
   void _listener(BuildContext context, SignUpBirthdayState state) {
     if (state is OpenDatePicker) {
       _openDatePicker();
+      _birthdayBloc.add(SelectingDate(_selectedDate));
     }
     if (state is BirthdaySelected) {
       _selectedDate = state.selectedDate;

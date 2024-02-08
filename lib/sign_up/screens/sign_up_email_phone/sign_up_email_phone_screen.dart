@@ -334,6 +334,12 @@ class _SignUpEmailPhoneScreenState extends State<SignUpEmailPhoneScreen> {
           onChange: (CountryModel country) {
             _selectedCountry = country;
             log('from country page $_selectedCountry');
+            _emailPhoneBloc.add(
+              PhoneOnChangeEvent(
+                phoneNumber: _mobileController.text,
+                phoneCode: _selectedCountry!.phoneCode,
+              ),
+            );
             setState(() {});
           },
         ),
@@ -342,20 +348,17 @@ class _SignUpEmailPhoneScreenState extends State<SignUpEmailPhoneScreen> {
   }
 
   void _continueClicked() {
-    UserModel updatedUser;
     if (_signUpMode == SignUpMode.email) {
-      updatedUser = widget.user.copyWith(email: _emailController.text);
+      widget.user.email = _emailController.text;
     } else {
-      updatedUser = widget.user.copyWith(
-        countryCode: _selectedCountry!.countryCode,
-        phoneCode: _selectedCountry!.phoneCode,
-        phoneNumber: _mobileController.text,
-      );
+      widget.user.countryCode = _selectedCountry!.countryCode;
+      widget.user.phoneCode = _selectedCountry!.phoneCode;
+      widget.user.phoneNumber = _mobileController.text;
     }
     Navigator.push(
       context,
       MaterialPageRoute(
-          builder: (context) => SignUpPasswordScreen(user: updatedUser)),
+          builder: (context) => SignUpPasswordScreen(user: widget.user)),
     );
   }
 }

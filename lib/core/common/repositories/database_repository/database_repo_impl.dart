@@ -66,7 +66,6 @@ class DatabaseRepoImpl implements DatabaseRepo {
 
   @override
   Future<void> insertCountries(List<CountryModel> countries) async {
-    print('Inserting countries.');
     final db = await database;
     final batch = db.batch();
     for (final country in countries) {
@@ -81,7 +80,6 @@ class DatabaseRepoImpl implements DatabaseRepo {
 
   @override
   Future<List<CountryModel>> getCountries() async {
-    print('getCountries function');
     final db = await database;
     final List<Map<String, dynamic>> result = await db.query('Countries');
     final countries = result.map((map) => CountryModel.fromMapDB(map)).toList();
@@ -126,12 +124,15 @@ class DatabaseRepoImpl implements DatabaseRepo {
   }
 
   @override
-  Future<UserModel> getUserByUsername(String username) async {
+  Future<UserModel?> getUserByUsername(String username) async {
     final db = await database;
-    List<Map<String, dynamic>> userMap;
-    userMap =
+    List<Map<String, dynamic>> usersData;
+    usersData =
         await db.query('Users', where: 'username = ?', whereArgs: [username]);
-    return UserModel.fromMap(userMap[0]);
+    if (usersData.isNotEmpty) {
+      return UserModel.fromMap(usersData[0]);
+    }
+    return null;
   }
 
   @override
@@ -144,5 +145,30 @@ class DatabaseRepoImpl implements DatabaseRepo {
       where: 'username = ?',
       whereArgs: [oldUsername],
     );
+  }
+
+  @override
+  Future<UserModel?> getUserByEmail(String email) async {
+    final db = await database;
+    List<Map<String, dynamic>> usersData;
+    usersData = await db.query('Users', where: 'email = ?', whereArgs: [email]);
+    if (usersData.isNotEmpty) {
+      return UserModel.fromMap(usersData[0]);
+    }
+    return null;
+  }
+
+  @override
+  Future<UserModel?> getUserByPhone(
+      String phoneCode, String phoneNumber) async {
+    final db = await database;
+    List<Map<String, dynamic>> usersData;
+    usersData = await db.query('Users',
+        where: 'phoneCode = ? AND phoneNumber = ?',
+        whereArgs: [phoneCode, phoneNumber]);
+    if (usersData.isNotEmpty) {
+      return UserModel.fromMap(usersData[0]);
+    }
+    return null;
   }
 }

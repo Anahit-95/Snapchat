@@ -22,7 +22,14 @@ final class InvalidPassword extends SignUpPasswordState {
   List<Object> get props => [passwordError];
 }
 
-final class ConfirmPassword extends SignUpPasswordState {}
+final class ConfirmPassword extends SignUpPasswordState {
+  const ConfirmPassword(this.user);
+
+  final UserModel user;
+
+  @override
+  List<Object> get props => [user];
+}
 
 final class SignUpError extends SignUpPasswordState {
   const SignUpError(this.error);

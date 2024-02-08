@@ -5,7 +5,8 @@ import 'package:snapchat/core/common/repositories/countries_repository/countries
 import 'package:snapchat/core/common/repositories/database_repository/database_repo_impl.dart';
 import 'package:snapchat/core/common/widgets/custom_back_button.dart';
 import 'package:snapchat/core/models/country_model.dart';
-import 'package:snapchat/core/providers/country_notifier.dart';
+// import 'package:snapchat/core/providers/country_notifier.dart';
+import 'package:snapchat/core/providers/country_value_notifier.dart';
 import 'package:snapchat/core/utils/consts/colors.dart';
 import 'package:snapchat/countries/countries_bloc/countries_bloc.dart';
 
@@ -13,7 +14,8 @@ class CountriesScreen extends StatefulWidget {
   const CountriesScreen({super.key, this.onChange, this.countryNotifier});
 
   final Function(CountryModel)? onChange;
-  final CountryNotifier? countryNotifier;
+  // final CountryNotifier? countryNotifier;
+  final CountryValueNotifier? countryNotifier;
 
   @override
   State<CountriesScreen> createState() => _CountriesScreenState();

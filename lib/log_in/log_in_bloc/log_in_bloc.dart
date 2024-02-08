@@ -36,7 +36,8 @@ class LogInBloc extends Bloc<LogInEvent, LogInState> {
         validationRepo: _validationRepo,
       );
       if (user != null) {
-        _storageRepo.setUser(username: user.username, password: user.password);
+        _storageRepo.setUser(
+            username: user.username!, password: user.password!);
         emit(LogInSuccess(user: user));
       } else {
         emit(const LogInError('Wrong username or password'));
@@ -50,16 +51,13 @@ class LogInBloc extends Bloc<LogInEvent, LogInState> {
   void _onChangeInput(OnChangeInputEvent event, Emitter<LogInState> emit) {
     var emailError = '';
     var passwordError = '';
-    if (_validationRepo.isValidUsername(event.email)) {
-      emailError = '';
-    } else {
+    if (!_validationRepo.isValidUsername(event.email)) {
       emailError = 'Must have at least 5 characters';
     }
-    if (_validationRepo.isValidPassword(event.password)) {
-      passwordError = '';
-    } else {
+    if (!_validationRepo.isValidPassword(event.password)) {
       passwordError = 'Your password must have at least 8 characters';
     }
+
     if (_validationRepo.isValidLoginState(
         email: event.email, password: event.password)) {
       emit(LoginValidState());

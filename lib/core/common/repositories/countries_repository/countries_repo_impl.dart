@@ -25,7 +25,6 @@ class CountriesRepoImpl implements CountriesRepo {
     List<CountryModel> countries;
     if (databaseExists) {
       try {
-        print('calling db');
         countries = await _dbRepo.getCountries();
         print('loaded from database');
         return countries;

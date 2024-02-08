@@ -13,7 +13,9 @@ abstract class DatabaseRepo {
 
   Future<List<UserModel>> getAllUsers();
 
-  Future<UserModel> getUserByUsername(String username);
+  Future<UserModel?> getUserByUsername(String username);
+  Future<UserModel?> getUserByEmail(String email);
+  Future<UserModel?> getUserByPhone(String phoneCode, String phoneNumber);
 
   Future<UserModel?> loginUser({
     required String password,

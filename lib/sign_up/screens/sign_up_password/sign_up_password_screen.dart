@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:provider/provider.dart';
+// import 'package:provider/provider.dart';
 import 'package:snapchat/core/common/repositories/database_repository/database_repo_impl.dart';
 import 'package:snapchat/core/common/repositories/storage_repo/storage_repo_impl.dart';
 import 'package:snapchat/core/common/repositories/validation_repository/validation_repo_impl.dart';
@@ -9,7 +9,7 @@ import 'package:snapchat/core/common/widgets/custom_text_field.dart';
 import 'package:snapchat/core/common/widgets/header_text.dart';
 import 'package:snapchat/core/common/widgets/sign_screen_wrapper.dart';
 import 'package:snapchat/core/models/user_model.dart';
-import 'package:snapchat/core/providers/country_notifier.dart';
+// import 'package:snapchat/core/providers/country_notifier.dart';
 import 'package:snapchat/core/utils/consts/colors.dart';
 import 'package:snapchat/profile/edit_profile_screen.dart';
 import 'package:snapchat/sign_up/screens/sign_up_password/sign_up_password_bloc/sign_up_password_bloc.dart';
@@ -113,9 +113,9 @@ class _SignUpPasswordScreenState extends State<SignUpPasswordScreen> {
   }
 
   Widget _renderContinueButton(SignUpPasswordState state) {
+    widget.user.password = _controller.text;
     return ContinueButton(
-      onPressed: () => _passwordBloc.add(ConfirmingPasswordEvent(
-          widget.user.copyWith(password: _controller.text))),
+      onPressed: () => _passwordBloc.add(ConfirmingPasswordEvent(widget.user)),
       isEnabled: state is ValidPassword,
       title: 'Continue',
     );
@@ -128,12 +128,14 @@ extension _BlocAddition on _SignUpPasswordScreenState {
       Navigator.pushAndRemoveUntil(
         context,
         MaterialPageRoute(
-          builder: (context) => ChangeNotifierProvider(
-            create: (context) => CountryNotifier(),
-            child: EditProfileScreen(
-              user: widget.user.copyWith(password: _controller.text),
-            ),
+          builder: (context) =>
+              // ChangeNotifierProvider(
+              //   create: (context) => CountryNotifier(),
+              //   child:
+              EditProfileScreen(
+            user: state.user,
           ),
+          // ),
         ),
         (route) => route.isFirst,
       );

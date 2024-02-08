@@ -114,17 +114,18 @@ class _SignUpUsernameScreenState extends State<SignUpUsernameScreen> {
   Widget _renderContinueButton(SignUpUsernameState state) {
     return ContinueButton(
       onPressed: _continuePressed,
-      isEnabled: _controller.text.length >= 5 && state is! InvalidUsername,
+      isEnabled: state is UsernameAvailable,
       title: 'Continue',
     );
   }
 
   void _continuePressed() {
+    widget.user.username = _controller.text;
     Navigator.push(
       context,
       MaterialPageRoute(
-          builder: (context) => SignUpEmailPhoneScreen(
-              user: widget.user.copyWith(username: _controller.text))),
+        builder: (context) => SignUpEmailPhoneScreen(user: widget.user),
+      ),
     );
   }
 }

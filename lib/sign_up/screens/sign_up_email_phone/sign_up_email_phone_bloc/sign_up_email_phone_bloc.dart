@@ -22,16 +22,13 @@ class SignUpEmailPhoneBloc
   final ValidationRepoImpl _validationRepo;
   final DatabaseRepoImpl _dbRepo;
 
-  List<UserModel> _allUsers = [];
-
   Future<void> _onEmailOnChange(
       EmailOnChangeEvent event, Emitter<SignUpEmailPhoneState> emit) async {
     if (_validationRepo.isValidEmail(event.email)) {
-      if (_allUsers.isEmpty) {
-        _allUsers = await _dbRepo.getAllUsers();
-      }
-      if (_validationRepo.isEmailAvailable(
-          email: event.email, allUsers: _allUsers)) {
+      final users = await _dbRepo.getAllUsers();
+      print(users);
+      final existingUser = await _dbRepo.getUserByEmail(event.email);
+      if (existingUser == null) {
         emit(EmailMode(event.email));
       } else {
         emit(const InvalidEmail('This email is already in use'));
@@ -44,13 +41,9 @@ class SignUpEmailPhoneBloc
   Future<void> _onMobileOnChange(
       PhoneOnChangeEvent event, Emitter<SignUpEmailPhoneState> emit) async {
     if (_validationRepo.isValidPhoneNumber(event.phoneNumber)) {
-      if (_allUsers.isEmpty) {
-        _allUsers = await _dbRepo.getAllUsers();
-      }
-      if (_validationRepo.isPhoneNumberAvailable(
-          phoneCode: event.phoneCode,
-          phoneNumber: event.phoneNumber,
-          allUsers: _allUsers)) {
+      final existingUser =
+          await _dbRepo.getUserByPhone(event.phoneCode, event.phoneNumber);
+      if (existingUser == null) {
         emit(PhoneMode(event.phoneNumber));
       } else {
         emit(const InvalidPhone('This number is already in use'));

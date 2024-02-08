@@ -29,7 +29,7 @@ class NavigationWidgetBloc
       final userMap = await _storageRepo.getUser();
       if (userMap != null) {
         final user = await _dbRepo.getUserByUsername(userMap['username']!);
-        emit(IsOnEditProfileScreen(user));
+        emit(IsOnEditProfileScreen(user!));
       } else {
         emit(IsOnStartScreen());
       }

@@ -45,10 +45,10 @@ class SignUpPasswordBloc
       emit(LoadingPassword());
       await _dbRepo.insertUser(event.user);
       await _storageRepo.setUser(
-        username: event.user.username,
-        password: event.user.password,
+        username: event.user.username!,
+        password: event.user.password!,
       );
-      emit(ConfirmPassword());
+      emit(ConfirmPassword(event.user));
     } catch (e) {
       print(e);
       emit(SignUpError('Failed to sign up: ${e.toString()}'));

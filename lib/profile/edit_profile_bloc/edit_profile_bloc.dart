@@ -66,7 +66,6 @@ class EditProfileBloc extends Bloc<EditProfileEvent, EditProfileState> {
     if (_allUsers.isEmpty) {
       _allUsers = await _dbRepo.getAllUsers();
     }
-    print(_allUsers);
 
     if (event.firstName.isEmpty) {
       firstNameError = 'This field must not be empty.';
@@ -173,6 +172,7 @@ class EditProfileBloc extends Bloc<EditProfileEvent, EditProfileState> {
 
   Future<void> onLogOut(
       LogOutEvent event, Emitter<EditProfileState> emit) async {
+    emit(LogingOutState());
     await _storageRepo.deleteUser();
     emit(LogOutState());
   }

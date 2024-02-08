@@ -2,7 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
-import 'package:provider/provider.dart';
+// import 'package:provider/provider.dart';
 import 'package:snapchat/core/common/repositories/api_repository/api_repo_impl.dart';
 import 'package:snapchat/core/common/repositories/countries_repository/countries_repo_impl.dart';
 import 'package:snapchat/core/common/repositories/database_repository/database_repo_impl.dart';
@@ -12,10 +12,13 @@ import 'package:snapchat/core/common/widgets/continue_button.dart';
 import 'package:snapchat/core/common/widgets/custom_text_field.dart';
 import 'package:snapchat/core/common/widgets/header_text.dart';
 import 'package:snapchat/core/enums/edit_field_name.dart';
+// import 'package:snapchat/core/models/country_model.dart';
 import 'package:snapchat/core/models/user_model.dart';
-import 'package:snapchat/core/providers/country_notifier.dart';
+// import 'package:snapchat/core/providers/country_notifier.dart';
+import 'package:snapchat/core/providers/country_value_notifier.dart';
 import 'package:snapchat/core/utils/consts/colors.dart';
 import 'package:snapchat/countries/countries_screen.dart';
+import 'package:snapchat/home/navigation_widget/navigation_widget_bloc.dart';
 import 'package:snapchat/profile/edit_profile_bloc/edit_profile_bloc.dart';
 
 class EditProfileScreen extends StatefulWidget {
@@ -46,29 +49,46 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     storageRepo: StorageRepoImpl(),
   );
 
-  late CountryNotifier _countryNotifier;
+  // // ChangeNotifier
+  // late CountryNotifier _countryNotifier;
+
+  // ValueNotifier
+  final CountryValueNotifier _valueNotifier = CountryValueNotifier();
 
   DateTime? _selectedDate;
+  // CountryModel? _selectedCountry;
 
   @override
   void initState() {
-    _firstNameController.text = widget.user.firstName;
-    _lastNameController.text = widget.user.lastName;
+    _firstNameController.text = widget.user.firstName!;
+    _lastNameController.text = widget.user.lastName!;
     _dateController.text =
-        DateFormat('d MMMM yyyy').format(widget.user.birthday);
-    _usernameController.text = widget.user.username;
+        DateFormat('d MMMM yyyy').format(widget.user.birthday!);
+    _usernameController.text = widget.user.username!;
     _emailController.text = widget.user.email ?? '';
     _phoneController.text = widget.user.phoneNumber ?? '';
-    _passwordController.text = widget.user.password;
+    _passwordController.text = widget.user.password!;
     _editProfileBloc.add(GetCountryEvent(widget.user.countryCode));
+    // ChangeNotifier with listener
+
+    // _countryNotifier = Provider.of(context, listen: false);
+    // _countryNotifier.addListener(updateCountry);
     super.initState();
   }
+
+  //// ChangeNotifier with listener
+  ///
+  // void updateCountry() {
+  //   setState(() {
+  //     _selectedCountry = _countryNotifier.country;
+  //   });
+  // }
 
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-
-    _countryNotifier = Provider.of(context, listen: false);
+    // ChangeNotifier with consumer
+    // _countryNotifier = Provider.of(context, listen: false);
   }
 
   @override
@@ -80,6 +100,9 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     _emailController.dispose();
     _phoneController.dispose();
     _passwordController.dispose();
+
+    // ChangeNotifier with listener
+    // _countryNotifier.removeListener(updateCountry);
     super.dispose();
   }
 
@@ -315,22 +338,68 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     );
   }
 
+  // // ChangeNotifier with consumer
+
+  // Widget _renderMobileInputFlagAndPhonCode() {
+  //   return Consumer<CountryNotifier>(
+  //     builder: (context, countryNotifier, _) {
+  //   return GestureDetector(
+  //       onTap: _onTapNavigateCountriesScreen,
+  //       child: Text(
+  //         countryNotifier.country != null
+  //             ? '${countryNotifier.country!.getFlagEmoji} +${countryNotifier.country!.phoneCode}'
+  //             : widget.user.phoneNumber != null
+  //                 ? '$getFlagEmoji +${widget.user.phoneCode}'
+  //                 : '+',
+  //         style: const TextStyle(
+  //           fontSize: 18,
+  //           color: AppColors.blueText2,
+  //         ),
+  //       ));
+  //     },
+  //   );
+  // }
+
+  // // ChangeNotifier with listener
+
+  // Widget _renderMobileInputFlagAndPhonCode() {
+  //   return GestureDetector(
+  //     onTap: _onTapNavigateCountriesScreen,
+  //     child: Text(
+  //       _selectedCountry != null
+  //           ? '${_selectedCountry!.getFlagEmoji} +${_selectedCountry!.phoneCode}'
+  //           : widget.user.phoneNumber != null
+  //               ? '$getFlagEmoji +${widget.user.phoneCode}'
+  //               : '+',
+  //       style: const TextStyle(
+  //         fontSize: 18,
+  //         color: AppColors.blueText2,
+  //       ),
+  //     ),
+  //   );
+  // }
+
+  // For ValueNotifier
+
   Widget _renderMobileInputFlagAndPhonCode() {
-    return Consumer<CountryNotifier>(
-      builder: (context, countryNotifier, _) {
+    print(_valueNotifier.value);
+    return ValueListenableBuilder(
+      valueListenable: _valueNotifier,
+      builder: (context, value, child) {
         return GestureDetector(
-            onTap: _onTapNavigateCountriesScreen,
-            child: Text(
-              countryNotifier.country != null
-                  ? '${countryNotifier.country!.getFlagEmoji} +${countryNotifier.country!.phoneCode}'
-                  : widget.user.phoneNumber != null
-                      ? '$getFlagEmoji +${widget.user.phoneCode}'
-                      : '+',
-              style: const TextStyle(
-                fontSize: 18,
-                color: AppColors.blueText2,
-              ),
-            ));
+          onTap: _onTapNavigateCountriesScreen,
+          child: Text(
+            _valueNotifier.value != null
+                ? '${_valueNotifier.value!.getFlagEmoji} +${_valueNotifier.value!.phoneCode}'
+                : widget.user.phoneNumber != null
+                    ? '$getFlagEmoji +${widget.user.phoneCode}'
+                    : '+',
+            style: const TextStyle(
+              fontSize: 18,
+              color: AppColors.blueText2,
+            ),
+          ),
+        );
       },
     );
   }
@@ -395,53 +464,79 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) =>
-            CountriesScreen(countryNotifier: _countryNotifier),
-      ),
+          builder: (context) =>
+              // CountriesScreen(countryNotifier: _countryNotifier),
+              CountriesScreen(
+                countryNotifier: _valueNotifier,
+              )),
     );
   }
 
   void _onChangeInputs() {
+    // print(_countryNotifier.country);
     _editProfileBloc.add(EditingOnChangeEvent(
       firstName: _firstNameController.text,
       lastName: _lastNameController.text,
-      birthday: _selectedDate ?? widget.user.birthday,
+      birthday: _selectedDate ?? widget.user.birthday!,
       username: _usernameController.text,
       email: _emailController.text,
-      phoneCode: _countryNotifier.country!.phoneCode,
+      // phoneCode: _countryNotifier.country!.phoneCode,
+      phoneCode: _valueNotifier.value!.phoneCode,
       phoneNumber: _phoneController.text,
       password: _passwordController.text,
       user: widget.user,
     ));
   }
 
-  void _onPressedSave() => _editProfileBloc.add(
-        SaveProfileChanges(
-          username: widget.user.username,
-          user: widget.user.copyWith(
-            firstName: _firstNameController.text,
-            lastName: _lastNameController.text,
-            birthday: _selectedDate ?? widget.user.birthday,
-            username: _usernameController.text,
-            email: _emailController.text.isEmpty ? null : _emailController.text,
-            countryCode: _phoneController.text.isEmpty
-                ? null
-                : _countryNotifier.country!.countryCode,
-            phoneCode: _phoneController.text.isEmpty
-                ? null
-                : _countryNotifier.country!.phoneCode,
-            phoneNumber:
-                _phoneController.text.isEmpty ? null : _phoneController.text,
-            password: _passwordController.text,
+  void _onPressedSave() {
+    widget.user.firstName = _firstNameController.text;
+    widget.user.lastName = _lastNameController.text;
+    widget.user.birthday = _selectedDate ?? widget.user.birthday;
+    widget.user.username = _usernameController.text;
+    widget.user.email =
+        _emailController.text.isEmpty ? null : _emailController.text;
+    widget.user.countryCode = _phoneController.text.isEmpty
+        ? null
+        // : _countryNotifier.country!.countryCode;
+        : _valueNotifier.value!.countryCode;
+    widget.user.phoneCode = _phoneController.text.isEmpty
+        ? null
+        // : _countryNotifier.country!.phoneCode;
+        : _valueNotifier.value!.phoneCode;
+    widget.user.phoneNumber =
+        _phoneController.text.isEmpty ? null : _phoneController.text;
+    widget.user.password = _passwordController.text;
+
+    _editProfileBloc.add(
+      SaveProfileChanges(username: widget.user.username!, user: widget.user
+          // user: widget.user.copyWith(
+          //   firstName: _firstNameController.text,
+          //   lastName: _lastNameController.text,
+          //   birthday: _selectedDate ?? widget.user.birthday,
+          //   username: _usernameController.text,
+          //   email: _emailController.text.isEmpty ? null : _emailController.text,
+          //   countryCode: _phoneController.text.isEmpty
+          //       ? null
+          //       // : _countryNotifier.country!.countryCode,
+          //       : _valueNotifier.value!.countryCode,
+          //   phoneCode: _phoneController.text.isEmpty
+          //       ? null
+          //       // : _countryNotifier.country!.phoneCode,
+          //       : _valueNotifier.value!.phoneCode,
+          //   phoneNumber:
+          //       _phoneController.text.isEmpty ? null : _phoneController.text,
+          //   password: _passwordController.text,
+          // ),
           ),
-        ),
-      );
+    );
+  }
 }
 
 extension _BlocAddition on _EditProfileScreenState {
   void _listener(BuildContext context, EditProfileState state) {
     if (state is CountryFounded) {
-      _countryNotifier.setCountry(state.country);
+      // _countryNotifier.setCountry(state.country);
+      _valueNotifier.setCountry(state.country);
     }
     if (state is UpdatedProfile) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -449,7 +544,10 @@ extension _BlocAddition on _EditProfileScreenState {
       );
     }
     if (state is LogOutState) {
-      Navigator.popUntil(context, (route) => route.isFirst);
+      // Navigator.popUntil(context, (route) => route.isFirst);
+      // BlocProvider.of<NavigationWidgetBloc>(context).add(TryToGetUserEvent());
+      Navigator.popUntil(context, (route) => false);
+      Navigator.pushNamed(context, '/');
     }
   }
 }
