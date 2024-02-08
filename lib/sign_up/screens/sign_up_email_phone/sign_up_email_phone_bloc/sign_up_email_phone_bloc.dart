@@ -1,8 +1,12 @@
+import 'dart:async';
+
 import 'package:bloc/bloc.dart';
+import 'package:country_codes/country_codes.dart';
 import 'package:equatable/equatable.dart';
+import 'package:snapchat/core/common/repositories/countries_repository/countries_repo_impl.dart';
 import 'package:snapchat/core/common/repositories/database_repository/database_repo_impl.dart';
 import 'package:snapchat/core/common/repositories/validation_repository/validation_repo_impl.dart';
-import 'package:snapchat/core/models/user_model.dart';
+import 'package:snapchat/core/models/country_model.dart';
 
 part 'sign_up_email_phone_event.dart';
 part 'sign_up_email_phone_state.dart';
@@ -12,15 +16,35 @@ class SignUpEmailPhoneBloc
   SignUpEmailPhoneBloc({
     required ValidationRepoImpl validationRepo,
     required DatabaseRepoImpl dbRepo,
+    required CountriesRepoImpl countriesRepo,
   })  : _validationRepo = validationRepo,
         _dbRepo = dbRepo,
+        _countriesRepo = countriesRepo,
         super(EmailPhoneInitial()) {
     on<EmailOnChangeEvent>(_onEmailOnChange);
     on<PhoneOnChangeEvent>(_onMobileOnChange);
+    on<GetCountryEvent>(_onGetCountry);
   }
 
   final ValidationRepoImpl _validationRepo;
   final DatabaseRepoImpl _dbRepo;
+  final CountriesRepoImpl _countriesRepo;
+
+  Future<void> _onGetCountry(
+      GetCountryEvent event, Emitter<SignUpEmailPhoneState> emit) async {
+    emit(FindingCountry());
+    final countries = await _countriesRepo.loadCountries();
+    String countryCode;
+    if (event.countryCode != null) {
+      countryCode = event.countryCode!;
+    } else {
+      final locale = CountryCodes.getDeviceLocale()!;
+      countryCode = locale.countryCode!;
+    }
+    final country = countries
+        .firstWhere((country) => country.countryCode == event.countryCode);
+    emit(CountryFounded(country));
+  }
 
   Future<void> _onEmailOnChange(
       EmailOnChangeEvent event, Emitter<SignUpEmailPhoneState> emit) async {

@@ -7,6 +7,15 @@ sealed class SignUpEmailPhoneEvent extends Equatable {
   List<Object> get props => [];
 }
 
+final class GetCountryEvent extends SignUpEmailPhoneEvent {
+  const GetCountryEvent(this.countryCode);
+
+  final String? countryCode;
+
+  @override
+  List<Object> get props => [countryCode!];
+}
+
 final class EmailOnChangeEvent extends SignUpEmailPhoneEvent {
   const EmailOnChangeEvent(this.email);
 

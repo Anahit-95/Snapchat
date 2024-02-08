@@ -14,32 +14,33 @@ class CountriesRepoImpl implements CountriesRepo {
   final DatabaseRepoImpl _dbRepo;
 
   @override
-  Future<CountryModel> getCountry(String countryCode) {
-    // TODO: implement getCountry
-    throw UnimplementedError();
+  Future<CountryModel> getCountry(String countryCode) async {
+    try {
+      var country = await _dbRepo.getCountryByCode(countryCode);
+      if (country == null) {
+        final countries = await loadCountries();
+        country = countries
+            .firstWhere((country) => countryCode == country.countryCode);
+      }
+      return country;
+    } on Exception {
+      rethrow;
+    }
   }
 
   @override
   Future<List<CountryModel>> loadCountries() async {
-    final databaseExists = await _dbRepo.countriesTableExist();
-    List<CountryModel> countries;
-    if (databaseExists) {
-      try {
-        countries = await _dbRepo.getCountries();
-        print('loaded from database');
-        return countries;
-      } catch (e) {
-        throw Exception('Failed loading countries from database.');
-      }
-    } else {
-      try {
+    try {
+      var countries = await _dbRepo.getCountries();
+      if (countries.isEmpty) {
         countries = await _apiRepo.loadCountries();
         print('loaded from api');
         await _dbRepo.insertCountries(countries);
         return countries;
-      } catch (e) {
-        throw Exception('Failed loading countries.');
       }
+      return countries;
+    } catch (e) {
+      throw Exception('Failed loading countries.');
     }
   }
 

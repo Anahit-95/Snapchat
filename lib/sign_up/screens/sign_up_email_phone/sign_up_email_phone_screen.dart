@@ -5,6 +5,8 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:snapchat/core/common/repositories/api_repository/api_repo_impl.dart';
+import 'package:snapchat/core/common/repositories/countries_repository/countries_repo_impl.dart';
 import 'package:snapchat/core/common/repositories/database_repository/database_repo_impl.dart';
 import 'package:snapchat/core/common/repositories/validation_repository/validation_repo_impl.dart';
 import 'package:snapchat/core/common/widgets/continue_button.dart';
@@ -46,6 +48,10 @@ class _SignUpEmailPhoneScreenState extends State<SignUpEmailPhoneScreen> {
   final SignUpEmailPhoneBloc _emailPhoneBloc = SignUpEmailPhoneBloc(
     validationRepo: ValidationRepoImpl(),
     dbRepo: DatabaseRepoImpl(),
+    countriesRepo: CountriesRepoImpl(
+      apiRepo: ApiRepoImpl(),
+      dbRepo: DatabaseRepoImpl(),
+    ),
   );
 
   @override
@@ -55,6 +61,7 @@ class _SignUpEmailPhoneScreenState extends State<SignUpEmailPhoneScreen> {
     _mobileController = TextEditingController();
     _emailFocusNode = FocusNode();
     _mobileFocusNode = FocusNode();
+    // _emailPhoneBloc.add(GetCountryEvent(null));
     // 1.2 find device local country by country picker package
     // give values to _selected country
 
@@ -80,7 +87,8 @@ class _SignUpEmailPhoneScreenState extends State<SignUpEmailPhoneScreen> {
   Widget build(BuildContext context) {
     return BlocProvider(
       create: (context) => _emailPhoneBloc,
-      child: BlocBuilder<SignUpEmailPhoneBloc, SignUpEmailPhoneState>(
+      child: BlocConsumer<SignUpEmailPhoneBloc, SignUpEmailPhoneState>(
+        listener: _listener,
         builder: (context, state) {
           return _render(state);
         },
@@ -360,5 +368,13 @@ class _SignUpEmailPhoneScreenState extends State<SignUpEmailPhoneScreen> {
       MaterialPageRoute(
           builder: (context) => SignUpPasswordScreen(user: widget.user)),
     );
+  }
+}
+
+extension _BlocAddition on _SignUpEmailPhoneScreenState {
+  void _listener(BuildContext context, SignUpEmailPhoneState state) {
+    if (state is CountryFounded) {
+      _selectedCountry = state.country;
+    }
   }
 }

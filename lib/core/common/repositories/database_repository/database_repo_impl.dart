@@ -54,15 +54,15 @@ class DatabaseRepoImpl implements DatabaseRepo {
     );
   }
 
-  @override
-  Future<bool> countriesTableExist() async {
-    final db = await database;
-    final List<Map<String, dynamic>> result = await db.query('Countries');
-    if (result.isEmpty) {
-      return false;
-    }
-    return true;
-  }
+  // @override
+  // Future<bool> countriesTableExist() async {
+  //   final db = await database;
+  //   final List<Map<String, dynamic>> result = await db.query('Countries');
+  //   if (result.isEmpty) {
+  //     return false;
+  //   }
+  //   return true;
+  // }
 
   @override
   Future<void> insertCountries(List<CountryModel> countries) async {
@@ -84,6 +84,20 @@ class DatabaseRepoImpl implements DatabaseRepo {
     final List<Map<String, dynamic>> result = await db.query('Countries');
     final countries = result.map((map) => CountryModel.fromMapDB(map)).toList();
     return countries;
+  }
+
+  @override
+  Future<CountryModel?> getCountryByCode(String countryCode) async {
+    final db = await database;
+    final countryMap = await db.query(
+      'Countries',
+      where: 'countryCode = ?',
+      whereArgs: [countryCode],
+    );
+    if (countryMap.isNotEmpty) {
+      return CountryModel.fromMapDB(countryMap[0]);
+    }
+    return null;
   }
 
   @override
@@ -110,11 +124,17 @@ class DatabaseRepoImpl implements DatabaseRepo {
     final db = await database;
     List<Map<String, dynamic>> userMap;
     if (validationRepo.isValidEmail(text)) {
-      userMap = await db.query('Users',
-          where: 'email = ? AND password = ?', whereArgs: [text, password]);
+      userMap = await db.query(
+        'Users',
+        where: 'email = ? AND password = ?',
+        whereArgs: [text, password],
+      );
     } else {
-      userMap = await db.query('Users',
-          where: 'username = ? AND password = ?', whereArgs: [text, password]);
+      userMap = await db.query(
+        'Users',
+        where: 'username = ? AND password = ?',
+        whereArgs: [text, password],
+      );
     }
     if (userMap.isNotEmpty) {
       final user = UserModel.fromMap(userMap[0]);
@@ -127,8 +147,11 @@ class DatabaseRepoImpl implements DatabaseRepo {
   Future<UserModel?> getUserByUsername(String username) async {
     final db = await database;
     List<Map<String, dynamic>> usersData;
-    usersData =
-        await db.query('Users', where: 'username = ?', whereArgs: [username]);
+    usersData = await db.query(
+      'Users',
+      where: 'username = ?',
+      whereArgs: [username],
+    );
     if (usersData.isNotEmpty) {
       return UserModel.fromMap(usersData[0]);
     }
@@ -151,7 +174,11 @@ class DatabaseRepoImpl implements DatabaseRepo {
   Future<UserModel?> getUserByEmail(String email) async {
     final db = await database;
     List<Map<String, dynamic>> usersData;
-    usersData = await db.query('Users', where: 'email = ?', whereArgs: [email]);
+    usersData = await db.query(
+      'Users',
+      where: 'email = ?',
+      whereArgs: [email],
+    );
     if (usersData.isNotEmpty) {
       return UserModel.fromMap(usersData[0]);
     }

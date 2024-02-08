@@ -9,6 +9,17 @@ sealed class SignUpEmailPhoneState extends Equatable {
 
 final class EmailPhoneInitial extends SignUpEmailPhoneState {}
 
+final class FindingCountry extends SignUpEmailPhoneState {}
+
+final class CountryFounded extends SignUpEmailPhoneState {
+  const CountryFounded(this.country);
+
+  final CountryModel country;
+
+  @override
+  List<Object> get props => [country];
+}
+
 final class EmailMode extends SignUpEmailPhoneState {
   const EmailMode(this.email);
 

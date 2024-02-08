@@ -3,11 +3,11 @@ import 'package:snapchat/core/models/country_model.dart';
 import 'package:snapchat/core/models/user_model.dart';
 
 abstract class DatabaseRepo {
-  Future<bool> countriesTableExist();
-
   Future<void> insertCountries(List<CountryModel> countries);
 
   Future<List<CountryModel>> getCountries();
+
+  Future<CountryModel?> getCountryByCode(String countryCode);
 
   Future<void> insertUser(UserModel user);
 
