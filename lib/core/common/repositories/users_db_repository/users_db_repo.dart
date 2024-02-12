@@ -1,14 +1,7 @@
 import 'package:snapchat/core/common/repositories/validation_repository/validation_repo_impl.dart';
-import 'package:snapchat/core/models/country_model.dart';
 import 'package:snapchat/core/models/user_model.dart';
 
-abstract class DatabaseRepo {
-  Future<void> insertCountries(List<CountryModel> countries);
-
-  Future<List<CountryModel>> getCountries();
-
-  Future<CountryModel?> getCountryByCode(String countryCode);
-
+abstract class UsersDBRepo {
   Future<void> insertUser(UserModel user);
 
   Future<List<UserModel>> getAllUsers();
@@ -23,6 +16,8 @@ abstract class DatabaseRepo {
     required ValidationRepoImpl validationRepo,
   });
 
-  Future<void> updateUser(
-      {required String oldUsername, required UserModel updatedUser});
+  Future<void> updateUser({
+    required String oldUsername,
+    required UserModel updatedUser,
+  });
 }

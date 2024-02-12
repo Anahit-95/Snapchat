@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:snapchat/app_localizations.dart';
 
 class StartScreen extends StatelessWidget {
   const StartScreen({super.key});
@@ -15,13 +16,13 @@ class StartScreen extends StatelessWidget {
             _renderLogo(),
             _renderButton(
               color: Colors.red,
-              text: 'LOG IN',
+              text: 'log_in'.tr(context).toUpperCase(),
               onTap: () => Navigator.pushNamed(context, '/login'),
             ),
             _renderButton(
               onTap: () => Navigator.pushNamed(context, 'sign-up'),
               color: Colors.blue,
-              text: 'SIGN UP',
+              text: 'sign_up'.tr(context),
             ),
           ],
         ),

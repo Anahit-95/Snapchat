@@ -2,8 +2,8 @@ import 'dart:async';
 
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
-import 'package:snapchat/core/common/repositories/database_repository/database_repo_impl.dart';
 import 'package:snapchat/core/common/repositories/storage_repo/storage_repo_impl.dart';
+import 'package:snapchat/core/common/repositories/users_db_repository/users_db_repo_impl.dart';
 import 'package:snapchat/core/models/user_model.dart';
 
 part 'navigation_widget_event.dart';
@@ -11,16 +11,17 @@ part 'navigation_widget_state.dart';
 
 class NavigationWidgetBloc
     extends Bloc<NavigationWidgetEvent, NavigationWidgetState> {
-  NavigationWidgetBloc(
-      {required StorageRepoImpl storageRepo, required DatabaseRepoImpl dbRepo})
-      : _storageRepo = storageRepo,
+  NavigationWidgetBloc({
+    required StorageRepoImpl storageRepo,
+    required UsersDBRepoImpl dbRepo,
+  })  : _storageRepo = storageRepo,
         _dbRepo = dbRepo,
         super(NavigationWidgetInitial()) {
     on<TryToGetUserEvent>(_onTryToGetUser);
   }
 
   final StorageRepoImpl _storageRepo;
-  final DatabaseRepoImpl _dbRepo;
+  final UsersDBRepoImpl _dbRepo;
 
   Future<void> _onTryToGetUser(
       TryToGetUserEvent event, Emitter<NavigationWidgetState> emit) async {

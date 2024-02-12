@@ -4,8 +4,8 @@ import 'package:bloc/bloc.dart';
 import 'package:country_codes/country_codes.dart';
 import 'package:equatable/equatable.dart';
 import 'package:snapchat/core/common/repositories/countries_repository/countries_repo_impl.dart';
-import 'package:snapchat/core/common/repositories/database_repository/database_repo_impl.dart';
 import 'package:snapchat/core/common/repositories/storage_repo/storage_repo_impl.dart';
+import 'package:snapchat/core/common/repositories/users_db_repository/users_db_repo_impl.dart';
 import 'package:snapchat/core/common/repositories/validation_repository/validation_repo_impl.dart';
 import 'package:snapchat/core/models/country_model.dart';
 import 'package:snapchat/core/models/user_model.dart';
@@ -16,7 +16,7 @@ part 'edit_profile_state.dart';
 class EditProfileBloc extends Bloc<EditProfileEvent, EditProfileState> {
   EditProfileBloc({
     required ValidationRepoImpl validationRepo,
-    required DatabaseRepoImpl dbRepo,
+    required UsersDBRepoImpl dbRepo,
     required CountriesRepoImpl countriesRepo,
     required StorageRepoImpl storageRepo,
   })  : _validationRepo = validationRepo,
@@ -31,11 +31,9 @@ class EditProfileBloc extends Bloc<EditProfileEvent, EditProfileState> {
   }
 
   final ValidationRepoImpl _validationRepo;
-  final DatabaseRepoImpl _dbRepo;
+  final UsersDBRepoImpl _dbRepo;
   final CountriesRepoImpl _countriesRepo;
   final StorageRepoImpl _storageRepo;
-
-  List<UserModel> _allUsers = [];
 
   Future<void> _onGetCountry(
       GetCountryEvent event, Emitter<EditProfileState> emit) async {
@@ -50,44 +48,31 @@ class EditProfileBloc extends Bloc<EditProfileEvent, EditProfileState> {
     }
     final country =
         countries.firstWhere((country) => country.countryCode == countryCode);
-    emit(CountryFounded(country));
+    emit(CountryFounded(country: country, countries: countries));
   }
 
   Future<void> _onEditingOnChange(
       EditingOnChangeEvent event, Emitter<EditProfileState> emit) async {
-    String firstNameError;
-    String lastNameError;
-    String birthdayError;
-    String usernameError;
-    String emailError;
-    String phoneError;
-    String passwordError;
-
-    if (_allUsers.isEmpty) {
-      _allUsers = await _dbRepo.getAllUsers();
-    }
+    var firstNameError = '';
+    var lastNameError = '';
+    var birthdayError = '';
+    var usernameError = '';
+    var emailError = '';
+    var phoneError = '';
+    var passwordError = '';
 
     if (event.firstName.isEmpty) {
       firstNameError = 'This field must not be empty.';
-    } else {
-      firstNameError = '';
     }
     if (event.lastName.isEmpty) {
       lastNameError = 'This field must not be empty.';
-    } else {
-      lastNameError = '';
     }
-    if (_validationRepo.isValidBirthday(event.birthday)) {
-      birthdayError = '';
-    } else {
+    if (!_validationRepo.isValidBirthday(event.birthday)) {
       birthdayError = 'You must be at least 16 year old.';
     }
     if (_validationRepo.isValidUsernameAndNotEmpty(event.username)) {
-      if (_validationRepo.isUsernameAvailable(
-              username: event.username, allUsers: _allUsers) ||
-          event.username == event.user.username) {
-        usernameError = '';
-      } else {
+      final existingUser = await _dbRepo.getUserByUsername(event.username);
+      if (existingUser != null && event.username != event.user.username) {
         usernameError = 'This username is already in use.';
       }
     } else {
@@ -96,11 +81,8 @@ class EditProfileBloc extends Bloc<EditProfileEvent, EditProfileState> {
 
     if (event.email!.isNotEmpty) {
       if (_validationRepo.isValidEmail(event.email!)) {
-        if (_validationRepo.isEmailAvailable(
-                email: event.email!, allUsers: _allUsers) ||
-            event.email! == event.user.email) {
-          emailError = '';
-        } else {
+        final existingUser = await _dbRepo.getUserByEmail(event.email!);
+        if (existingUser != null && event.email! != event.user.email) {
           emailError = 'This email is already in use';
         }
       } else {
@@ -114,11 +96,11 @@ class EditProfileBloc extends Bloc<EditProfileEvent, EditProfileState> {
 
     if (event.phoneNumber!.isNotEmpty) {
       if (_validationRepo.isValidPhoneNumber(event.phoneNumber!)) {
-        if (_validationRepo.isPhoneNumberAvailable(
-              phoneCode: event.phoneCode!,
-              phoneNumber: event.phoneNumber!,
-              allUsers: _allUsers,
-            ) ||
+        final existingUser = await _dbRepo.getUserByPhone(
+          event.phoneCode!,
+          event.phoneNumber!,
+        );
+        if (existingUser == null ||
             (event.phoneCode == event.user.phoneCode &&
                 event.phoneNumber == event.user.phoneNumber)) {
           phoneError = '';
@@ -134,9 +116,7 @@ class EditProfileBloc extends Bloc<EditProfileEvent, EditProfileState> {
       phoneError = '';
     }
 
-    if (_validationRepo.isValidPasswordAndNotEmpty(event.password)) {
-      passwordError = '';
-    } else {
+    if (!_validationRepo.isValidPasswordAndNotEmpty(event.password)) {
       passwordError = 'Your password must have at least 8 characters';
     }
 
@@ -166,7 +146,6 @@ class EditProfileBloc extends Bloc<EditProfileEvent, EditProfileState> {
     emit(LoadingEditProfile());
     await _dbRepo.updateUser(
         oldUsername: event.username, updatedUser: event.user);
-    _allUsers = await _dbRepo.getAllUsers();
     emit(UpdatedProfile());
   }
 

@@ -12,9 +12,13 @@ final class EmailPhoneInitial extends SignUpEmailPhoneState {}
 final class FindingCountry extends SignUpEmailPhoneState {}
 
 final class CountryFounded extends SignUpEmailPhoneState {
-  const CountryFounded(this.country);
+  const CountryFounded({
+    required this.country,
+    required this.countries,
+  });
 
   final CountryModel country;
+  final List<CountryModel> countries;
 
   @override
   List<Object> get props => [country];

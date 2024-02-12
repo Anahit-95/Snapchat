@@ -12,9 +12,13 @@ final class LoadCountriesEvent extends CountriesEvent {}
 final class GetCountriesApiEvent extends CountriesEvent {}
 
 final class SearchingCountriesEvent extends CountriesEvent {
-  const SearchingCountriesEvent(this.countryName);
+  const SearchingCountriesEvent({
+    required this.countryName,
+    required this.countries,
+  });
 
   final String countryName;
+  final List<CountryModel> countries;
 
   @override
   List<Object> get props => [countryName];

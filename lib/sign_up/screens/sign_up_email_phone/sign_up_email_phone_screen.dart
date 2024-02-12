@@ -1,18 +1,17 @@
-import 'dart:convert';
 import 'dart:developer';
 
-// import 'package:country_codes/country_codes.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:snapchat/core/common/repositories/api_repository/api_repo_impl.dart';
+import 'package:snapchat/core/common/repositories/countries_db_repository/countries_db_repo_impl.dart';
 import 'package:snapchat/core/common/repositories/countries_repository/countries_repo_impl.dart';
-import 'package:snapchat/core/common/repositories/database_repository/database_repo_impl.dart';
+import 'package:snapchat/core/common/repositories/users_db_repository/users_db_repo_impl.dart';
 import 'package:snapchat/core/common/repositories/validation_repository/validation_repo_impl.dart';
 import 'package:snapchat/core/common/widgets/continue_button.dart';
 import 'package:snapchat/core/common/widgets/custom_text_field.dart';
 import 'package:snapchat/core/common/widgets/header_text.dart';
 import 'package:snapchat/core/common/widgets/sign_screen_wrapper.dart';
+import 'package:snapchat/core/database/database_helper.dart';
 import 'package:snapchat/core/enums/sign_up_mode.dart';
 import 'package:snapchat/core/models/country_model.dart';
 import 'package:snapchat/core/models/user_model.dart';
@@ -42,15 +41,16 @@ class _SignUpEmailPhoneScreenState extends State<SignUpEmailPhoneScreen> {
   // Locale locale = CountryCodes.getDeviceLocale()!;
 
   CountryModel? _selectedCountry;
+  late List<CountryModel> _countries;
 
   SignUpMode _signUpMode = SignUpMode.email;
 
   final SignUpEmailPhoneBloc _emailPhoneBloc = SignUpEmailPhoneBloc(
     validationRepo: ValidationRepoImpl(),
-    dbRepo: DatabaseRepoImpl(),
+    dbRepo: UsersDBRepoImpl(DatabaseHelper()),
     countriesRepo: CountriesRepoImpl(
       apiRepo: ApiRepoImpl(),
-      dbRepo: DatabaseRepoImpl(),
+      dbRepo: CountriesDBRepoImpl(DatabaseHelper()),
     ),
   );
 
@@ -61,7 +61,7 @@ class _SignUpEmailPhoneScreenState extends State<SignUpEmailPhoneScreen> {
     _mobileController = TextEditingController();
     _emailFocusNode = FocusNode();
     _mobileFocusNode = FocusNode();
-    // _emailPhoneBloc.add(GetCountryEvent(null));
+    _emailPhoneBloc.add(GetCountryEvent());
     // 1.2 find device local country by country picker package
     // give values to _selected country
 
@@ -309,9 +309,9 @@ class _SignUpEmailPhoneScreenState extends State<SignUpEmailPhoneScreen> {
 
   Future<void> _onTapChangeMode() async {
     // 3. get device local country while swithing to phone mode
-    if (_signUpMode == SignUpMode.email && _selectedCountry == null) {
-      _selectedCountry = await _getDeviceCountry();
-    }
+    // if (_signUpMode == SignUpMode.email && _selectedCountry == null) {
+    //   _selectedCountry = await _getDeviceCountry();
+    // }
     setState(() {
       if (_signUpMode == SignUpMode.email) {
         _signUpMode = SignUpMode.phone;
@@ -321,33 +321,36 @@ class _SignUpEmailPhoneScreenState extends State<SignUpEmailPhoneScreen> {
     });
   }
 
-  Future<CountryModel> _getDeviceCountry() async {
-    final code = View.of(context).platformDispatcher.locale.countryCode;
-    final data =
-        await rootBundle.loadString('assets/resources/country_codes.json');
-    final List<dynamic> jsonList = jsonDecode(data);
+  // Future<CountryModel> _getDeviceCountry() async {
+  //   final code = View.of(context).platformDispatcher.locale.countryCode;
+  //   final data =
+  //       await rootBundle.loadString('assets/resources/country_codes.json');
+  //   final List<dynamic> jsonList = jsonDecode(data);
 
-    final countries =
-        jsonList.map((json) => CountryModel.fromMap(json)).toList();
-    final currentCountry =
-        countries.firstWhere((country) => country.countryCode == code);
-    return currentCountry;
-  }
+  //   final countries =
+  //       jsonList.map((json) => CountryModel.fromMap(json)).toList();
+  //   final currentCountry =
+  //       countries.firstWhere((country) => country.countryCode == code);
+  //   return currentCountry;
+  // }
 
   void _onTapNavigateCountriesScreen() {
     Navigator.push(
       context,
       MaterialPageRoute(
         builder: (context) => CountriesScreen(
+          countries: _countries,
           onChange: (CountryModel country) {
             _selectedCountry = country;
             log('from country page $_selectedCountry');
-            _emailPhoneBloc.add(
-              PhoneOnChangeEvent(
-                phoneNumber: _mobileController.text,
-                phoneCode: _selectedCountry!.phoneCode,
-              ),
-            );
+            if (_mobileController.text.isNotEmpty) {
+              _emailPhoneBloc.add(
+                PhoneOnChangeEvent(
+                  phoneNumber: _mobileController.text,
+                  phoneCode: _selectedCountry!.phoneCode,
+                ),
+              );
+            }
             setState(() {});
           },
         ),
@@ -366,7 +369,8 @@ class _SignUpEmailPhoneScreenState extends State<SignUpEmailPhoneScreen> {
     Navigator.push(
       context,
       MaterialPageRoute(
-          builder: (context) => SignUpPasswordScreen(user: widget.user)),
+        builder: (context) => SignUpPasswordScreen(user: widget.user),
+      ),
     );
   }
 }
@@ -375,6 +379,7 @@ extension _BlocAddition on _SignUpEmailPhoneScreenState {
   void _listener(BuildContext context, SignUpEmailPhoneState state) {
     if (state is CountryFounded) {
       _selectedCountry = state.country;
+      _countries = state.countries;
     }
   }
 }

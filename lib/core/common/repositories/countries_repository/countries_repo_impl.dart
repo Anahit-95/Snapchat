@@ -1,32 +1,17 @@
 import 'package:snapchat/core/common/repositories/api_repository/api_repo_impl.dart';
+import 'package:snapchat/core/common/repositories/countries_db_repository/countries_db_repo_impl.dart';
 import 'package:snapchat/core/common/repositories/countries_repository/countries_repo.dart';
-import 'package:snapchat/core/common/repositories/database_repository/database_repo_impl.dart';
 import 'package:snapchat/core/models/country_model.dart';
 
 class CountriesRepoImpl implements CountriesRepo {
   CountriesRepoImpl({
     required ApiRepoImpl apiRepo,
-    required DatabaseRepoImpl dbRepo,
+    required CountriesDBRepoImpl dbRepo,
   })  : _apiRepo = apiRepo,
         _dbRepo = dbRepo;
 
   final ApiRepoImpl _apiRepo;
-  final DatabaseRepoImpl _dbRepo;
-
-  @override
-  Future<CountryModel> getCountry(String countryCode) async {
-    try {
-      var country = await _dbRepo.getCountryByCode(countryCode);
-      if (country == null) {
-        final countries = await loadCountries();
-        country = countries
-            .firstWhere((country) => countryCode == country.countryCode);
-      }
-      return country;
-    } on Exception {
-      rethrow;
-    }
-  }
+  final CountriesDBRepoImpl _dbRepo;
 
   @override
   Future<List<CountryModel>> loadCountries() async {
@@ -38,6 +23,7 @@ class CountriesRepoImpl implements CountriesRepo {
         await _dbRepo.insertCountries(countries);
         return countries;
       }
+      print('loaded from db');
       return countries;
     } catch (e) {
       throw Exception('Failed loading countries.');

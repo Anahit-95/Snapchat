@@ -16,4 +16,4 @@ final class SelectingDate extends SignUpBirthdayEvent {
   List<Object> get props => [birthDate];
 }
 
-final class OpenDatePickerEvent extends SignUpBirthdayEvent {}
+// final class OpenDatePickerEvent extends SignUpBirthdayEvent {}

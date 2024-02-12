@@ -1,25 +1,28 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 // import 'package:provider/provider.dart';
 import 'package:snapchat/core/common/repositories/api_repository/api_repo_impl.dart';
+import 'package:snapchat/core/common/repositories/countries_db_repository/countries_db_repo_impl.dart';
 import 'package:snapchat/core/common/repositories/countries_repository/countries_repo_impl.dart';
-import 'package:snapchat/core/common/repositories/database_repository/database_repo_impl.dart';
 import 'package:snapchat/core/common/repositories/storage_repo/storage_repo_impl.dart';
+import 'package:snapchat/core/common/repositories/users_db_repository/users_db_repo_impl.dart';
 import 'package:snapchat/core/common/repositories/validation_repository/validation_repo_impl.dart';
 import 'package:snapchat/core/common/widgets/continue_button.dart';
 import 'package:snapchat/core/common/widgets/custom_text_field.dart';
-import 'package:snapchat/core/common/widgets/header_text.dart';
+import 'package:snapchat/core/database/database_helper.dart';
 import 'package:snapchat/core/enums/edit_field_name.dart';
+import 'package:snapchat/core/models/country_model.dart';
 // import 'package:snapchat/core/models/country_model.dart';
 import 'package:snapchat/core/models/user_model.dart';
 // import 'package:snapchat/core/providers/country_notifier.dart';
 import 'package:snapchat/core/providers/country_value_notifier.dart';
-import 'package:snapchat/core/utils/consts/colors.dart';
-import 'package:snapchat/countries/countries_screen.dart';
 import 'package:snapchat/home/navigation_widget/navigation_widget_bloc.dart';
 import 'package:snapchat/profile/edit_profile_bloc/edit_profile_bloc.dart';
+import 'package:snapchat/profile/widgets/birthday_input.dart';
+// import 'package:snapchat/profile/widgets/edit_profile_input.dart';
+import 'package:snapchat/profile/widgets/mobile_input.dart';
+import 'package:snapchat/profile/widgets/profile_header.dart';
 
 class EditProfileScreen extends StatefulWidget {
   const EditProfileScreen({required this.user, super.key});
@@ -41,10 +44,10 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
 
   final EditProfileBloc _editProfileBloc = EditProfileBloc(
     validationRepo: ValidationRepoImpl(),
-    dbRepo: DatabaseRepoImpl(),
+    dbRepo: UsersDBRepoImpl(DatabaseHelper()),
     countriesRepo: CountriesRepoImpl(
       apiRepo: ApiRepoImpl(),
-      dbRepo: DatabaseRepoImpl(),
+      dbRepo: CountriesDBRepoImpl(DatabaseHelper()),
     ),
     storageRepo: StorageRepoImpl(),
   );
@@ -54,8 +57,9 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
 
   // ValueNotifier
   final CountryValueNotifier _valueNotifier = CountryValueNotifier();
+  List<CountryModel> _countries = [];
 
-  DateTime? _selectedDate;
+  late DateTime _selectedDate;
   // CountryModel? _selectedCountry;
 
   @override
@@ -64,11 +68,13 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     _lastNameController.text = widget.user.lastName!;
     _dateController.text =
         DateFormat('d MMMM yyyy').format(widget.user.birthday!);
+    _selectedDate = widget.user.birthday!;
     _usernameController.text = widget.user.username!;
     _emailController.text = widget.user.email ?? '';
     _phoneController.text = widget.user.phoneNumber ?? '';
     _passwordController.text = widget.user.password!;
     _editProfileBloc.add(GetCountryEvent(widget.user.countryCode));
+    _valueNotifier.addListener(_changeCountryListener);
     // ChangeNotifier with listener
 
     // _countryNotifier = Provider.of(context, listen: false);
@@ -100,6 +106,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     _emailController.dispose();
     _phoneController.dispose();
     _passwordController.dispose();
+    _valueNotifier.removeListener(_changeCountryListener);
 
     // ChangeNotifier with listener
     // _countryNotifier.removeListener(updateCountry);
@@ -128,20 +135,45 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                _renderHeader(),
-                _renderFirstNameInput(),
+                ProfileHeader(editProfileBloc: _editProfileBloc),
+                _renderProfileInput(
+                  labelText: 'FIRST NAME',
+                  controller: _firstNameController,
+                ),
                 _renderErrorText(state, EditFieldName.firstName),
-                _renderLastNameInput(),
+                _renderProfileInput(
+                  controller: _lastNameController,
+                  labelText: 'LAST NAME',
+                ),
                 _renderErrorText(state, EditFieldName.lastName),
-                _renderBirthdayInput(),
+                BirthdayInput(
+                  dateController: _dateController,
+                  selectedDate: _selectedDate,
+                  onDateTimeChanged: _onDateTimeChanged,
+                ),
                 _renderErrorText(state, EditFieldName.birthday),
-                _renderUsernameInput(),
+                _renderProfileInput(
+                  controller: _usernameController,
+                  labelText: 'USERNAME',
+                ),
                 _renderErrorText(state, EditFieldName.username),
-                _renderEmailInput(),
+                _renderProfileInput(
+                  controller: _emailController,
+                  labelText: 'EMAIL',
+                ),
                 _renderErrorText(state, EditFieldName.email),
-                _renderMobileInput(),
+                MobileInput(
+                  valueNotifier: _valueNotifier,
+                  phoneController: _phoneController,
+                  countries: _countries!,
+                  onChanged: (_) => _onChangeInputs(),
+                ),
                 _renderErrorText(state, EditFieldName.phone),
-                _renderPasswordInput(),
+                _renderProfileInput(
+                  controller: _passwordController,
+                  labelText: 'PASSWORD',
+                  obscureText: true,
+                ),
                 _renderErrorText(state, EditFieldName.password),
                 _renderSaveButton(state)
               ],
@@ -152,29 +184,17 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     );
   }
 
-  Widget _renderHeader() {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        const HeaderText(
-          title: 'Edit Profile',
-          fontSize: 22,
-          color: AppColors.blueText1,
-        ),
-        GestureDetector(
-          onTap: () => _editProfileBloc.add(LogOutEvent()),
-          child: const Icon(Icons.logout_sharp),
-        )
-      ],
-    );
-  }
-
-  Widget _renderFirstNameInput() {
+  Widget _renderProfileInput({
+    required TextEditingController controller,
+    required String labelText,
+    bool obscureText = false,
+  }) {
     return Padding(
-      padding: const EdgeInsets.only(top: 20, bottom: 4),
+      padding: const EdgeInsets.only(bottom: 4),
       child: CustomTextField(
-        controller: _firstNameController,
-        labelText: 'FIRST NAME',
+        controller: controller,
+        labelText: labelText,
+        obscureText: obscureText,
         onChanged: (_) => _onChangeInputs(),
       ),
     );
@@ -220,230 +240,6 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     }
   }
 
-  Widget _renderLastNameInput() {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 4.0),
-      child: CustomTextField(
-        controller: _lastNameController,
-        labelText: 'LAST NAME',
-        onChanged: (_) => _onChangeInputs(),
-      ),
-    );
-  }
-
-  Widget _renderBirthdayInput() {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 4),
-      child: TextField(
-        autofocus: true,
-        readOnly: true,
-        controller: _dateController,
-        keyboardType: TextInputType.datetime,
-        decoration: const InputDecoration(
-          labelText: 'BIRTHDAY',
-          labelStyle: TextStyle(
-            color: AppColors.disabled,
-            fontSize: 14,
-          ),
-        ),
-        onTap: _openDatePicker,
-      ),
-    );
-  }
-
-  Future<void> _openDatePicker() async {
-    FocusScope.of(context).unfocus();
-    final currentDate = DateTime.now();
-    showCupertinoModalPopup(
-      context: context,
-      builder: (context) {
-        return Container(
-          color: Colors.white,
-          height: 250,
-          padding: EdgeInsets.only(
-            bottom: MediaQuery.of(context).viewInsets.bottom,
-          ),
-          child: CupertinoDatePicker(
-            mode: CupertinoDatePickerMode.date,
-            initialDateTime: _selectedDate ?? widget.user.birthday,
-            minimumDate: DateTime(1900),
-            maximumDate: currentDate,
-            dateOrder: DatePickerDateOrder.dmy,
-            onDateTimeChanged: (newDate) {
-              _selectedDate = newDate;
-              _dateController.text =
-                  DateFormat('d MMMM yyyy').format(_selectedDate!);
-              _onChangeInputs();
-            },
-          ),
-        );
-      },
-    );
-  }
-
-  Widget _renderUsernameInput() {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 4.0),
-      child: CustomTextField(
-        controller: _usernameController,
-        labelText: 'USERNAME',
-        onChanged: (_) => _onChangeInputs(),
-      ),
-    );
-  }
-
-  Widget _renderEmailInput() {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 4.0),
-      child: CustomTextField(
-        controller: _emailController,
-        labelText: 'EMAIL',
-        onChanged: (_) => _onChangeInputs(),
-        keyboardType: TextInputType.emailAddress,
-      ),
-    );
-  }
-
-  Widget _renderMobileInput() {
-    return Container(
-      margin: const EdgeInsets.only(top: 10, bottom: 2),
-      decoration: const BoxDecoration(
-        border: Border(
-          bottom: BorderSide(
-            color: AppColors.disabled,
-            width: 1,
-          ),
-        ),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          _renderMobileInputLabel(),
-          Row(
-            children: [
-              _renderMobileInputFlagAndPhonCode(),
-              _renderMobileInputDivider(),
-              _renderMobileInputNumberField(),
-            ],
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _renderMobileInputLabel() {
-    return const Text(
-      'MOBILE NUMBER',
-      style: TextStyle(color: AppColors.disabled, fontSize: 13),
-    );
-  }
-
-  // // ChangeNotifier with consumer
-
-  // Widget _renderMobileInputFlagAndPhonCode() {
-  //   return Consumer<CountryNotifier>(
-  //     builder: (context, countryNotifier, _) {
-  //   return GestureDetector(
-  //       onTap: _onTapNavigateCountriesScreen,
-  //       child: Text(
-  //         countryNotifier.country != null
-  //             ? '${countryNotifier.country!.getFlagEmoji} +${countryNotifier.country!.phoneCode}'
-  //             : widget.user.phoneNumber != null
-  //                 ? '$getFlagEmoji +${widget.user.phoneCode}'
-  //                 : '+',
-  //         style: const TextStyle(
-  //           fontSize: 18,
-  //           color: AppColors.blueText2,
-  //         ),
-  //       ));
-  //     },
-  //   );
-  // }
-
-  // // ChangeNotifier with listener
-
-  // Widget _renderMobileInputFlagAndPhonCode() {
-  //   return GestureDetector(
-  //     onTap: _onTapNavigateCountriesScreen,
-  //     child: Text(
-  //       _selectedCountry != null
-  //           ? '${_selectedCountry!.getFlagEmoji} +${_selectedCountry!.phoneCode}'
-  //           : widget.user.phoneNumber != null
-  //               ? '$getFlagEmoji +${widget.user.phoneCode}'
-  //               : '+',
-  //       style: const TextStyle(
-  //         fontSize: 18,
-  //         color: AppColors.blueText2,
-  //       ),
-  //     ),
-  //   );
-  // }
-
-  // For ValueNotifier
-
-  Widget _renderMobileInputFlagAndPhonCode() {
-    print(_valueNotifier.value);
-    return ValueListenableBuilder(
-      valueListenable: _valueNotifier,
-      builder: (context, value, child) {
-        return GestureDetector(
-          onTap: _onTapNavigateCountriesScreen,
-          child: Text(
-            _valueNotifier.value != null
-                ? '${_valueNotifier.value!.getFlagEmoji} +${_valueNotifier.value!.phoneCode}'
-                : widget.user.phoneNumber != null
-                    ? '$getFlagEmoji +${widget.user.phoneCode}'
-                    : '+',
-            style: const TextStyle(
-              fontSize: 18,
-              color: AppColors.blueText2,
-            ),
-          ),
-        );
-      },
-    );
-  }
-
-  Widget _renderMobileInputDivider() {
-    return Container(
-      width: 1,
-      height: 24,
-      margin: const EdgeInsets.only(left: 6, right: 6),
-      decoration: const BoxDecoration(
-        border: Border(
-          left: BorderSide(
-            color: AppColors.greyText2,
-            width: 1,
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget _renderMobileInputNumberField() {
-    return Expanded(
-      child: TextField(
-        autofocus: true,
-        controller: _phoneController,
-        decoration: const InputDecoration(border: InputBorder.none),
-        keyboardType: TextInputType.phone,
-        onChanged: (_) => _onChangeInputs(),
-      ),
-    );
-  }
-
-  Widget _renderPasswordInput() {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 4),
-      child: CustomTextField(
-        controller: _passwordController,
-        labelText: 'PASSWORD',
-        obscureText: true,
-        onChanged: (_) => _onChangeInputs(),
-      ),
-    );
-  }
-
   Widget _renderSaveButton(EditProfileState state) {
     return ContinueButton(
       onPressed: _onPressedSave,
@@ -453,31 +249,20 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     );
   }
 
-  String get getFlagEmoji {
-    final flag = widget.user.countryCode!.toUpperCase().replaceAllMapped(
-        RegExp(r'[A-Z]'),
-        (match) => String.fromCharCode(match.group(0)!.codeUnitAt(0) + 127397));
-    return flag;
+  void _onDateTimeChanged(newDate) {
+    _selectedDate = newDate;
+    _dateController.text = DateFormat('d MMMM yyyy').format(_selectedDate);
+    _onChangeInputs();
   }
 
-  void _onTapNavigateCountriesScreen() {
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-          builder: (context) =>
-              // CountriesScreen(countryNotifier: _countryNotifier),
-              CountriesScreen(
-                countryNotifier: _valueNotifier,
-              )),
-    );
-  }
+  void _changeCountryListener() => _onChangeInputs();
 
   void _onChangeInputs() {
     // print(_countryNotifier.country);
     _editProfileBloc.add(EditingOnChangeEvent(
       firstName: _firstNameController.text,
       lastName: _lastNameController.text,
-      birthday: _selectedDate ?? widget.user.birthday!,
+      birthday: _selectedDate,
       username: _usernameController.text,
       email: _emailController.text,
       // phoneCode: _countryNotifier.country!.phoneCode,
@@ -489,46 +274,25 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   }
 
   void _onPressedSave() {
-    widget.user.firstName = _firstNameController.text;
-    widget.user.lastName = _lastNameController.text;
-    widget.user.birthday = _selectedDate ?? widget.user.birthday;
-    widget.user.username = _usernameController.text;
-    widget.user.email =
-        _emailController.text.isEmpty ? null : _emailController.text;
-    widget.user.countryCode = _phoneController.text.isEmpty
-        ? null
-        // : _countryNotifier.country!.countryCode;
-        : _valueNotifier.value!.countryCode;
-    widget.user.phoneCode = _phoneController.text.isEmpty
-        ? null
-        // : _countryNotifier.country!.phoneCode;
-        : _valueNotifier.value!.phoneCode;
-    widget.user.phoneNumber =
-        _phoneController.text.isEmpty ? null : _phoneController.text;
-    widget.user.password = _passwordController.text;
-
-    _editProfileBloc.add(
-      SaveProfileChanges(username: widget.user.username!, user: widget.user
-          // user: widget.user.copyWith(
-          //   firstName: _firstNameController.text,
-          //   lastName: _lastNameController.text,
-          //   birthday: _selectedDate ?? widget.user.birthday,
-          //   username: _usernameController.text,
-          //   email: _emailController.text.isEmpty ? null : _emailController.text,
-          //   countryCode: _phoneController.text.isEmpty
-          //       ? null
-          //       // : _countryNotifier.country!.countryCode,
-          //       : _valueNotifier.value!.countryCode,
-          //   phoneCode: _phoneController.text.isEmpty
-          //       ? null
-          //       // : _countryNotifier.country!.phoneCode,
-          //       : _valueNotifier.value!.phoneCode,
-          //   phoneNumber:
-          //       _phoneController.text.isEmpty ? null : _phoneController.text,
-          //   password: _passwordController.text,
-          // ),
-          ),
+    widget.user.updateUser(
+      firstName: _firstNameController.text,
+      lastName: _lastNameController.text,
+      birthday: _selectedDate,
+      username: _usernameController.text,
+      email: _emailController.text.isEmpty ? null : _emailController.text,
+      countryCode: _phoneController.text.isEmpty
+          ? null
+          // : _countryNotifier.country!.countryCode;
+          : _valueNotifier.value!.countryCode,
+      phoneCode: _phoneController.text.isEmpty
+          ? null
+          // : _countryNotifier.country!.phoneCode;
+          : _valueNotifier.value!.phoneCode,
+      phoneNumber: _phoneController.text.isEmpty ? null : _phoneController.text,
+      password: _passwordController.text,
     );
+    _editProfileBloc.add(
+        SaveProfileChanges(username: widget.user.username!, user: widget.user));
   }
 }
 
@@ -537,6 +301,7 @@ extension _BlocAddition on _EditProfileScreenState {
     if (state is CountryFounded) {
       // _countryNotifier.setCountry(state.country);
       _valueNotifier.setCountry(state.country);
+      _countries = state.countries;
     }
     if (state is UpdatedProfile) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -544,10 +309,8 @@ extension _BlocAddition on _EditProfileScreenState {
       );
     }
     if (state is LogOutState) {
-      // Navigator.popUntil(context, (route) => route.isFirst);
-      // BlocProvider.of<NavigationWidgetBloc>(context).add(TryToGetUserEvent());
-      Navigator.popUntil(context, (route) => false);
-      Navigator.pushNamed(context, '/');
+      Navigator.popUntil(context, (route) => route.isFirst);
+      BlocProvider.of<NavigationWidgetBloc>(context).add(TryToGetUserEvent());
     }
   }
 }

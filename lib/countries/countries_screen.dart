@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:snapchat/core/common/repositories/api_repository/api_repo_impl.dart';
+import 'package:snapchat/core/common/repositories/countries_db_repository/countries_db_repo_impl.dart';
 import 'package:snapchat/core/common/repositories/countries_repository/countries_repo_impl.dart';
-import 'package:snapchat/core/common/repositories/database_repository/database_repo_impl.dart';
 import 'package:snapchat/core/common/widgets/custom_back_button.dart';
+import 'package:snapchat/core/database/database_helper.dart';
 import 'package:snapchat/core/models/country_model.dart';
 // import 'package:snapchat/core/providers/country_notifier.dart';
 import 'package:snapchat/core/providers/country_value_notifier.dart';
@@ -11,11 +12,17 @@ import 'package:snapchat/core/utils/consts/colors.dart';
 import 'package:snapchat/countries/countries_bloc/countries_bloc.dart';
 
 class CountriesScreen extends StatefulWidget {
-  const CountriesScreen({super.key, this.onChange, this.countryNotifier});
+  const CountriesScreen({
+    required this.countries,
+    this.onChange,
+    this.countryNotifier,
+    super.key,
+  });
 
   final Function(CountryModel)? onChange;
   // final CountryNotifier? countryNotifier;
   final CountryValueNotifier? countryNotifier;
+  final List<CountryModel> countries;
 
   @override
   State<CountriesScreen> createState() => _CountriesScreenState();
@@ -25,15 +32,17 @@ class _CountriesScreenState extends State<CountriesScreen> {
   final TextEditingController _searchController = TextEditingController();
 
   final CountriesBloc _countriesBloc = CountriesBloc(
-    countriesRepo:
-        CountriesRepoImpl(apiRepo: ApiRepoImpl(), dbRepo: DatabaseRepoImpl()),
+    countriesRepo: CountriesRepoImpl(
+      apiRepo: ApiRepoImpl(),
+      dbRepo: CountriesDBRepoImpl(DatabaseHelper()),
+    ),
   );
 
   @override
   void initState() {
     super.initState();
     // _countriesBloc.add(LoadCountriesEvent());
-    _countriesBloc.add(GetCountriesApiEvent());
+    // _countriesBloc.add(GetCountriesApiEvent());
   }
 
   @override
@@ -64,8 +73,9 @@ class _CountriesScreenState extends State<CountriesScreen> {
             children: [
               const CustomBackButton(),
               _renderSearchInput(),
-              if (state is LoadingCountries) _renderLoadingText(),
-              if (state is CountriesLoaded) _renderCountries(state.countries),
+              // if (state is LoadingCountries) _renderLoadingText(),
+              if (state is CountriesInitial || state is CountriesLoaded)
+                _renderCountries(widget.countries),
               if (state is CountriesFound) _renderCountries(state.countries),
               if (state is CountriesError) _renderErrorText(state),
             ],
@@ -80,8 +90,10 @@ class _CountriesScreenState extends State<CountriesScreen> {
       padding: const EdgeInsets.only(top: 30.0, left: 15, right: 15),
       child: TextField(
         controller: _searchController,
-        onChanged: (value) =>
-            _countriesBloc.add(SearchingCountriesEvent(_searchController.text)),
+        onChanged: (value) => _countriesBloc.add(SearchingCountriesEvent(
+          countryName: _searchController.text,
+          countries: widget.countries,
+        )),
         decoration: const InputDecoration(
           prefixIcon: Padding(
             padding: EdgeInsets.symmetric(horizontal: 8),

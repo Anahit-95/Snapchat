@@ -13,7 +13,7 @@ class SignUpBirthdayBloc
       : _validationRepo = validationRepo,
         super(BirthdayInitial()) {
     on<SelectingDate>(_onSelectingDate);
-    on<OpenDatePickerEvent>(_onOpenDatePicker);
+    // on<OpenDatePickerEvent>(_onOpenDatePicker);
   }
   final ValidationRepoImpl _validationRepo;
 
@@ -27,8 +27,8 @@ class SignUpBirthdayBloc
     }
   }
 
-  void _onOpenDatePicker(
-      OpenDatePickerEvent event, Emitter<SignUpBirthdayState> emit) {
-    emit(OpenDatePicker());
-  }
+  // void _onOpenDatePicker(
+  //     OpenDatePickerEvent event, Emitter<SignUpBirthdayState> emit) {
+  //   emit(OpenDatePicker());
+  // }
 }

@@ -2,7 +2,7 @@ import 'dart:async';
 
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
-import 'package:snapchat/core/common/repositories/database_repository/database_repo_impl.dart';
+import 'package:snapchat/core/common/repositories/users_db_repository/users_db_repo_impl.dart';
 import 'package:snapchat/core/common/repositories/validation_repository/validation_repo_impl.dart';
 
 part 'sign_up_username_event.dart';
@@ -12,14 +12,14 @@ class SignUpUsernameBloc
     extends Bloc<SignUpUsernameEvent, SignUpUsernameState> {
   SignUpUsernameBloc({
     required ValidationRepoImpl validationRepo,
-    required DatabaseRepoImpl dbRepo,
+    required UsersDBRepoImpl dbRepo,
   })  : _validationRepo = validationRepo,
         _dbRepo = dbRepo,
         super(UsernameInitial()) {
     on<OnChangeInputEvent>(_onOnChangeInputEvent);
   }
   final ValidationRepoImpl _validationRepo;
-  final DatabaseRepoImpl _dbRepo;
+  final UsersDBRepoImpl _dbRepo;
 
   Future<void> _onOnChangeInputEvent(
       OnChangeInputEvent event, Emitter<SignUpUsernameState> emit) async {

@@ -18,16 +18,14 @@ class CountriesBloc extends Bloc<CountriesEvent, CountriesState> {
     on<SearchingCountriesEvent>(_onSearchingCountries);
   }
   final CountriesRepoImpl _countriesRepo;
-  List<CountryModel> _countries = [];
 
   Future<void> _onGetCountriesApi(
       GetCountriesApiEvent event, Emitter<CountriesState> emit) async {
+    print('HIIIII');
     try {
       emit(LoadingCountries());
-      if (_countries.isEmpty) {
-        _countries = await _countriesRepo.loadCountries();
-      }
-      emit(CountriesLoaded(countries: _countries));
+      final countries = await _countriesRepo.loadCountries();
+      emit(CountriesLoaded(countries: countries));
     } catch (e) {
       emit(CountriesError(e.toString()));
     }
@@ -38,11 +36,11 @@ class CountriesBloc extends Bloc<CountriesEvent, CountriesState> {
     if (event.countryName.isNotEmpty) {
       final findedCountries = _countriesRepo.searchCountries(
         countryName: event.countryName,
-        countries: _countries,
+        countries: event.countries,
       );
       emit(CountriesFound(countries: findedCountries));
     } else {
-      emit(CountriesLoaded(countries: _countries));
+      emit(CountriesLoaded(countries: event.countries));
     }
   }
 
