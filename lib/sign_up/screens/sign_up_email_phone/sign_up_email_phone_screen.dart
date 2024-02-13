@@ -13,6 +13,7 @@ import 'package:snapchat/core/common/widgets/header_text.dart';
 import 'package:snapchat/core/common/widgets/sign_screen_wrapper.dart';
 import 'package:snapchat/core/database/database_helper.dart';
 import 'package:snapchat/core/enums/sign_up_mode.dart';
+import 'package:snapchat/core/localizations/app_localizations.dart';
 import 'package:snapchat/core/models/country_model.dart';
 import 'package:snapchat/core/models/user_model.dart';
 import 'package:snapchat/core/utils/consts/colors.dart';
@@ -142,7 +143,7 @@ class _SignUpEmailPhoneScreenState extends State<SignUpEmailPhoneScreen> {
       padding: const EdgeInsets.only(bottom: 4.0),
       child: CustomTextField(
         controller: _emailController,
-        labelText: 'EMAIL',
+        labelText: 'email'.tr(context),
         onChanged: (_) =>
             _emailPhoneBloc.add(EmailOnChangeEvent(_emailController.text)),
         keyboardType: TextInputType.emailAddress,
@@ -211,9 +212,9 @@ class _SignUpEmailPhoneScreenState extends State<SignUpEmailPhoneScreen> {
   }
 
   Widget _renderMobileInputLabel() {
-    return const Text(
-      'MOBILE NUMBER',
-      style: TextStyle(color: AppColors.blueText2, fontSize: 13),
+    return Text(
+      'mobile_number'.tr(context),
+      style: const TextStyle(color: AppColors.blueText2, fontSize: 13),
     );
   }
 
@@ -303,7 +304,7 @@ class _SignUpEmailPhoneScreenState extends State<SignUpEmailPhoneScreen> {
     return ContinueButton(
       onPressed: _continueClicked,
       isEnabled: isEnabled,
-      title: 'Continue',
+      title: 'continue'.tr(context),
     );
   }
 

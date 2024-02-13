@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:snapchat/core/localizations/app_localizations.dart';
 import 'package:snapchat/core/utils/consts/colors.dart';
 
 class BirthdayInput extends StatelessWidget {
@@ -21,9 +22,9 @@ class BirthdayInput extends StatelessWidget {
         readOnly: true,
         controller: dateController,
         keyboardType: TextInputType.datetime,
-        decoration: const InputDecoration(
-          labelText: 'BIRTHDAY',
-          labelStyle: TextStyle(
+        decoration: InputDecoration(
+          labelText: 'birthday'.tr(context),
+          labelStyle: const TextStyle(
             color: AppColors.disabled,
             fontSize: 14,
           ),

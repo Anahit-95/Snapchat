@@ -3,5 +3,14 @@
     "sign_up": "ЗАРЕГИСТРИРОВАТЬСЯ",
     "username_or_email": "ИМЯ ПОЛЬЗОВАТЕЛЯ ИЛИ ЭЛ. АДРЕС",
     "password": "ПАРОЛЬ",
-    "forgot_your_password" : "Забыли пароль?"
+    "forgot_your_password" : "Забыли пароль?",
+    "first_name": "ИМЯ",
+    "last_name": "ФАМИЛИЯ",
+    "birthday": "ДЕНЬ РОЖДЕНИЯ",
+    "username": "ИМЯ ПОЛЬЗОВАТЕЛЯ",
+    "email": "ЭЛ. АДРЕС",
+    "mobile_number": "МОБИЛЬНЫЙ НОМЕР",
+    "continue": "Продолжить",
+    "sign_up_and_accept": "Зарегистрироваться и Принять",
+    "edit_profile": "Редактировать профиль"
 }

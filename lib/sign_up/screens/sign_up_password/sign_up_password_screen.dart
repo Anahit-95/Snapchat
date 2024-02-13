@@ -9,6 +9,7 @@ import 'package:snapchat/core/common/widgets/custom_text_field.dart';
 import 'package:snapchat/core/common/widgets/header_text.dart';
 import 'package:snapchat/core/common/widgets/sign_screen_wrapper.dart';
 import 'package:snapchat/core/database/database_helper.dart';
+import 'package:snapchat/core/localizations/app_localizations.dart';
 import 'package:snapchat/core/models/user_model.dart';
 // import 'package:snapchat/core/providers/country_notifier.dart';
 import 'package:snapchat/core/utils/consts/colors.dart';
@@ -90,7 +91,7 @@ class _SignUpPasswordScreenState extends State<SignUpPasswordScreen> {
       padding: const EdgeInsets.only(bottom: 4),
       child: CustomTextField(
         controller: _controller,
-        labelText: 'PASSWORD',
+        labelText: 'password'.tr(context),
         obscureText: true,
         onChanged: (_) =>
             _passwordBloc.add(OnChangePasswordInputEvent(_controller.text)),
@@ -118,7 +119,7 @@ class _SignUpPasswordScreenState extends State<SignUpPasswordScreen> {
     return ContinueButton(
       onPressed: () => _passwordBloc.add(ConfirmingPasswordEvent(widget.user)),
       isEnabled: state is ValidPassword,
-      title: 'Continue',
+      title: 'continue'.tr(context),
     );
   }
 }

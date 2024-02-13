@@ -6,6 +6,7 @@ import 'package:snapchat/core/common/repositories/validation_repository/validati
 import 'package:snapchat/core/common/widgets/continue_button.dart';
 import 'package:snapchat/core/common/widgets/custom_back_button.dart';
 import 'package:snapchat/core/common/widgets/header_text.dart';
+import 'package:snapchat/core/localizations/app_localizations.dart';
 import 'package:snapchat/core/models/user_model.dart';
 import 'package:snapchat/core/utils/consts/colors.dart';
 import 'package:snapchat/sign_up/screens/sign_up_birthday/sign_up_birthday_bloc/sign_up_birthday_bloc.dart';
@@ -129,9 +130,9 @@ class _SignUpBirthdayScreenState extends State<SignUpBirthdayScreen> {
         readOnly: true,
         controller: _dateController,
         keyboardType: TextInputType.datetime,
-        decoration: const InputDecoration(
-          labelText: 'BIRTHDAY',
-          labelStyle: TextStyle(
+        decoration: InputDecoration(
+          labelText: 'birthday'.tr(context),
+          labelStyle: const TextStyle(
             color: AppColors.disabled,
             fontSize: 14,
           ),
@@ -160,7 +161,7 @@ class _SignUpBirthdayScreenState extends State<SignUpBirthdayScreen> {
     return ContinueButton(
       onPressed: _continuePressed,
       isEnabled: state is ValidBirthday,
-      title: 'Continue',
+      title: 'continue'.tr(context),
     );
   }
 

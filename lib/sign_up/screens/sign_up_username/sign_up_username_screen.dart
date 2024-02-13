@@ -7,6 +7,7 @@ import 'package:snapchat/core/common/widgets/custom_text_field.dart';
 import 'package:snapchat/core/common/widgets/header_text.dart';
 import 'package:snapchat/core/common/widgets/sign_screen_wrapper.dart';
 import 'package:snapchat/core/database/database_helper.dart';
+import 'package:snapchat/core/localizations/app_localizations.dart';
 import 'package:snapchat/core/models/user_model.dart';
 import 'package:snapchat/core/utils/consts/colors.dart';
 import 'package:snapchat/sign_up/screens/sign_up_email_phone/sign_up_email_phone_screen.dart';
@@ -84,7 +85,7 @@ class _SignUpUsernameScreenState extends State<SignUpUsernameScreen> {
   Widget _renderUsernameInput() {
     return CustomTextField(
       controller: _controller,
-      labelText: 'USERNAME',
+      labelText: 'username'.tr(context),
       onChanged: (_) => _usernameBloc.add(OnChangeInputEvent(_controller.text)),
     );
   }
@@ -116,7 +117,7 @@ class _SignUpUsernameScreenState extends State<SignUpUsernameScreen> {
     return ContinueButton(
       onPressed: _continuePressed,
       isEnabled: state is UsernameAvailable,
-      title: 'Continue',
+      title: 'continue'.tr(context),
     );
   }
 

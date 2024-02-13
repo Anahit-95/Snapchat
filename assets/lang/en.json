@@ -3,5 +3,14 @@
     "sign_up": "SIGN UP",
     "username_or_email": "USERNAME OR EMAIL",
     "password": "PASSWORD",
-    "forgot_your_password" : "Forgot your password?"
+    "forgot_your_password" : "Forgot your password?",
+    "first_name": "FIRST NAME",
+    "last_name": "LAST NAME",
+    "birthday": "BIRTHDAY",
+    "username": "USERNAME",
+    "email": "EMAIL",
+    "mobile_number": "MOBILE NUMBER",
+    "contnue": "Continue",
+    "sign_up_and_accept": "Sign Up & Accept",
+    "edit_profile": "Edit Profile"
 }

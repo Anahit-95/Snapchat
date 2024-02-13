@@ -52,15 +52,15 @@ class UserModel extends Equatable {
     String? phoneNumber,
     String? password,
   }) {
-    firstName = firstName ?? this.firstName;
-    lastName = lastName ?? this.lastName;
-    birthday = birthday ?? this.birthday;
-    username = username ?? this.username;
-    email = email ?? this.email;
-    countryCode = countryCode ?? this.countryCode;
-    phoneCode = phoneCode ?? this.phoneCode;
-    phoneNumber = phoneNumber ?? this.phoneNumber;
-    password = password ?? this.password;
+    firstName = firstName;
+    lastName = lastName;
+    birthday = birthday;
+    username = username;
+    email = email;
+    countryCode = countryCode;
+    phoneCode = phoneCode;
+    phoneNumber = phoneNumber;
+    password = password;
 
     return this;
   }

@@ -5,6 +5,7 @@ import 'package:snapchat/core/common/widgets/continue_button.dart';
 import 'package:snapchat/core/common/widgets/custom_back_button.dart';
 import 'package:snapchat/core/common/widgets/custom_text_field.dart';
 import 'package:snapchat/core/common/widgets/header_text.dart';
+import 'package:snapchat/core/localizations/app_localizations.dart';
 import 'package:snapchat/core/models/user_model.dart';
 import 'package:snapchat/core/utils/consts/colors.dart';
 import 'package:snapchat/sign_up/screens/sign_up_birthday/sign_up_birthday_screen.dart';
@@ -92,7 +93,7 @@ class _SignUpNameScreenState extends State<SignUpNameScreen> {
       child: CustomTextField(
         controller: _firstNameController,
         focusNode: _firstNameFocusNode,
-        labelText: 'FIRST NAME',
+        labelText: 'first_name'.tr(context),
         onChanged: (_) => _nameBloc.add(OnChangeInputEvent(
           firstName: _firstNameController.text,
           lastName: _lastNameController.text,
@@ -109,7 +110,7 @@ class _SignUpNameScreenState extends State<SignUpNameScreen> {
       child: CustomTextField(
         controller: _lastNameController,
         focusNode: _lastNameFocusNode,
-        labelText: 'LAST NAME',
+        labelText: 'last_name'.tr(context),
         onChanged: (_) => _nameBloc.add(OnChangeInputEvent(
           firstName: _firstNameController.text,
           lastName: _lastNameController.text,
@@ -123,7 +124,7 @@ class _SignUpNameScreenState extends State<SignUpNameScreen> {
     return ContinueButton(
       onPressed: _renderSignUpAndAccept,
       isEnabled: state is! ButtonIsDisabled && state is! NameInitial,
-      title: 'Sign Up & Accept',
+      title: 'sign_up_and_accept'.tr(context),
     );
   }
 

@@ -2,6 +2,15 @@
     "log_in": "Մուտք գործել",
     "sign_up": "ԳՐԱՆՑՎԵԼ",
     "username_or_email": "ՄՈՒՏՔԱՆՈՒՆ ԿԱՄ ԷԼ. ՀԱՍՑԵ",
-    "password": "PASSWORD",
-    "forgot_your_password" : "Forgot your password?"
+    "password": "ԳԱՂՏՆԱԲԱՌ",
+    "forgot_your_password" : "Մոռացե՞լ եք գաղտնաբառը:",
+    "first_name": "ԱՆՈՒՆ",
+    "last_name": "ԱԶԳԱՆՈՒՆ",
+    "birthday": "ԾՆՆԴՅԱՆ ՕՐԸ",
+    "username": "ՄՈՒՏՔԱՆՈՒՆ",
+    "email": "ԷԼ. ՀԱՍՑԵ",
+    "mobile_number": "ԲՋՋԱՅԻՆ ՀԵՌԱԽՈՍԱՀԱՄԱՐ",
+    "continue": "Շարունակել",
+    "sign_up_and_accept": "Գրանցվել և ընդունել",
+    "edit_profile": "Խմբագրել Հաշիվը"
 }

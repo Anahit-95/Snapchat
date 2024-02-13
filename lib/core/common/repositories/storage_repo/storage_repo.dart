@@ -4,4 +4,8 @@ abstract class StorageRepo {
   Future<void> deleteUser();
 
   Future<Map<String, String>?> getUser();
+
+  Future<void> setLocale(String languageCode);
+
+  Future<String?> getLocale();
 }
