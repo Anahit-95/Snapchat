@@ -63,7 +63,7 @@ class _SignUpPasswordScreenState extends State<SignUpPasswordScreen> {
     return SignScreenWrapper(
         child: Column(
       children: [
-        const HeaderText(title: 'Set a password'),
+        HeaderText(title: 'set_a_password'.tr(context)),
         _renderDescription(),
         _renderPasswordInput(),
         _renderPasswordErrorText(state),
@@ -73,12 +73,12 @@ class _SignUpPasswordScreenState extends State<SignUpPasswordScreen> {
   }
 
   Widget _renderDescription() {
-    return const Padding(
-      padding: EdgeInsets.only(top: 10, bottom: 20),
+    return Padding(
+      padding: const EdgeInsets.only(top: 10, bottom: 20),
       child: Text(
-        'Your password should be at least 8\n characters.',
+        'your_password_should_be'.tr(context),
         textAlign: TextAlign.center,
-        style: TextStyle(
+        style: const TextStyle(
           color: AppColors.greyText1,
           fontSize: 14,
         ),

@@ -5,6 +5,7 @@ import 'package:snapchat/core/common/repositories/countries_db_repository/countr
 import 'package:snapchat/core/common/repositories/countries_repository/countries_repo_impl.dart';
 import 'package:snapchat/core/common/widgets/custom_back_button.dart';
 import 'package:snapchat/core/database/database_helper.dart';
+import 'package:snapchat/core/localizations/app_localizations.dart';
 import 'package:snapchat/core/models/country_model.dart';
 // import 'package:snapchat/core/providers/country_notifier.dart';
 import 'package:snapchat/core/providers/country_value_notifier.dart';
@@ -42,7 +43,9 @@ class _CountriesScreenState extends State<CountriesScreen> {
   void initState() {
     super.initState();
     // _countriesBloc.add(LoadCountriesEvent());
-    // _countriesBloc.add(GetCountriesApiEvent());
+    if (widget.countries.isEmpty) {
+      _countriesBloc.add(GetCountriesApiEvent());
+    }
   }
 
   @override
@@ -94,31 +97,31 @@ class _CountriesScreenState extends State<CountriesScreen> {
           countryName: _searchController.text,
           countries: widget.countries,
         )),
-        decoration: const InputDecoration(
-          prefixIcon: Padding(
+        decoration: InputDecoration(
+          prefixIcon: const Padding(
             padding: EdgeInsets.symmetric(horizontal: 8),
             child: Icon(
               Icons.search,
               color: AppColors.disabled,
             ),
           ),
-          prefixIconConstraints: BoxConstraints(maxWidth: 38),
-          hintText: 'Search',
-          hintStyle: TextStyle(
+          prefixIconConstraints: const BoxConstraints(maxWidth: 38),
+          hintText: 'search'.tr(context),
+          hintStyle: const TextStyle(
             color: AppColors.greyText1,
             fontSize: 15,
             fontWeight: FontWeight.w400,
           ),
-          contentPadding: EdgeInsets.symmetric(
+          contentPadding: const EdgeInsets.symmetric(
             vertical: 12,
           ),
-          enabledBorder: OutlineInputBorder(
+          enabledBorder: const OutlineInputBorder(
             borderRadius: BorderRadius.all(Radius.circular(10)),
             borderSide: BorderSide(
               color: AppColors.greyText2,
             ),
           ),
-          focusedBorder: OutlineInputBorder(
+          focusedBorder: const OutlineInputBorder(
             borderRadius: BorderRadius.all(Radius.circular(10)),
             borderSide: BorderSide(
               color: AppColors.greyText2,

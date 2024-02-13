@@ -58,7 +58,7 @@ class _SignUpUsernameScreenState extends State<SignUpUsernameScreen> {
     return SignScreenWrapper(
       child: Column(
         children: [
-          const HeaderText(title: 'Pick a username'),
+          HeaderText(title: 'pick_a_username'.tr(context)),
           _renderDescription(),
           _renderUsernameInput(),
           _rederAvailable(state),

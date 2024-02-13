@@ -107,7 +107,7 @@ class _SignUpEmailPhoneScreenState extends State<SignUpEmailPhoneScreen> {
   Widget _renderEmailMode(SignUpEmailPhoneState state) {
     return Column(
       children: [
-        _renderHeader("What's your email?"),
+        _renderHeader('what_is_your_email'.tr(context)),
         _renderSignUpWithEmailPhone(),
         _renderEmailInput(),
         _renderEmailErrorText(state),
@@ -121,7 +121,7 @@ class _SignUpEmailPhoneScreenState extends State<SignUpEmailPhoneScreen> {
   Widget _renderPhoneMode(SignUpEmailPhoneState state) {
     return Column(
       children: [
-        _renderHeader("What's your \nmobile number?"),
+        _renderHeader('what_is_your_mobile'.tr(context)),
         _renderSignUpWithEmailPhone(),
         _renderMobileInput(),
         _renderPhoneErrorText(state),
@@ -158,8 +158,8 @@ class _SignUpEmailPhoneScreenState extends State<SignUpEmailPhoneScreen> {
         padding: const EdgeInsets.symmetric(vertical: 20),
         child: Text(
           _signUpMode == SignUpMode.phone
-              ? 'Sign up with email instead'
-              : 'Sign up with phone instead',
+              ? 'sign_up_with_email'.tr(context)
+              : 'sign_up_with_phone'.tr(context),
           style: const TextStyle(
             color: AppColors.blueText1,
             fontSize: 12,
@@ -293,9 +293,9 @@ class _SignUpEmailPhoneScreenState extends State<SignUpEmailPhoneScreen> {
     return Container(
       padding: const EdgeInsets.only(top: 10),
       width: double.maxFinite,
-      child: const Text(
-        "We'll send you SMS verification code.",
-        style: TextStyle(fontSize: 12),
+      child: Text(
+        'verification_code'.tr(context),
+        style: const TextStyle(fontSize: 12),
       ),
     );
   }
