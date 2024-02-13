@@ -19,13 +19,19 @@ class CountriesRepoImpl implements CountriesRepo {
       var countries = await _dbRepo.getCountries();
       if (countries.isEmpty) {
         countries = await _apiRepo.loadCountries();
-        print('loaded from api');
-        await _dbRepo.insertCountries(countries);
+        // final data =
+        //     await rootBundle.loadString('assets/resources/country_codes.json');
+        // final List<dynamic> jsonList = jsonDecode(data);
+
+        // countries = jsonList.map((json) => CountryModel.fromMap(json)).toList();
+        // print('loaded from api');
+        // await _dbRepo.insertCountries(countries);
         return countries;
       }
       print('loaded from db');
       return countries;
     } catch (e) {
+      print(e);
       throw Exception('Failed loading countries.');
     }
   }

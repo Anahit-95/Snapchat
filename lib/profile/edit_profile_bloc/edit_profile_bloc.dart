@@ -144,6 +144,10 @@ class EditProfileBloc extends Bloc<EditProfileEvent, EditProfileState> {
   Future<void> _onSaveProfileChanges(
       SaveProfileChanges event, Emitter<EditProfileState> emit) async {
     emit(LoadingEditProfile());
+    await _storageRepo.setUser(
+      username: event.user.username!,
+      password: event.user.password!,
+    );
     await _dbRepo.updateUser(
         oldUsername: event.username, updatedUser: event.user);
     emit(UpdatedProfile());

@@ -275,27 +275,28 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   }
 
   void _onPressedSave() {
-    widget.user.updateUser(
-      firstName: _firstNameController.text,
-      lastName: _lastNameController.text,
-      birthday: _selectedDate,
-      username: _usernameController.text,
-      email: _emailController.text.isEmpty ? null : _emailController.text,
-      countryCode: _phoneController.text.isEmpty
-          ? null
-          // : _countryNotifier.country!.countryCode;
-          : _valueNotifier.value!.countryCode,
-      phoneCode: _phoneController.text.isEmpty
-          ? null
-          // : _countryNotifier.country!.phoneCode;
-          : _valueNotifier.value!.phoneCode,
-      phoneNumber: _phoneController.text.isEmpty ? null : _phoneController.text,
-      password: _passwordController.text,
-    );
-    _editProfileBloc.add(SaveProfileChanges(
-      username: widget.user.username!,
-      user: widget.user,
-    ));
+    final oldUsername = widget.user.username;
+    widget.user.firstName = _firstNameController.text;
+    widget.user.lastName = _lastNameController.text;
+    widget.user.birthday = _selectedDate;
+    widget.user.username = _usernameController.text;
+    widget.user.email =
+        _emailController.text.isEmpty ? null : _emailController.text;
+    widget.user.countryCode = _phoneController.text.isEmpty
+        ? null
+        // : _countryNotifier.country!.countryCode;
+        : _valueNotifier.value!.countryCode;
+    widget.user.phoneCode = _phoneController.text.isEmpty
+        ? null
+        // : _countryNotifier.country!.phoneCode;
+        : _valueNotifier.value!.phoneCode;
+    widget.user.phoneNumber =
+        _phoneController.text.isEmpty ? null : _phoneController.text;
+    widget.user.password = _passwordController.text;
+
+    print(widget.user);
+    _editProfileBloc
+        .add(SaveProfileChanges(username: oldUsername!, user: widget.user));
   }
 }
 

@@ -10,6 +10,7 @@ import 'package:snapchat/core/common/widgets/custom_text_field.dart';
 import 'package:snapchat/core/common/widgets/header_text.dart';
 import 'package:snapchat/core/common/widgets/sign_screen_wrapper.dart';
 import 'package:snapchat/core/database/database_helper.dart';
+import 'package:snapchat/core/localizations/app_localizations.dart';
 // import 'package:snapchat/core/providers/country_notifier.dart';
 import 'package:snapchat/core/utils/consts/colors.dart';
 import 'package:snapchat/log_in/log_in_bloc/log_in_bloc.dart';

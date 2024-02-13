@@ -31,4 +31,17 @@ class StorageRepoImpl extends StorageRepo {
       return null;
     }
   }
+
+  @override
+  Future<String?> getLocale() async {
+    final prefs = await SharedPreferences.getInstance();
+    final languageCode = prefs.getString('languageCode');
+    return languageCode;
+  }
+
+  @override
+  Future<void> setLocale(String languageCode) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString('languageCode', languageCode);
+  }
 }
