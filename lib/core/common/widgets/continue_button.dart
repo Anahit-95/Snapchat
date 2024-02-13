@@ -29,6 +29,7 @@ class ContinueButton extends StatelessWidget {
             disabledForegroundColor: AppColors.white),
         child: Text(
           title,
+          textAlign: TextAlign.center,
           style: const TextStyle(
             fontSize: 18,
             fontWeight: FontWeight.w500,

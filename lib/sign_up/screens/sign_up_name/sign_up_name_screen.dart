@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:snapchat/core/localizations/app_localizations.dart';
 import 'package:snapchat/core/common/repositories/validation_repository/validation_repo_impl.dart';
 import 'package:snapchat/core/common/widgets/continue_button.dart';
 import 'package:snapchat/core/common/widgets/custom_back_button.dart';
@@ -71,7 +72,7 @@ class _SignUpNameScreenState extends State<SignUpNameScreen> {
                 padding: const EdgeInsets.all(60),
                 child: Column(
                   children: [
-                    const HeaderText(title: "What's your name?"),
+                    HeaderText(title: 'what_is_your_name'.tr(context)),
                     _renderFirstNameInput(),
                     _renderLastNameInput(),
                     _renderAcceptText(),
@@ -92,7 +93,7 @@ class _SignUpNameScreenState extends State<SignUpNameScreen> {
       child: CustomTextField(
         controller: _firstNameController,
         focusNode: _firstNameFocusNode,
-        labelText: 'FIRST NAME',
+        labelText: 'first_name'.tr(context),
         onChanged: (_) => _nameBloc.add(OnChangeInputEvent(
           firstName: _firstNameController.text,
           lastName: _lastNameController.text,
@@ -109,7 +110,7 @@ class _SignUpNameScreenState extends State<SignUpNameScreen> {
       child: CustomTextField(
         controller: _lastNameController,
         focusNode: _lastNameFocusNode,
-        labelText: 'LAST NAME',
+        labelText: 'last_name'.tr(context),
         onChanged: (_) => _nameBloc.add(OnChangeInputEvent(
           firstName: _firstNameController.text,
           lastName: _lastNameController.text,
@@ -123,7 +124,7 @@ class _SignUpNameScreenState extends State<SignUpNameScreen> {
     return ContinueButton(
       onPressed: _renderSignUpAndAccept,
       isEnabled: state is! ButtonIsDisabled && state is! NameInitial,
-      title: 'Sign Up & Accept',
+      title: 'sign_up_and_accept'.tr(context),
     );
   }
 

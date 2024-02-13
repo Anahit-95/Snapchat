@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:snapchat/core/localizations/app_localizations.dart';
 import 'package:snapchat/core/models/country_model.dart';
 import 'package:snapchat/core/providers/country_value_notifier.dart';
 import 'package:snapchat/core/utils/consts/colors.dart';
@@ -33,7 +34,7 @@ class MobileInput extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          _renderMobileInputLabel(),
+          _renderMobileInputLabel(context),
           Row(
             children: [
               _renderMobileInputFlagAndPhonCode(),
@@ -46,10 +47,10 @@ class MobileInput extends StatelessWidget {
     );
   }
 
-  Widget _renderMobileInputLabel() {
-    return const Text(
-      'MOBILE NUMBER',
-      style: TextStyle(color: AppColors.disabled, fontSize: 13),
+  Widget _renderMobileInputLabel(BuildContext context) {
+    return Text(
+      'mobile_number'.tr(context),
+      style: const TextStyle(color: AppColors.disabled, fontSize: 13),
     );
   }
 

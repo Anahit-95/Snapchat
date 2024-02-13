@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:snapchat/core/common/widgets/header_text.dart';
+import 'package:snapchat/core/localizations/app_localizations.dart';
 import 'package:snapchat/core/utils/consts/colors.dart';
 import 'package:snapchat/profile/edit_profile_bloc/edit_profile_bloc.dart';
 
@@ -15,8 +16,8 @@ class ProfileHeader extends StatelessWidget {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          const HeaderText(
-            title: 'Edit Profile',
+          HeaderText(
+            title: 'edit_profile'.tr(context),
             fontSize: 22,
             color: AppColors.blueText1,
           ),

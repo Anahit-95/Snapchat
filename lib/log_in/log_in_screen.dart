@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:snapchat/core/localizations/app_localizations.dart';
 // import 'package:provider/provider.dart';
 import 'package:snapchat/core/common/repositories/storage_repo/storage_repo_impl.dart';
 import 'package:snapchat/core/common/repositories/users_db_repository/users_db_repo_impl.dart';
@@ -69,7 +70,7 @@ class _LogInScreenState extends State<LogInScreen> {
     return SignScreenWrapper(
       child: Column(
         children: [
-          const HeaderText(title: 'Log In'),
+          HeaderText(title: 'log_in'.tr(context)),
           // Email or username TextField
           _renderEmailTextField(),
           _renderEmailErrorText(state),
@@ -89,7 +90,7 @@ class _LogInScreenState extends State<LogInScreen> {
       child: CustomTextField(
         controller: _emailController,
         focusNode: _emailFocusNode,
-        labelText: 'USERNAME OR EMAIL',
+        labelText: 'username_or_email'.tr(context),
         keyboardType: TextInputType.emailAddress,
         onChanged: (p0) => _loginBloc.add(OnChangeInputEvent(
           email: _emailController.text,
@@ -122,7 +123,7 @@ class _LogInScreenState extends State<LogInScreen> {
       child: CustomTextField(
         controller: _passwordController,
         focusNode: _passwordFocusNode,
-        labelText: 'PASSWORD',
+        labelText: 'password'.tr(context),
         obscureText: true,
         onChanged: (_) => _loginBloc.add(
           OnChangeInputEvent(
@@ -155,9 +156,9 @@ class _LogInScreenState extends State<LogInScreen> {
       padding: const EdgeInsets.only(top: 5),
       child: GestureDetector(
         onTap: () {},
-        child: const Text(
-          'Forgot your password?',
-          style: TextStyle(color: AppColors.blueText1),
+        child: Text(
+          'forgot_your_password'.tr(context),
+          style: const TextStyle(color: AppColors.blueText1),
         ),
       ),
     );
@@ -167,7 +168,7 @@ class _LogInScreenState extends State<LogInScreen> {
     return ContinueButton(
       onPressed: _loginPressed,
       isEnabled: state is! LogInInvalidState && state is! LogInInitial,
-      title: 'Log In',
+      title: 'log_in'.tr(context),
     );
   }
 

@@ -4,8 +4,9 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 import 'package:snapchat/core/common/repositories/validation_repository/validation_repo_impl.dart';
 import 'package:snapchat/core/common/widgets/continue_button.dart';
-import 'package:snapchat/core/common/widgets/custom_back_button.dart';
 import 'package:snapchat/core/common/widgets/header_text.dart';
+import 'package:snapchat/core/common/widgets/sign_screen_wrapper.dart';
+import 'package:snapchat/core/localizations/app_localizations.dart';
 import 'package:snapchat/core/models/user_model.dart';
 import 'package:snapchat/core/utils/consts/colors.dart';
 import 'package:snapchat/sign_up/screens/sign_up_birthday/sign_up_birthday_bloc/sign_up_birthday_bloc.dart';
@@ -57,69 +58,69 @@ class _SignUpBirthdayScreenState extends State<SignUpBirthdayScreen> {
     );
   }
 
-  // Widget _render(SignUpBirthdayState state) {
-  //   return SignScreenWrapper(
-  //     child: Stack(
-  //       children: [
-  //         Column(
-  //           children: [
-  //             const HeaderText(title: "When's your birthday?"),
-  //             _renderBirthdayInput(),
-  //             _renderBirthdayErrorText(state),
-  //             _renderBirthdayContinueButton(state)
-  //           ],
-  //         ),
-  //         Positioned(
-  //           child: Container(
-  //             height: MediaQuery.of(context).size.height * .76,
-  //             alignment: Alignment.bottomCenter,
-  //             child: SizedBox(
-  //               height: 250,
-  //               width: double.maxFinite,
-  //               child: CupertinoDatePicker(
-  //                 mode: CupertinoDatePickerMode.date,
-  //                 initialDateTime: _selectedDate,
-  //                 minimumDate: DateTime(1900),
-  //                 maximumDate: DateTime.now(),
-  //                 dateOrder: DatePickerDateOrder.dmy,
-  //                 onDateTimeChanged: (newDate) {
-  //                   _birthdayBloc.add(SelectingDate(newDate));
-  //                 },
-  //               ),
-  //             ),
-  //           ),
-  //         )
-  //       ],
-  //     ),
-  //   );
-  // }
-
   Widget _render(SignUpBirthdayState state) {
-    return Scaffold(
-      body: SafeArea(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const CustomBackButton(),
-            Expanded(
-              child: Padding(
-                padding: const EdgeInsets.only(top: 60, left: 60, right: 60),
-                child: Column(
-                  children: [
-                    const HeaderText(title: "When's your birthday?"),
-                    _renderBirthdayInput(),
-                    _renderBirthdayErrorText(state),
-                    _renderBirthdayContinueButton(state),
-                  ],
+    return SignScreenWrapper(
+      child: Stack(
+        children: [
+          Column(
+            children: [
+              HeaderText(title: 'when_is_your_birthday'.tr(context)),
+              _renderBirthdayInput(),
+              _renderBirthdayErrorText(state),
+              _renderBirthdayContinueButton(state)
+            ],
+          ),
+          Positioned(
+            child: Container(
+              height: MediaQuery.of(context).size.height * .76,
+              alignment: Alignment.bottomCenter,
+              child: SizedBox(
+                height: 250,
+                width: double.maxFinite,
+                child: CupertinoDatePicker(
+                  mode: CupertinoDatePickerMode.date,
+                  initialDateTime: _selectedDate,
+                  minimumDate: DateTime(1900),
+                  maximumDate: DateTime.now(),
+                  dateOrder: DatePickerDateOrder.dmy,
+                  onDateTimeChanged: (newDate) {
+                    _birthdayBloc.add(SelectingDate(newDate));
+                  },
                 ),
               ),
             ),
-            _renderDatePicker(),
-          ],
-        ),
+          )
+        ],
       ),
     );
   }
+
+  // Widget _render(SignUpBirthdayState state) {
+  //   return Scaffold(
+  //     body: SafeArea(
+  //       child: Column(
+  //         crossAxisAlignment: CrossAxisAlignment.start,
+  //         children: [
+  //           const CustomBackButton(),
+  //           Expanded(
+  //             child: Padding(
+  //               padding: const EdgeInsets.only(top: 60, left: 60, right: 60),
+  //               child: Column(
+  //                 children: [
+  //                   const HeaderText(title: 'when_is_your_birthday'.tr(context)),
+  //                   _renderBirthdayInput(),
+  //                   _renderBirthdayErrorText(state),
+  //                   _renderBirthdayContinueButton(state),
+  //                 ],
+  //               ),
+  //             ),
+  //           ),
+  //           _renderDatePicker(),
+  //         ],
+  //       ),
+  //     ),
+  //   );
+  // }
 
   Widget _renderBirthdayInput() {
     return Padding(
@@ -129,9 +130,9 @@ class _SignUpBirthdayScreenState extends State<SignUpBirthdayScreen> {
         readOnly: true,
         controller: _dateController,
         keyboardType: TextInputType.datetime,
-        decoration: const InputDecoration(
-          labelText: 'BIRTHDAY',
-          labelStyle: TextStyle(
+        decoration: InputDecoration(
+          labelText: 'birthday'.tr(context),
+          labelStyle: const TextStyle(
             color: AppColors.disabled,
             fontSize: 14,
           ),
@@ -160,22 +161,27 @@ class _SignUpBirthdayScreenState extends State<SignUpBirthdayScreen> {
     return ContinueButton(
       onPressed: _continuePressed,
       isEnabled: state is ValidBirthday,
-      title: 'Continue',
+      title: 'continue'.tr(context),
     );
   }
 
   Widget _renderDatePicker() {
-    return SizedBox(
-      height: 250,
-      child: CupertinoDatePicker(
-        mode: CupertinoDatePickerMode.date,
-        initialDateTime: _selectedDate,
-        minimumDate: DateTime(1900),
-        maximumDate: DateTime.now(),
-        dateOrder: DatePickerDateOrder.dmy,
-        onDateTimeChanged: (newDate) {
-          _birthdayBloc.add(SelectingDate(newDate));
-        },
+    return Expanded(
+      child: Container(
+        alignment: Alignment.bottomCenter,
+        child: SizedBox(
+          height: 250,
+          child: CupertinoDatePicker(
+            mode: CupertinoDatePickerMode.date,
+            initialDateTime: _selectedDate,
+            minimumDate: DateTime(1900),
+            maximumDate: DateTime.now(),
+            dateOrder: DatePickerDateOrder.dmy,
+            onDateTimeChanged: (newDate) {
+              _birthdayBloc.add(SelectingDate(newDate));
+            },
+          ),
+        ),
       ),
     );
   }

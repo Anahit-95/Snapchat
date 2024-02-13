@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:snapchat/app_localizations.dart';
+import 'package:snapchat/core/localizations/app_localizations.dart';
 
 class StartScreen extends StatelessWidget {
   const StartScreen({super.key});

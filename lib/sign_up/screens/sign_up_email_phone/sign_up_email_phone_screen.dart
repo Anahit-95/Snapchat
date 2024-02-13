@@ -13,6 +13,7 @@ import 'package:snapchat/core/common/widgets/header_text.dart';
 import 'package:snapchat/core/common/widgets/sign_screen_wrapper.dart';
 import 'package:snapchat/core/database/database_helper.dart';
 import 'package:snapchat/core/enums/sign_up_mode.dart';
+import 'package:snapchat/core/localizations/app_localizations.dart';
 import 'package:snapchat/core/models/country_model.dart';
 import 'package:snapchat/core/models/user_model.dart';
 import 'package:snapchat/core/utils/consts/colors.dart';
@@ -106,7 +107,7 @@ class _SignUpEmailPhoneScreenState extends State<SignUpEmailPhoneScreen> {
   Widget _renderEmailMode(SignUpEmailPhoneState state) {
     return Column(
       children: [
-        _renderHeader("What's your email?"),
+        _renderHeader('what_is_your_email'.tr(context)),
         _renderSignUpWithEmailPhone(),
         _renderEmailInput(),
         _renderEmailErrorText(state),
@@ -120,7 +121,7 @@ class _SignUpEmailPhoneScreenState extends State<SignUpEmailPhoneScreen> {
   Widget _renderPhoneMode(SignUpEmailPhoneState state) {
     return Column(
       children: [
-        _renderHeader("What's your \nmobile number?"),
+        _renderHeader('what_is_your_mobile'.tr(context)),
         _renderSignUpWithEmailPhone(),
         _renderMobileInput(),
         _renderPhoneErrorText(state),
@@ -142,7 +143,7 @@ class _SignUpEmailPhoneScreenState extends State<SignUpEmailPhoneScreen> {
       padding: const EdgeInsets.only(bottom: 4.0),
       child: CustomTextField(
         controller: _emailController,
-        labelText: 'EMAIL',
+        labelText: 'email'.tr(context),
         onChanged: (_) =>
             _emailPhoneBloc.add(EmailOnChangeEvent(_emailController.text)),
         keyboardType: TextInputType.emailAddress,
@@ -157,8 +158,8 @@ class _SignUpEmailPhoneScreenState extends State<SignUpEmailPhoneScreen> {
         padding: const EdgeInsets.symmetric(vertical: 20),
         child: Text(
           _signUpMode == SignUpMode.phone
-              ? 'Sign up with email instead'
-              : 'Sign up with phone instead',
+              ? 'sign_up_with_email'.tr(context)
+              : 'sign_up_with_phone'.tr(context),
           style: const TextStyle(
             color: AppColors.blueText1,
             fontSize: 12,
@@ -211,9 +212,9 @@ class _SignUpEmailPhoneScreenState extends State<SignUpEmailPhoneScreen> {
   }
 
   Widget _renderMobileInputLabel() {
-    return const Text(
-      'MOBILE NUMBER',
-      style: TextStyle(color: AppColors.blueText2, fontSize: 13),
+    return Text(
+      'mobile_number'.tr(context),
+      style: const TextStyle(color: AppColors.blueText2, fontSize: 13),
     );
   }
 
@@ -292,9 +293,9 @@ class _SignUpEmailPhoneScreenState extends State<SignUpEmailPhoneScreen> {
     return Container(
       padding: const EdgeInsets.only(top: 10),
       width: double.maxFinite,
-      child: const Text(
-        "We'll send you SMS verification code.",
-        style: TextStyle(fontSize: 12),
+      child: Text(
+        'verification_code'.tr(context),
+        style: const TextStyle(fontSize: 12),
       ),
     );
   }
@@ -303,7 +304,7 @@ class _SignUpEmailPhoneScreenState extends State<SignUpEmailPhoneScreen> {
     return ContinueButton(
       onPressed: _continueClicked,
       isEnabled: isEnabled,
-      title: 'Continue',
+      title: 'continue'.tr(context),
     );
   }
 

@@ -12,6 +12,7 @@ import 'package:snapchat/core/common/widgets/continue_button.dart';
 import 'package:snapchat/core/common/widgets/custom_text_field.dart';
 import 'package:snapchat/core/database/database_helper.dart';
 import 'package:snapchat/core/enums/edit_field_name.dart';
+import 'package:snapchat/core/localizations/app_localizations.dart';
 import 'package:snapchat/core/models/country_model.dart';
 // import 'package:snapchat/core/models/country_model.dart';
 import 'package:snapchat/core/models/user_model.dart';
@@ -137,13 +138,13 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
               children: [
                 ProfileHeader(editProfileBloc: _editProfileBloc),
                 _renderProfileInput(
-                  labelText: 'FIRST NAME',
+                  labelText: 'first_name'.tr(context),
                   controller: _firstNameController,
                 ),
                 _renderErrorText(state, EditFieldName.firstName),
                 _renderProfileInput(
                   controller: _lastNameController,
-                  labelText: 'LAST NAME',
+                  labelText: 'last_name'.tr(context),
                 ),
                 _renderErrorText(state, EditFieldName.lastName),
                 BirthdayInput(
@@ -154,24 +155,24 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                 _renderErrorText(state, EditFieldName.birthday),
                 _renderProfileInput(
                   controller: _usernameController,
-                  labelText: 'USERNAME',
+                  labelText: 'username'.tr(context),
                 ),
                 _renderErrorText(state, EditFieldName.username),
                 _renderProfileInput(
                   controller: _emailController,
-                  labelText: 'EMAIL',
+                  labelText: 'email'.tr(context),
                 ),
                 _renderErrorText(state, EditFieldName.email),
                 MobileInput(
                   valueNotifier: _valueNotifier,
                   phoneController: _phoneController,
-                  countries: _countries!,
+                  countries: _countries,
                   onChanged: (_) => _onChangeInputs(),
                 ),
                 _renderErrorText(state, EditFieldName.phone),
                 _renderProfileInput(
                   controller: _passwordController,
-                  labelText: 'PASSWORD',
+                  labelText: 'password'.tr(context),
                   obscureText: true,
                 ),
                 _renderErrorText(state, EditFieldName.password),
@@ -291,8 +292,10 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
       phoneNumber: _phoneController.text.isEmpty ? null : _phoneController.text,
       password: _passwordController.text,
     );
-    _editProfileBloc.add(
-        SaveProfileChanges(username: widget.user.username!, user: widget.user));
+    _editProfileBloc.add(SaveProfileChanges(
+      username: widget.user.username!,
+      user: widget.user,
+    ));
   }
 }
 
