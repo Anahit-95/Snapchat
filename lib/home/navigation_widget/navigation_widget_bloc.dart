@@ -3,7 +3,8 @@ import 'dart:async';
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:snapchat/core/common/repositories/storage_repo/storage_repo_impl.dart';
-import 'package:snapchat/core/common/repositories/users_db_repository/users_db_repo_impl.dart';
+import 'package:snapchat/core/common/repositories/users_db_repository/user_realm_repo_impl.dart';
+// import 'package:snapchat/core/common/repositories/users_db_repository/users_db_repo_impl.dart';
 import 'package:snapchat/core/models/user_model.dart';
 
 part 'navigation_widget_event.dart';
@@ -13,7 +14,8 @@ class NavigationWidgetBloc
     extends Bloc<NavigationWidgetEvent, NavigationWidgetState> {
   NavigationWidgetBloc({
     required StorageRepoImpl storageRepo,
-    required UsersDBRepoImpl dbRepo,
+    // required UsersDBRepoImpl dbRepo,
+    required UserRealmRepoImpl dbRepo,
   })  : _storageRepo = storageRepo,
         _dbRepo = dbRepo,
         super(NavigationWidgetInitial()) {
@@ -21,7 +23,8 @@ class NavigationWidgetBloc
   }
 
   final StorageRepoImpl _storageRepo;
-  final UsersDBRepoImpl _dbRepo;
+  // final UsersDBRepoImpl _dbRepo;
+  final UserRealmRepoImpl _dbRepo;
 
   Future<void> _onTryToGetUser(
       TryToGetUserEvent event, Emitter<NavigationWidgetState> emit) async {
@@ -35,6 +38,7 @@ class NavigationWidgetBloc
         emit(IsOnStartScreen());
       }
     } catch (e) {
+      await _storageRepo.deleteUser();
       emit(const NavigationWidgetError('Failed to get user.'));
     }
   }

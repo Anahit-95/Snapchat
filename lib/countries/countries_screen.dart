@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:snapchat/core/common/repositories/api_repository/api_repo_impl.dart';
-import 'package:snapchat/core/common/repositories/countries_db_repository/countries_db_repo_impl.dart';
+// import 'package:snapchat/core/common/repositories/countries_db_repository/countries_db_repo_impl.dart';
+import 'package:snapchat/core/common/repositories/countries_db_repository/countries_realm_repo_impl.dart';
 import 'package:snapchat/core/common/repositories/countries_repository/countries_repo_impl.dart';
 import 'package:snapchat/core/common/widgets/custom_back_button.dart';
-import 'package:snapchat/core/database/database_helper.dart';
+// import 'package:snapchat/core/database/database_helper.dart';
+import 'package:snapchat/core/database/realm_db_helper.dart';
 import 'package:snapchat/core/localizations/app_localizations.dart';
 import 'package:snapchat/core/models/country_model.dart';
 // import 'package:snapchat/core/providers/country_notifier.dart';
@@ -35,7 +37,8 @@ class _CountriesScreenState extends State<CountriesScreen> {
   final CountriesBloc _countriesBloc = CountriesBloc(
     countriesRepo: CountriesRepoImpl(
       apiRepo: ApiRepoImpl(),
-      dbRepo: CountriesDBRepoImpl(DatabaseHelper()),
+      // dbRepo: CountriesDBRepoImpl(DatabaseHelper()),
+      dbRepo: CountriesRealmRepoImpl(RealmDBHelper()),
     ),
   );
 
@@ -76,7 +79,9 @@ class _CountriesScreenState extends State<CountriesScreen> {
             children: [
               const CustomBackButton(),
               _renderSearchInput(),
-              // if (state is LoadingCountries) _renderLoadingText(),
+              if (state is LoadingCountries) _renderLoadingText(),
+              if (state is CountriesLoaded && widget.countries.isEmpty)
+                _renderCountries(state.countries),
               if (state is CountriesInitial || state is CountriesLoaded)
                 _renderCountries(widget.countries),
               if (state is CountriesFound) _renderCountries(state.countries),

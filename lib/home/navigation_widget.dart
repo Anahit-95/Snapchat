@@ -3,8 +3,10 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:provider/provider.dart';
 import 'package:snapchat/core/common/repositories/storage_repo/storage_repo_impl.dart';
-import 'package:snapchat/core/common/repositories/users_db_repository/users_db_repo_impl.dart';
-import 'package:snapchat/core/database/database_helper.dart';
+import 'package:snapchat/core/common/repositories/users_db_repository/user_realm_repo_impl.dart';
+// import 'package:snapchat/core/common/repositories/users_db_repository/users_db_repo_impl.dart';
+// import 'package:snapchat/core/database/database_helper.dart';
+import 'package:snapchat/core/database/realm_db_helper.dart';
 import 'package:snapchat/core/localizations/app_localizations.dart';
 import 'package:snapchat/core/providers/locale_notifier.dart';
 import 'package:snapchat/core/utils/consts/colors.dart';
@@ -24,7 +26,8 @@ class Home extends StatelessWidget {
       child: BlocProvider(
         create: (context) => NavigationWidgetBloc(
           storageRepo: StorageRepoImpl(),
-          dbRepo: UsersDBRepoImpl(DatabaseHelper()),
+          // dbRepo: UsersDBRepoImpl(DatabaseHelper()),
+          dbRepo: UserRealmRepoImpl(RealmDBHelper()),
         )..add(TryToGetUserEvent()),
         child: Consumer<LocaleNotifier>(
           builder: (_, localeNotifier, __) {

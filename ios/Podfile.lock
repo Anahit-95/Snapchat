@@ -2,6 +2,8 @@ PODS:
   - country_codes (0.0.1):
     - Flutter
   - Flutter (1.0.0)
+  - realm (1.9.0):
+    - Flutter
   - shared_preferences_foundation (0.0.1):
     - Flutter
     - FlutterMacOS
@@ -12,6 +14,7 @@ PODS:
 DEPENDENCIES:
   - country_codes (from `.symlinks/plugins/country_codes/ios`)
   - Flutter (from `Flutter`)
+  - realm (from `.symlinks/plugins/realm/ios`)
   - shared_preferences_foundation (from `.symlinks/plugins/shared_preferences_foundation/darwin`)
   - sqflite (from `.symlinks/plugins/sqflite/darwin`)
 
@@ -20,6 +23,8 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/country_codes/ios"
   Flutter:
     :path: Flutter
+  realm:
+    :path: ".symlinks/plugins/realm/ios"
   shared_preferences_foundation:
     :path: ".symlinks/plugins/shared_preferences_foundation/darwin"
   sqflite:
@@ -28,6 +33,7 @@ EXTERNAL SOURCES:
 SPEC CHECKSUMS:
   country_codes: b0900f46ad686281d5dab438e354e44ad10f5941
   Flutter: e0871f40cf51350855a761d2e70bf5af5b9b5de7
+  realm: ce4ab8d2eb411ca3ba175a8e0f9cbec166c6466b
   shared_preferences_foundation: b4c3b4cddf1c21f02770737f147a3f5da9d39695
   sqflite: 673a0e54cc04b7d6dba8d24fb8095b31c3a99eec
 

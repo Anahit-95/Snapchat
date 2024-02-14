@@ -2,13 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 // import 'package:provider/provider.dart';
 import 'package:snapchat/core/common/repositories/storage_repo/storage_repo_impl.dart';
-import 'package:snapchat/core/common/repositories/users_db_repository/users_db_repo_impl.dart';
+import 'package:snapchat/core/common/repositories/users_db_repository/user_realm_repo_impl.dart';
+// import 'package:snapchat/core/common/repositories/users_db_repository/users_db_repo_impl.dart';
 import 'package:snapchat/core/common/repositories/validation_repository/validation_repo_impl.dart';
 import 'package:snapchat/core/common/widgets/continue_button.dart';
 import 'package:snapchat/core/common/widgets/custom_text_field.dart';
 import 'package:snapchat/core/common/widgets/header_text.dart';
 import 'package:snapchat/core/common/widgets/sign_screen_wrapper.dart';
-import 'package:snapchat/core/database/database_helper.dart';
+// import 'package:snapchat/core/database/database_helper.dart';
+import 'package:snapchat/core/database/realm_db_helper.dart';
 import 'package:snapchat/core/localizations/app_localizations.dart';
 // import 'package:snapchat/core/providers/country_notifier.dart';
 import 'package:snapchat/core/utils/consts/colors.dart';
@@ -31,7 +33,8 @@ class _LogInScreenState extends State<LogInScreen> {
 
   final LogInBloc _loginBloc = LogInBloc(
     validationRepo: ValidationRepoImpl(),
-    dbRepo: UsersDBRepoImpl(DatabaseHelper()),
+    // dbRepo: UsersDBRepoImpl(DatabaseHelper()),
+    dbRepo: UserRealmRepoImpl(RealmDBHelper()),
     storageRepo: StorageRepoImpl(),
   );
 

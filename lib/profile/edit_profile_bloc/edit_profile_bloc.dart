@@ -5,7 +5,8 @@ import 'package:country_codes/country_codes.dart';
 import 'package:equatable/equatable.dart';
 import 'package:snapchat/core/common/repositories/countries_repository/countries_repo_impl.dart';
 import 'package:snapchat/core/common/repositories/storage_repo/storage_repo_impl.dart';
-import 'package:snapchat/core/common/repositories/users_db_repository/users_db_repo_impl.dart';
+import 'package:snapchat/core/common/repositories/users_db_repository/user_realm_repo_impl.dart';
+// import 'package:snapchat/core/common/repositories/users_db_repository/users_db_repo_impl.dart';
 import 'package:snapchat/core/common/repositories/validation_repository/validation_repo_impl.dart';
 import 'package:snapchat/core/models/country_model.dart';
 import 'package:snapchat/core/models/user_model.dart';
@@ -16,7 +17,8 @@ part 'edit_profile_state.dart';
 class EditProfileBloc extends Bloc<EditProfileEvent, EditProfileState> {
   EditProfileBloc({
     required ValidationRepoImpl validationRepo,
-    required UsersDBRepoImpl dbRepo,
+    // required UsersDBRepoImpl dbRepo,
+    required UserRealmRepoImpl dbRepo,
     required CountriesRepoImpl countriesRepo,
     required StorageRepoImpl storageRepo,
   })  : _validationRepo = validationRepo,
@@ -31,7 +33,8 @@ class EditProfileBloc extends Bloc<EditProfileEvent, EditProfileState> {
   }
 
   final ValidationRepoImpl _validationRepo;
-  final UsersDBRepoImpl _dbRepo;
+  // final UsersDBRepoImpl _dbRepo;
+  final UserRealmRepoImpl _dbRepo;
   final CountriesRepoImpl _countriesRepo;
   final StorageRepoImpl _storageRepo;
 

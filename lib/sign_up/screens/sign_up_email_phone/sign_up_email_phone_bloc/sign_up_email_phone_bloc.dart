@@ -4,7 +4,8 @@ import 'package:bloc/bloc.dart';
 import 'package:country_codes/country_codes.dart';
 import 'package:equatable/equatable.dart';
 import 'package:snapchat/core/common/repositories/countries_repository/countries_repo_impl.dart';
-import 'package:snapchat/core/common/repositories/users_db_repository/users_db_repo_impl.dart';
+import 'package:snapchat/core/common/repositories/users_db_repository/user_realm_repo_impl.dart';
+// import 'package:snapchat/core/common/repositories/users_db_repository/users_db_repo_impl.dart';
 import 'package:snapchat/core/common/repositories/validation_repository/validation_repo_impl.dart';
 import 'package:snapchat/core/models/country_model.dart';
 
@@ -15,7 +16,8 @@ class SignUpEmailPhoneBloc
     extends Bloc<SignUpEmailPhoneEvent, SignUpEmailPhoneState> {
   SignUpEmailPhoneBloc({
     required ValidationRepoImpl validationRepo,
-    required UsersDBRepoImpl dbRepo,
+    // required UsersDBRepoImpl dbRepo,
+    required UserRealmRepoImpl dbRepo,
     required CountriesRepoImpl countriesRepo,
   })  : _validationRepo = validationRepo,
         _dbRepo = dbRepo,
@@ -27,7 +29,8 @@ class SignUpEmailPhoneBloc
   }
 
   final ValidationRepoImpl _validationRepo;
-  final UsersDBRepoImpl _dbRepo;
+  // final UsersDBRepoImpl _dbRepo;
+  final UserRealmRepoImpl _dbRepo;
   final CountriesRepoImpl _countriesRepo;
 
   Future<void> _onGetCountry(

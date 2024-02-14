@@ -3,7 +3,8 @@ import 'dart:async';
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:snapchat/core/common/repositories/storage_repo/storage_repo_impl.dart';
-import 'package:snapchat/core/common/repositories/users_db_repository/users_db_repo_impl.dart';
+import 'package:snapchat/core/common/repositories/users_db_repository/user_realm_repo_impl.dart';
+// import 'package:snapchat/core/common/repositories/users_db_repository/users_db_repo_impl.dart';
 import 'package:snapchat/core/common/repositories/validation_repository/validation_repo_impl.dart';
 import 'package:snapchat/core/models/user_model.dart';
 
@@ -14,7 +15,8 @@ class SignUpPasswordBloc
     extends Bloc<SignUpPasswordEvent, SignUpPasswordState> {
   SignUpPasswordBloc({
     required ValidationRepoImpl validationRepo,
-    required UsersDBRepoImpl dbRepo,
+    // required UsersDBRepoImpl dbRepo,
+    required UserRealmRepoImpl dbRepo,
     required StorageRepoImpl storageRepo,
   })  : _validationRepo = validationRepo,
         _dbRepo = dbRepo,
@@ -25,7 +27,8 @@ class SignUpPasswordBloc
   }
 
   final ValidationRepoImpl _validationRepo;
-  final UsersDBRepoImpl _dbRepo;
+  final UserRealmRepoImpl _dbRepo;
+  // final UsersDBRepoImpl _dbRepo;
   final StorageRepoImpl _storageRepo;
 
   void _onOnChangePasswordInput(

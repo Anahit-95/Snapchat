@@ -3,14 +3,17 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 // import 'package:provider/provider.dart';
 import 'package:snapchat/core/common/repositories/api_repository/api_repo_impl.dart';
-import 'package:snapchat/core/common/repositories/countries_db_repository/countries_db_repo_impl.dart';
+// import 'package:snapchat/core/common/repositories/countries_db_repository/countries_db_repo_impl.dart';
+import 'package:snapchat/core/common/repositories/countries_db_repository/countries_realm_repo_impl.dart';
 import 'package:snapchat/core/common/repositories/countries_repository/countries_repo_impl.dart';
 import 'package:snapchat/core/common/repositories/storage_repo/storage_repo_impl.dart';
-import 'package:snapchat/core/common/repositories/users_db_repository/users_db_repo_impl.dart';
+import 'package:snapchat/core/common/repositories/users_db_repository/user_realm_repo_impl.dart';
+// import 'package:snapchat/core/common/repositories/users_db_repository/users_db_repo_impl.dart';
 import 'package:snapchat/core/common/repositories/validation_repository/validation_repo_impl.dart';
 import 'package:snapchat/core/common/widgets/continue_button.dart';
 import 'package:snapchat/core/common/widgets/custom_text_field.dart';
-import 'package:snapchat/core/database/database_helper.dart';
+// import 'package:snapchat/core/database/database_helper.dart';
+import 'package:snapchat/core/database/realm_db_helper.dart';
 import 'package:snapchat/core/enums/edit_field_name.dart';
 import 'package:snapchat/core/localizations/app_localizations.dart';
 import 'package:snapchat/core/models/country_model.dart';
@@ -45,10 +48,12 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
 
   final EditProfileBloc _editProfileBloc = EditProfileBloc(
     validationRepo: ValidationRepoImpl(),
-    dbRepo: UsersDBRepoImpl(DatabaseHelper()),
+    // dbRepo: UsersDBRepoImpl(DatabaseHelper()),
+    dbRepo: UserRealmRepoImpl(RealmDBHelper()),
     countriesRepo: CountriesRepoImpl(
       apiRepo: ApiRepoImpl(),
-      dbRepo: CountriesDBRepoImpl(DatabaseHelper()),
+      // dbRepo: CountriesDBRepoImpl(DatabaseHelper()),
+      dbRepo: CountriesRealmRepoImpl(RealmDBHelper()),
     ),
     storageRepo: StorageRepoImpl(),
   );

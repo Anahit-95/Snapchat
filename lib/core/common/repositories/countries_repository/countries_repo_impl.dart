@@ -1,17 +1,19 @@
 import 'package:snapchat/core/common/repositories/api_repository/api_repo_impl.dart';
-import 'package:snapchat/core/common/repositories/countries_db_repository/countries_db_repo_impl.dart';
+// import 'package:snapchat/core/common/repositories/countries_db_repository/countries_db_repo_impl.dart';
+import 'package:snapchat/core/common/repositories/countries_db_repository/countries_realm_repo_impl.dart';
 import 'package:snapchat/core/common/repositories/countries_repository/countries_repo.dart';
 import 'package:snapchat/core/models/country_model.dart';
 
 class CountriesRepoImpl implements CountriesRepo {
-  CountriesRepoImpl({
-    required ApiRepoImpl apiRepo,
-    required CountriesDBRepoImpl dbRepo,
-  })  : _apiRepo = apiRepo,
+  CountriesRepoImpl(
+      {required ApiRepoImpl apiRepo,
+      // required CountriesDBRepoImpl dbRepo,
+      required CountriesRealmRepoImpl dbRepo})
+      : _apiRepo = apiRepo,
         _dbRepo = dbRepo;
 
   final ApiRepoImpl _apiRepo;
-  final CountriesDBRepoImpl _dbRepo;
+  final CountriesRealmRepoImpl _dbRepo;
 
   @override
   Future<List<CountryModel>> loadCountries() async {
@@ -24,8 +26,8 @@ class CountriesRepoImpl implements CountriesRepo {
         // final List<dynamic> jsonList = jsonDecode(data);
 
         // countries = jsonList.map((json) => CountryModel.fromMap(json)).toList();
-        // print('loaded from api');
-        // await _dbRepo.insertCountries(countries);
+        print('loaded from api');
+        await _dbRepo.insertCountries(countries);
         return countries;
       }
       print('loaded from db');
